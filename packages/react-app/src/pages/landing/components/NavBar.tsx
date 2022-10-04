@@ -16,7 +16,7 @@ export default class NavBar extends Component {
 						</div>
 
 						<div className="inline-flex items-center">
-							<Button value='Log in' className='bg-blue-500' />
+							<Button value='Log in' overrideClassName='bg-gray-500 text-white py-2 px-4 rounded' />
 						</div>
 					</div>
 				</div>

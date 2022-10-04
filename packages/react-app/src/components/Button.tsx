@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
 interface propsType {
-	value: string,
-	className?: string
+	value?: string,
+	overrideClassName?: string
 }
 
 export default class Button extends Component<propsType> {
@@ -11,7 +11,7 @@ export default class Button extends Component<propsType> {
 	}
 	render() {
 		return (
-			<button className={'bg-gray-500 text-white py-2 px-4 rounded ' + this.props.className}>
+			<button className={this.props.overrideClassName || 'bg-blue-500 text-white py-2 px-4 rounded'}>
 				{this.props.value}
 			</button>
 		)
