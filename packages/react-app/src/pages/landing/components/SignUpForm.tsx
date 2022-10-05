@@ -1,23 +1,21 @@
 import React, { Component } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
-import Input from '../../../components/Input';
-import Button from '../../../components/Button';
-const inputStyles ='border border-gray-300 rounded w-96 px-4 py-1';
 
 export default class SignUpForm extends Component {
 	render() {
 		return (
-			<div className='w-fit bg-gray-50 p-5 rounded-lg'>
-				<div className='text-2xl font-bold text-center py-10'>
+			<div className='w-fit bg-gray-50 px-10 py-16 rounded-lg'>
+				<div className='text-3xl font-extrabold text-center pb-10'>
 					Sign up to {'{name}'}
 				</div>
-				<div className='flex flex-col gap-7'>
-					<Input placeholder='Display Name' type='text' overrideClassName={inputStyles} />
-					<Input placeholder='Email address' type='email' overrideClassName={inputStyles}/>
-					<Input placeholder='Password' type='password' overrideClassName={inputStyles}/>
-					<Button value='Create your account'/>
-					
+				<form className='flex flex-col gap-7'>
+					<input placeholder='Display Name' type='text' className='border border-gray-300 rounded w-96 px-4 py-1' required/>
+					<input placeholder='Email address' type='email' className='border border-gray-300 rounded w-96 px-4 py-1' required/>
+					<input placeholder='Password' type='password' className='border border-gray-300 rounded w-96 px-4 py-1' required/>
+					<button className='bg-blue-500 text-white py-2 px-4 rounded'>Create your account</button>
+				</form>
+				<div className='flex flex-col gap-6 mt-5'>
 					{/* This is the divider */}
 					<div className='relative flex items-center'>
 						<div className='flex-grow border-gray-300 border-t'></div>

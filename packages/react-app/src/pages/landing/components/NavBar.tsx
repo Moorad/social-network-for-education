@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import Button from '../../../components/Button';
 import logo from "../../../assets/images/logo.png";
 
 export default class NavBar extends Component {
@@ -16,7 +15,9 @@ export default class NavBar extends Component {
 						</div>
 
 						<div className="inline-flex items-center">
-							<Button value='Log in' overrideClassName='bg-gray-500 text-white py-2 px-4 rounded' />
+							<button className='bg-gray-500 text-white py-2 px-4 rounded'>
+								Log in
+							</button>
 						</div>
 					</div>
 				</div>
