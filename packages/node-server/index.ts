@@ -16,7 +16,9 @@ app.listen((process.env.PORT || '4000'), () => {
 app.post('/api/register', (req, res) => {
 	console.log(req.body);
 
+	// res.statusCode = 402;
 	res.json({
-		'message': 'ping'
+		message: "ok"
 	})
+
 })

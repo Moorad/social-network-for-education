@@ -12,7 +12,7 @@ export default class Landing extends Component {
 					<div className='absolute w-96 h-96 bg-teal-400 rounded-full opacity-40 -z-50 -right-48 bottom-20 overflow-hidden' style={{filter: 'blur(200px)'}}></div>
 				</div>
 				<NavBar />
-				<div className='flex mr-20 mt-32 justify-between'>
+				<div className='flex mr-20 mt-12 justify-between'>
 					<div className='flex flex-col text-white ml-20 justify-center mb-32'>
 						<div className='font-bold text-5xl w-3/4 mb-10'>Lorem ipsum dolor sit amet consectetur!</div>
 						<div className='w-3/4 text-2xl font-light'>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vulputate vehicula sapien et tempor. Sed egestas, leo quis efficitur ultrices, augue neque sollicitudin diam.</div>

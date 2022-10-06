@@ -6,6 +6,10 @@
   "author": "Moorad <moorad2003@gmail.com>",
   "license": "MIT",
   "private": true,
+  "scripts": {
+	"start-react": "yarn --cwd ./packages/react-app start",
+	"start-server": "yarn --cwd ./packages/node-server start"
+  },
   "devDependencies": {
     "lerna": "^5.5.4"
   },
