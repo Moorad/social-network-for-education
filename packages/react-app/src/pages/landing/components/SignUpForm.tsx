@@ -56,18 +56,15 @@ export default function SignUpForm() {
 	}
 
 	return (
-		<div className='w-fit bg-gray-50 px-10 py-16 rounded-lg'>
-			<div className='text-3xl font-extrabold text-center pb-10'>
+		<div className='w-fit h-fit bg-gray-50 px-10 py-16 rounded-lg align-middle'>
+			<div className='text-3xl font-bold text-center pb-20'>
 				Sign up to {'{name}'}
 			</div>
 			<div className={"text-red-500 mb-5 text-center bg-red-100 p-1 rounded border border-red-500" + (error != '' ? '' : ' hidden')}>
 				{error}
 			</div>
 			<form className='flex flex-col gap-7' onSubmit={handleSubmission}>
-				<input placeholder='Display Name' type='text' className='border border-gray-300 rounded w-96 px-4 py-1' required onChange={(e) => setDisplayName(e.target.value)} />
-				<input placeholder='Email address' type='email' className='border border-gray-300 rounded w-96 px-4 py-1' required onChange={(e) => setEmail(e.target.value)} />
-				<input placeholder='Password' type='password' className='border border-gray-300 rounded w-96 px-4 py-1' required onChange={(e) => setPassword(e.target.value)} />
-				<button className='bg-blue-500 text-white py-2 px-4 rounded'>
+				<button className='bg-blue-500 text-white py-2 px-4 rounded w-96'>
 					{loadingButton()}
 				</button>
 			</form>
@@ -85,14 +82,22 @@ export default function SignUpForm() {
 					<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-500'>
 						<FontAwesomeIcon icon={faGoogle} />
 					</span>
-					Sign in with Google
+					Sign up with Google
 				</button>
 				<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300'>
 					<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700'>
 						<FontAwesomeIcon icon={faSquareFacebook} />
 					</span>
-					Sign in with Facebook
+					Sign up with Facebook
 				</button>
+				<div className='relative mt-16'>
+					<div className='my-3 text-gray-400 font-medium'>
+						Already have an account?
+					</div>
+					<button className='relative bg-gray-500 text-white py-2 px-4 rounded w-full'>
+						Sign in
+					</button>
+				</div>
 			</div>
 
 		</div>
