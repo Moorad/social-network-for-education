@@ -1,15 +1,14 @@
-import React, { Component, FormEvent, useState } from 'react';
+import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 
-export default function SignUpForm() {
-
+export default function ButtonGroup() {
 	return (
 		<div className='w-fit h-fit bg-gray-50 px-10 py-16 rounded-lg align-middle'>
 			<div className='text-3xl font-bold text-center pb-20'>
 				Sign up to {'{name}'}
 			</div>
-			<a href="signup">
+			<a href='signup'>
 				<button className='bg-blue-500 text-white py-2 px-4 rounded w-96'>
 					Create an account
 				</button>
@@ -40,14 +39,13 @@ export default function SignUpForm() {
 					<div className='my-3 text-gray-400 font-medium'>
 						Already have an account?
 					</div>
-					<a href="/signin">
+					<a href='/signin'>
 						<button className='relative bg-gray-500 text-white py-2 px-4 rounded w-full'>
 							Sign in
 						</button>
 					</a>
 				</div>
 			</div>
-
 		</div>
-	)
+	);
 }

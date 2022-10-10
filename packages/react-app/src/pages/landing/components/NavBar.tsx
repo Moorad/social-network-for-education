@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import logo from "../../../assets/images/logo.png";
+import logo from '../../../assets/images/logo.png';
 
 export default class NavBar extends Component {
 	render() {
@@ -14,7 +14,7 @@ export default class NavBar extends Component {
 							<a>Contact</a>
 						</div>
 
-						<div className="inline-flex items-center">
+						<div className='inline-flex items-center'>
 							<button className='bg-gray-500 text-white py-2 px-4 rounded'>
 								Log in
 							</button>
