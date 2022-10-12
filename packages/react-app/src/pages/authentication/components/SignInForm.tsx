@@ -1,13 +1,18 @@
-import React, { FormEvent, useRef } from 'react';
+import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import ErrorPrompt from './Form/ErrorPrompt';
 
 export default function SignIn() {
+	const [error, setError] = useState('');
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 	const navigate = useNavigate();
 
 	function handleSubmission(e: FormEvent) {
 		e.preventDefault();
+		setError('');
 		if (emailRef.current && passwordRef.current) {
 			fetch('http://localhost:4000/api/login', {
 				method: 'POST',
@@ -20,18 +25,20 @@ export default function SignIn() {
 				}),
 			})
 				.then((res) => {
-					if (!res.ok) {
-						throw new Error(`${res.status} ${res.statusText}`);
+					if (res.ok) {
+						return res.json();
 					}
 
-					return res.json();
-				})
-				.catch((err) => {
-					console.log(err);
+					return Promise.reject(res);
 				})
 				.then((res) => {
 					console.log(res);
 					navigate('/home');
+				})
+				.catch((res) => {
+					res.json().then((json: any) => {
+						setError(`${res.status}: ${json.message}`);
+					});
 				});
 		}
 	}
@@ -61,9 +68,10 @@ export default function SignIn() {
 					type='password'
 					className='border border-gray-300 rounded w-full px-4 py-1'
 					required
-					autoComplete='new-password'
+					autoComplete='current-password'
 					ref={passwordRef}
 				/>
+				<ErrorPrompt message={error} />
 				<div className='flex justify-end text-sm gap-3 text-white mt-14'>
 					<button
 						type='submit'

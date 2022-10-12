@@ -50,11 +50,10 @@ app.post('/api/register', (req, res) => {
 		try {
 			await user.save();
 		} catch (dbErr) {
-			console.log(dbErr);
 			if ((dbErr as MongoServerError).code == 11000) {
 				res.statusCode = 403;
 				res.json({
-					message: 'Email is already registered.',
+					message: 'Email is already registered',
 				});
 			} else {
 				res.statusCode = 500;
