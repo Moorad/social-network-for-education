@@ -4,7 +4,7 @@ import SignInForm from './components/SignInForm';
 import NavBar from './components/NavBar';
 
 type propTypes = {
-	type?: 'SignUp' | 'SignIn';
+	type: 'SignUp' | 'SignIn';
 };
 
 export default function Authentication(props: propTypes) {
@@ -21,7 +21,7 @@ export default function Authentication(props: propTypes) {
 
 	return (
 		<>
-			<NavBar />
+			<NavBar type={props.type} />
 			<div className='inset-center'>{getForm()}</div>
 		</>
 	);

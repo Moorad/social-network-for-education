@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Step1 from './FormSteps/Step1';
 
 export default function SignUpForm() {
+	const navigate = useNavigate();
 	const [step, setStep] = useState(0);
 	const steps = [
 		{
@@ -16,6 +18,8 @@ export default function SignUpForm() {
 		if (step < steps.length - 1) {
 			setStep(step + 1);
 			console.log('curent step', step);
+		} else {
+			navigate('/home');
 		}
 	}
 

@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import { MongoServerError } from 'mongodb';
 import bycrypt from 'bcrypt';
 
 import User from './Models/User';
@@ -36,20 +37,69 @@ app.post('/api/register', (req, res) => {
 		if (err) {
 			res.statusCode = 500;
 			res.json({
-				message: err.message
+				message: err.message,
 			});
 		}
 
 		const user = new User({
 			displayName: req.body.displayName,
 			email: req.body.email,
-			password: hash
+			password: hash,
 		});
 
-		await user.save();
+		try {
+			await user.save();
+		} catch (dbErr) {
+			console.log(dbErr);
+			if ((dbErr as MongoServerError).code == 11000) {
+				res.statusCode = 403;
+				res.json({
+					message: 'Email is already registered.',
+				});
+			} else {
+				res.statusCode = 500;
+				res.json({
+					message: (dbErr as Error).message,
+				});
+			}
+
+			return;
+		}
 
 		res.json({
 			message: 'ok',
 		});
 	});
+});
+
+app.post('/api/login', async (req, res) => {
+	const user = await User.findOne({ email: req.body.email }).exec();
+
+	if (user) {
+		bycrypt.compare(req.body.password, user.password, (err, result) => {
+			if (err) {
+				res.statusCode = 500;
+				res.json({
+					message: err.message,
+				});
+				return;
+			}
+
+			if (result) {
+				res.json({
+					message: 'ok',
+				});
+			} else {
+				res.statusCode = 403;
+				res.json({
+					message: 'Invalid credentials',
+				});
+			}
+		});
+	} else {
+		res.statusCode = 403;
+		res.json({
+			message: 'Invalid credentials',
+		});
+	}
 });
