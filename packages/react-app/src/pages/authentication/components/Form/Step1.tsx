@@ -1,6 +1,7 @@
 import React, { FormEvent, useRef, useState } from 'react';
 import ErrorPrompt from './ErrorPrompt';
 import NavButtons from './NavButtons';
+import axios from 'axios';
 
 type propTypes = {
 	next: () => void;
@@ -15,40 +16,26 @@ export default function Step1(props: propTypes) {
 
 	function handleSubmission(e: FormEvent) {
 		e.preventDefault();
-		console.log('API call here');
-
 		// setIsFetching(true);
-		if (displayNameRef.current && emailRef.current && passwordRef.current)
-			fetch('http://localhost:4000/api/register', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
+		if (displayNameRef.current && emailRef.current && passwordRef.current) {
+			axios
+				.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
 					displayName: displayNameRef.current.value,
 					email: emailRef.current.value,
 					password: passwordRef.current.value,
-				}),
-			})
-				.then((res) => {
-					if (res.ok) {
-						return res.json();
-					}
-
-					return Promise.reject(res);
 				})
 				.then((res) => {
-					console.log(res);
+					localStorage.setItem('token', res.data.accessToken);
 					// setIsFetching(false);
 					props.next();
 				})
 				.catch((res) => {
-					res.json().then((json: any) => {
-						setError(`${res.status}: ${json.message}`);
-					});
+					setError(
+						`${res.response.status}: ${res.response.data.message}`
+					);
 				});
+		}
 	}
-
 	return (
 		<form
 			onSubmit={(e) => handleSubmission(e)}

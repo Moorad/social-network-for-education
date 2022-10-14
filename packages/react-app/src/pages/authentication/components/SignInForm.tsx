@@ -1,8 +1,7 @@
-import { faCircleExclamation } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ErrorPrompt from './Form/ErrorPrompt';
+import axios from 'axios';
 
 export default function SignIn() {
 	const [error, setError] = useState('');
@@ -14,31 +13,19 @@ export default function SignIn() {
 		e.preventDefault();
 		setError('');
 		if (emailRef.current && passwordRef.current) {
-			fetch('http://localhost:4000/api/login', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({
+			axios
+				.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
 					email: emailRef.current.value,
 					password: passwordRef.current.value,
-				}),
-			})
-				.then((res) => {
-					if (res.ok) {
-						return res.json();
-					}
-
-					return Promise.reject(res);
 				})
 				.then((res) => {
-					console.log(res);
+					localStorage.setItem('token', res.data.accessToken);
 					navigate('/home');
 				})
 				.catch((res) => {
-					res.json().then((json: any) => {
-						setError(`${res.status}: ${json.message}`);
-					});
+					setError(
+						`${res.response.status}: ${res.response.data.message}`
+					);
 				});
 		}
 	}

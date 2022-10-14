@@ -1,29 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Landing from './pages/landing/Landing';
 import Authentication from './pages/authentication/Authentication';
 import Home from './pages/home/Home';
-
-const router = createBrowserRouter([
-	{
-		path: '/',
-		element: <Landing />,
-	},
-	{
-		path: '/signup',
-		element: <Authentication type='SignUp' />,
-	},
-	{
-		path: 'signin',
-		element: <Authentication type='SignIn'></Authentication>,
-	},
-	{
-		path: '/home',
-		element: <Home />,
-	},
-]);
+import RequireAuth from './utils/RequireAuth';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -31,6 +13,25 @@ const root = ReactDOM.createRoot(
 
 root.render(
 	<React.StrictMode>
-		<RouterProvider router={router} />
+		{/* <Provider store={store}> */}
+		<BrowserRouter>
+			<Routes>
+				<Route path='/' element={<Landing />} />
+				<Route
+					path='/signup'
+					element={<Authentication type='SignUp' />}
+				/>
+				<Route
+					path='/signin'
+					element={<Authentication type='SignIn' />}
+				/>
+
+				{/* Requires Auth */}
+				<Route element={<RequireAuth />}>
+					<Route path='/home' element={<Home />} />
+				</Route>
+			</Routes>
+		</BrowserRouter>
+		{/* </Provider> */}
 	</React.StrictMode>
 );
