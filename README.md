@@ -1,28 +1,55 @@
 ## Installation
-You need yarn installed
 
-Node.js < 16.10, install corepack
+You need node.js and yarn installed
+
+For node.js version < 16.10, install corepack. Otherwise you have it pre-installed with node
+
 ```
 npm i -g corepack
 ```
 
-Node.js >= 16.10, enable corepack
+enable corepack
+
 ```
 corepack enable
 ```
 
 Install packages
+
 ```
 yarn install
 ```
 
-## Usage
-Go to packages/node-server and run
+You will also need to setup a mongodb server. If you are using WSL use the mongodb docker image for painless setup.
+
+Create .env file in `packages/node-server` with
+
 ```
-yarn start
+DB=YOUR_MONGODB_URI
+SECRET_TOKEN=RANDOM_STRING_OF_CHARACTERS_FOR_USER_AUTH
+PORT=THIS_IS_OPTIONAL
 ```
 
-Open another terminal instance, navigate to packages/react-app and run
+Create .env file in `packages/react-app` with
+
 ```
-yarn start
+REACT_APP_API_URL=URL_TO_NODE_SERVER
 ```
+
+for dev purposes use "http://localhost:4000" for `REACT_APP_API_URL` if no `PORT` env variable set
+
+## Usage
+
+On root project folder run
+
+```
+yarn start-server
+```
+
+Open another terminal instance, run
+
+```
+yarn start-react
+```
+
+Navigate to http://localhost:4000 (you will be directed there automatically with `yarn start-react`).
