@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import logo from '../../../assets/images/logo.png';
 
 type propTypes = {
@@ -10,13 +11,13 @@ export default function Navbar(props: propTypes) {
 	if (props.type == 'SignUp') {
 		elements = (
 			<div className='inline-flex items-center align-middle font-medium underline text-gray-400'>
-				<a href='signin'>Already have an account? Sign in</a>
+				<Link to='/signin'>Already have an account? Sign in</Link>
 			</div>
 		);
 	} else {
 		elements = (
 			<div className='inline-flex items-center align-middle font-medium underline text-gray-400'>
-				<a href='signup'>Don&apos;t have an account? Sign up</a>
+				<Link to='/signup'>Don&apos;t have an account? Sign up</Link>
 			</div>
 		);
 	}
@@ -26,10 +27,12 @@ export default function Navbar(props: propTypes) {
 			<div className='max-w-auto p-5'>
 				<div className='flex justify-between'>
 					<div className='inline-flex items-center gap-3 font-medium'>
-						<img
-							src={logo}
-							className='w-auto h-12 mr-5 invert'
-						></img>
+						<Link to='/'>
+							<img
+								src={logo}
+								className='w-auto h-12 mr-5 invert'
+							></img>
+						</Link>
 					</div>
 					{elements}
 				</div>

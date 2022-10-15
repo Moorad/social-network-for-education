@@ -1,6 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
+import { Link } from 'react-router-dom';
 
 export default function ButtonGroup() {
 	return (
@@ -8,11 +9,11 @@ export default function ButtonGroup() {
 			<div className='text-3xl font-bold text-center pb-20'>
 				Sign up to {'{name}'}
 			</div>
-			<a href='signup'>
+			<Link to='/signup'>
 				<button className='bg-blue-500 text-white py-2 px-4 rounded w-96'>
 					Create an account
 				</button>
-			</a>
+			</Link>
 			<div className='flex flex-col gap-6 mt-5'>
 				{/* This is the divider */}
 				<div className='relative flex items-center'>
@@ -39,11 +40,11 @@ export default function ButtonGroup() {
 					<div className='my-3 text-gray-400 font-medium'>
 						Already have an account?
 					</div>
-					<a href='/signin'>
+					<Link to='/signin'>
 						<button className='relative bg-gray-500 text-white py-2 px-4 rounded w-full'>
 							Sign in
 						</button>
-					</a>
+					</Link>
 				</div>
 			</div>
 		</div>
