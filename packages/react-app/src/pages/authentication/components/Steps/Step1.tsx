@@ -1,5 +1,5 @@
 import React, { FormEvent, useRef, useState } from 'react';
-import ErrorPrompt from './ErrorPrompt';
+import ErrorPrompt from '../ErrorPrompt';
 import NavButtons from './NavButtons';
 import axios from 'axios';
 

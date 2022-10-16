@@ -1,6 +1,6 @@
 import React, { FormEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ErrorPrompt from './Form/ErrorPrompt';
+import ErrorPrompt from './ErrorPrompt';
 import axios from 'axios';
 
 export default function SignIn() {

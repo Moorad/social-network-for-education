@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Step1 from './Form/Step1';
+import Step1 from './Steps/Step1';
 
 export default function SignUpForm() {
 	const navigate = useNavigate();

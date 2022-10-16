@@ -1,7 +1,7 @@
 import React from 'react';
 import SignUpForm from './components/SignUpForm';
 import SignInForm from './components/SignInForm';
-import NavBar from './components/NavBar';
+import NavBarController from '../../components/NavBarController';
 
 type propTypes = {
 	type: 'SignUp' | 'SignIn';
@@ -21,7 +21,7 @@ export default function Authentication(props: propTypes) {
 
 	return (
 		<>
-			<NavBar type={props.type} />
+			<NavBarController type='AuthNavBar' authType={props.type} />
 			<div className='inset-center'>{getForm()}</div>
 		</>
 	);

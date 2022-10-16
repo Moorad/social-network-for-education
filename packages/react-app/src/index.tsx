@@ -6,6 +6,7 @@ import Landing from './pages/landing/Landing';
 import Authentication from './pages/authentication/Authentication';
 import Home from './pages/home/Home';
 import RequireAuth from './utils/RequireAuth';
+import Profile from './pages/profile/Profile';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -29,6 +30,7 @@ root.render(
 				{/* Requires Auth */}
 				<Route element={<RequireAuth />}>
 					<Route path='/home' element={<Home />} />
+					<Route path='/profile' element={<Profile />}></Route>
 				</Route>
 			</Routes>
 		</BrowserRouter>
