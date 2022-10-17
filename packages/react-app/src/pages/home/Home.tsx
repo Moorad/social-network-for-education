@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SignOutButton from '../../components/SignOutButton';
+import MainNavBar from '../../components/NavBars/MainNavBar';
 
 export default function home() {
 	const [user, setUser] = useState('');
@@ -21,11 +22,13 @@ export default function home() {
 	});
 
 	return (
-		<div>
-			<div className='text-2xl'>Welcome {user}!</div>
+		<MainNavBar active={0}>
 			<div>
-				<SignOutButton />
+				<div className='text-2xl'>Welcome {user}!</div>
+				<div>
+					<SignOutButton />
+				</div>
 			</div>
-		</div>
+		</MainNavBar>
 	);
 }

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
+import LandingNavBar from '../../components/NavBars/LandingNavBar';
 import SignUpForm from './components/ButtonGroup';
-import NavBarController from '../../components/NavBarController';
 
 export default class Landing extends Component {
 	render() {
@@ -17,7 +17,7 @@ export default class Landing extends Component {
 						style={{ filter: 'blur(200px)' }}
 					></div>
 				</div>
-				<NavBarController type='LandingNavBar' />
+				<LandingNavBar />
 				<div className='flex mr-20 justify-between h-full'>
 					<div className='flex flex-col text-white ml-20 justify-center mb-32'>
 						<div className='font-bold text-5xl w-3/4 mb-10'>
