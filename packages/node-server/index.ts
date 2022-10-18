@@ -7,12 +7,22 @@ import { MongoServerError } from 'mongodb';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
+import multer from 'multer';
 
 import User from './Models/User';
+import {
+	mediaExists,
+	multerFileFilter,
+	multerWriteMedia,
+} from './file_manager/file_manager';
 
 dotenv.config();
 
 const SALT_ROUNDS = 10;
+const upload = multer({
+	storage: multerWriteMedia(),
+	fileFilter: multerFileFilter,
+}).single('file');
 
 if (process.env.DB) {
 	mongoose.connect(process.env.DB);
@@ -130,17 +140,18 @@ app.post('/api/auth/login', async (req, res) => {
 	}
 });
 
-// app.get('/api/auth/token', (req, res) => {
-// 	if (req.cookies.token) {
-// 		return res.json({
-// 			exists: true,
-// 		});
-// 	}
-
-// 	return res.json({
-// 		exists: false,
-// 	});
-// });
+app.get('/api/image/:id', (req, res) => {
+	mediaExists(req.params.id, 'png')
+		.then((path) => {
+			res.sendFile(path);
+		})
+		.catch((err) => {
+			res.statusCode = 404;
+			res.json({
+				message: err,
+			});
+		});
+});
 
 // Authentication middleware
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
@@ -181,5 +192,22 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 	res.statusCode = 404;
 	return res.json({
 		message: 'User was not found',
+	});
+});
+
+app.post('/api/upload', authenticateToken, (req, res) => {
+	upload(req, res, (err) => {
+		if (err) {
+			res.statusCode = 400;
+			return res.json({
+				message: 'unable to upload',
+			});
+		}
+		console.log(req.file);
+		res.send({
+			url:
+				'http://localhost:4000/api/image/' +
+				req.file?.filename.slice(0, -4),
+		});
 	});
 });
