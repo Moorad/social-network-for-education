@@ -47,15 +47,3 @@ export function multerFileFilter(
 	// To reject this file pass `false`, like so:
 	cb(new Error('File type not allowed'));
 }
-
-export function writeMedia(fileContent: string, fileExtention: string) {
-	return new Promise<string>((resolve, reject) => {
-		const resolvedPath = path.join(
-			__dirname,
-			'../..',
-			'./file_manager/media',
-			`./${uuidv4()}.${fileExtention}`
-		);
-	});
-}
-// function writeImage() {}

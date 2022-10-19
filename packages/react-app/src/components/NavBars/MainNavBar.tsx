@@ -22,7 +22,10 @@ export default function MainNavBar(props: propTypes) {
 				<div className='flex items-center pr-4'>
 					<div>
 						<img
-							src='https://i.pravatar.cc/250'
+							src={
+								process.env.REACT_APP_API_URL +
+								'/api/image/default'
+							}
 							alt='profile image'
 							className='w-14 rounded-full'
 						/>
@@ -32,7 +35,7 @@ export default function MainNavBar(props: propTypes) {
 
 			<div className='flex h-screen'>
 				<SideNavBar active={props.active} />
-				<div className='flex-grow'>{props.children}</div>
+				<div className='flex-1'>{props.children}</div>
 			</div>
 		</div>
 	);

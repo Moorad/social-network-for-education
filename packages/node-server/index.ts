@@ -2,7 +2,7 @@ import * as dotenv from 'dotenv';
 import express, { NextFunction, Request, Response } from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import mongoose, { Types } from 'mongoose';
+import mongoose from 'mongoose';
 import { MongoServerError } from 'mongodb';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
@@ -91,7 +91,7 @@ app.post('/api/auth/register', (req, res) => {
 		const payload = {
 			id: user._id.toString(),
 		};
-		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN!);
+		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
 
 		res.json({
 			accessToken: accessToken,
@@ -119,7 +119,7 @@ app.post('/api/auth/login', async (req, res) => {
 				};
 				const accessToken = jwt.sign(
 					payload,
-					process.env.SECRET_TOKEN!
+					process.env.SECRET_TOKEN || ''
 				);
 
 				res.json({
@@ -166,7 +166,7 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
 
 	const token = authHeader.split(' ')[1];
 
-	jwt.verify(token, process.env.SECRET_TOKEN!, (err: any, user: any) => {
+	jwt.verify(token, process.env.SECRET_TOKEN || '', (err, user) => {
 		if (err) {
 			res.statusCode = 403;
 			return res.json({
