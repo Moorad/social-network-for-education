@@ -7,6 +7,7 @@ import Authentication from './pages/authentication/Authentication';
 import Home from './pages/home/Home';
 import RequireAuth from './utils/RequireAuth';
 import Profile from './pages/profile/Profile';
+import UserInParams from './pages/user/UserInParams';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -31,6 +32,7 @@ root.render(
 				<Route element={<RequireAuth />}>
 					<Route path='/home' element={<Home />} />
 					<Route path='/profile' element={<Profile />}></Route>
+					<Route path='/user/:id' element={<UserInParams />}></Route>
 				</Route>
 			</Routes>
 		</BrowserRouter>

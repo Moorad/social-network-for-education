@@ -187,8 +187,14 @@ app.get('/api/auth/token', authenticateToken, (req, res) => {
 });
 
 app.get('/api/user', authenticateToken, async (req, res) => {
-	// const id = new Types.ObjectId();
-	const doc = await User.findById(res.locals.user.id).exec();
+	let userId;
+
+	if (req.query.id) {
+		userId = req.query.id;
+	} else {
+		userId = res.locals.user.id;
+	}
+	const doc = await User.findById(userId).exec();
 
 	if (doc) {
 		const user: IUserSafe = {
@@ -199,6 +205,7 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 			followingCount: doc.followingCount,
 			posts: doc.posts,
 			avatar: doc.avatar,
+			_id: doc._id,
 		};
 
 		console.log(user);

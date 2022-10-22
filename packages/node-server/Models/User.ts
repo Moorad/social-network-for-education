@@ -10,6 +10,7 @@ interface IUser {
 	followingCount: number;
 	posts: Schema.Types.ObjectId[];
 	avatar: string;
+	_id: Schema.Types.ObjectId;
 }
 
 export type IUserSafe = Omit<IUser, 'email' | 'password'>;
