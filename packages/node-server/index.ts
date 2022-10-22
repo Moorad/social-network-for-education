@@ -9,7 +9,7 @@ import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 
-import User from './Models/User';
+import User, { IUserSafe } from './Models/User';
 import {
 	mediaExists,
 	multerFileFilter,
@@ -188,12 +188,21 @@ app.get('/api/auth/token', authenticateToken, (req, res) => {
 
 app.get('/api/user', authenticateToken, async (req, res) => {
 	// const id = new Types.ObjectId();
-	const user = await User.findById(res.locals.user.id).exec();
+	const doc = await User.findById(res.locals.user.id).exec();
 
-	if (user) {
-		return res.json({
-			displayName: user.displayName,
-		});
+	if (doc) {
+		const user: IUserSafe = {
+			displayName: doc.displayName,
+			description: doc.description,
+			label: doc.label,
+			followerCount: doc.followerCount,
+			followingCount: doc.followingCount,
+			posts: doc.posts,
+			avatar: doc.avatar,
+		};
+
+		console.log(user);
+		return res.json(user);
 	}
 
 	res.statusCode = 404;

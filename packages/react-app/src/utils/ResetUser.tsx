@@ -1,7 +1,8 @@
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+// import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function ResetUser() {
+	const navigate = useNavigate();
 	localStorage.clear();
-	return <Navigate to='/signin' state={{ from: location }} replace />;
+	navigate('/signin');
 }

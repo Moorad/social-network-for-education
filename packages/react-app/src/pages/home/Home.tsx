@@ -5,7 +5,15 @@ import MainNavBar from '../../components/NavBars/MainNavBar';
 import ResetUser from '../../utils/ResetUser';
 
 export default function home() {
-	const [user, setUser] = useState('');
+	const [user, setUser] = useState({
+		displayName: '',
+		description: '',
+		label: '',
+		followerCount: 0,
+		followingCount: 0,
+		posts: [],
+		avatar: '',
+	});
 	useEffect(() => {
 		axios
 			.get(`${process.env.REACT_APP_API_URL}/api/user`, {
@@ -15,7 +23,8 @@ export default function home() {
 			})
 			.then((res) => {
 				if (res.status == 200) {
-					setUser(res.data.displayName);
+					setUser(res.data);
+					console.log(user);
 				}
 			})
 			.catch((err) => {
@@ -23,12 +32,12 @@ export default function home() {
 					ResetUser();
 				}
 			});
-	});
+	}, []);
 
 	return (
 		<MainNavBar active={0}>
 			<div>
-				<div className='text-2xl'>Welcome {user}!</div>
+				<div className='text-2xl'>Welcome {user.displayName}!</div>
 				<div>
 					<SignOutButton />
 				</div>

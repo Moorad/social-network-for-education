@@ -29,7 +29,7 @@ function RequireAuth() {
 				setValidToken(false);
 			})
 			.finally(() => setIsFetching(false));
-	});
+	}, []);
 
 	if (isFetching) {
 		return <div>loading</div>;
