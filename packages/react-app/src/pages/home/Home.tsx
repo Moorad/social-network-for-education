@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import SignOutButton from '../../components/SignOutButton';
 import MainNavBar from '../../components/NavBars/MainNavBar';
+import ResetUser from '../../utils/ResetUser';
 
 export default function home() {
 	const [user, setUser] = useState('');
@@ -15,8 +16,11 @@ export default function home() {
 			.then((res) => {
 				if (res.status == 200) {
 					setUser(res.data.displayName);
-				} else {
-					throw res.data.message;
+				}
+			})
+			.catch((err) => {
+				if (err.response && err.response.status == 404) {
+					ResetUser();
 				}
 			});
 	});

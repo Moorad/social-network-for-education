@@ -179,6 +179,13 @@ function authenticateToken(req: Request, res: Response, next: NextFunction) {
 	});
 }
 
+app.get('/api/auth/token', authenticateToken, (req, res) => {
+	res.statusCode = 200;
+	res.json({
+		message: 'ok',
+	});
+});
+
 app.get('/api/user', authenticateToken, async (req, res) => {
 	// const id = new Types.ObjectId();
 	const user = await User.findById(res.locals.user.id).exec();
