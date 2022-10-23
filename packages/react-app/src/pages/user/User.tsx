@@ -4,9 +4,12 @@ import background from '../../assets/images/background.jpg';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { selectUser } from '../../redux/userSlice';
 
 type propTypes = {
-	id: string;
+	id?: string;
+	me?: boolean;
 };
 
 export default function User(props: propTypes) {
@@ -19,25 +22,35 @@ export default function User(props: propTypes) {
 		posts: [],
 		avatar: '',
 	});
+	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
-		axios
-			.get(`${process.env.REACT_APP_API_URL}/api/user?id=${props.id}`, {
-				headers: {
-					authorization: `Bearer ${localStorage.getItem('token')}`,
-				},
-			})
-			.then((res) => {
-				if (res.status == 200) {
-					setUser(res.data);
-				}
-			})
-			.catch((err) => {
-				if (err.response && err.response.status == 404) {
-					console.log('user not found');
-				}
-			});
+		if (props.me) {
+			setUser(reduxUser);
+		} else {
+			axios
+				.get(
+					`${process.env.REACT_APP_API_URL}/api/user?id=${props.id}`,
+					{
+						headers: {
+							authorization: `Bearer ${localStorage.getItem(
+								'token'
+							)}`,
+						},
+					}
+				)
+				.then((res) => {
+					if (res.status == 200) {
+						setUser(res.data);
+					}
+				})
+				.catch((err) => {
+					if (err.response && err.response.status == 404) {
+						console.log('user not found');
+					}
+				});
+		}
 	}, []);
 
 	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -78,15 +91,17 @@ export default function User(props: propTypes) {
 
 	return (
 		<div className='overflow-hidden h-screen'>
-			<input
-				type='file'
-				onChange={(e) => handleImageUpload(e)}
-				ref={fileRef}
-				accept='.png'
-				className='hidden'
-			/>
+			{props.me && (
+				<input
+					type='file'
+					onChange={(e) => handleImageUpload(e)}
+					ref={fileRef}
+					accept='.png'
+					className='hidden'
+				/>
+			)}
 
-			<MainNavBar active={1}>
+			<MainNavBar active={props.me ? 1 : -1}>
 				<div className='text-gray-800'>
 					<img
 						src={background}
@@ -96,17 +111,19 @@ export default function User(props: propTypes) {
 					<div className='flex px-40 justify-between items-end h-24'>
 						<div className='flex items-end gap-10'>
 							<div className='translate-y-4 select-none'>
-								<div
-									className='absolute h-44 w-44 bg-gray-800/[.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer '
-									onClick={handleAvatarClick}
-								>
-									<div className='flex w-full h-full justify-center items-center'>
-										<FontAwesomeIcon
-											icon={faCamera}
-											className='text-white text-5xl'
-										/>
+								{props.me && (
+									<div
+										className='absolute h-44 w-44 bg-gray-800/[.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer '
+										onClick={handleAvatarClick}
+									>
+										<div className='flex w-full h-full justify-center items-center'>
+											<FontAwesomeIcon
+												icon={faCamera}
+												className='text-white text-5xl'
+											/>
+										</div>
 									</div>
-								</div>
+								)}
 								<img
 									src={user.avatar}
 									alt='profile picture'
@@ -143,9 +160,11 @@ export default function User(props: propTypes) {
 							</div>
 						</div>
 						<div>
-							<button className='bg-blue-500 text-white py-2 px-7 rounded-md'>
-								Follow
-							</button>
+							{!props.me && (
+								<button className='bg-blue-500 text-white py-2 px-7 rounded-md'>
+									Follow
+								</button>
+							)}
 						</div>
 					</div>
 					<div className='mx-40 my-20 px-64 font-medium text-lg'>

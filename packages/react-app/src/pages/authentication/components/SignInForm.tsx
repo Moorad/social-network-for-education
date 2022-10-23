@@ -15,7 +15,7 @@ export default function SignIn() {
 		if (emailRef.current && passwordRef.current) {
 			axios
 				.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-					email: emailRef.current.value,
+					email: emailRef.current.value.toLowerCase(),
 					password: passwordRef.current.value,
 				})
 				.then((res) => {

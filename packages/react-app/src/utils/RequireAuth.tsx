@@ -1,11 +1,14 @@
 import axios from 'axios';
 import React, { useLayoutEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
+import { setUser } from '../redux/userSlice';
 
 function RequireAuth() {
 	const [isFetching, setIsFetching] = useState(true);
 	const [validToken, setValidToken] = useState(false);
 	const location = useLocation();
+	const dispatch = useDispatch();
 
 	useLayoutEffect(() => {
 		const token = localStorage.getItem('token');
@@ -15,13 +18,14 @@ function RequireAuth() {
 		}
 
 		axios
-			.get(process.env.REACT_APP_API_URL + '/api/auth/token', {
+			.get(process.env.REACT_APP_API_URL + '/api/user', {
 				headers: {
 					authorization: `Bearer ${token}`,
 				},
 			})
 			.then((res) => {
 				if (res.status == 200) {
+					dispatch(setUser(res.data));
 					setValidToken(true);
 				}
 			})

@@ -21,7 +21,7 @@ export default function Step1(props: propTypes) {
 			axios
 				.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
 					displayName: displayNameRef.current.value,
-					email: emailRef.current.value,
+					email: emailRef.current.value.toLowerCase(),
 					password: passwordRef.current.value,
 				})
 				.then((res) => {

@@ -1,6 +1,8 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import { selectAvatar } from '../../redux/userSlice';
 import SideNavBar from './SideNavBar';
 
 type propTypes = {
@@ -9,6 +11,7 @@ type propTypes = {
 };
 
 export default function MainNavBar(props: propTypes) {
+	const avatar = useSelector(selectAvatar);
 	return (
 		<div>
 			<div className='flex justify-between shadow'>
@@ -22,10 +25,7 @@ export default function MainNavBar(props: propTypes) {
 				<div className='flex items-center pr-4'>
 					<div>
 						<img
-							src={
-								process.env.REACT_APP_API_URL +
-								'/api/image/default'
-							}
+							src={avatar}
 							alt='profile image'
 							className='w-14 rounded-full'
 						/>
