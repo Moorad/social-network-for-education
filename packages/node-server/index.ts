@@ -208,7 +208,6 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 			_id: doc._id,
 		};
 
-		console.log(user);
 		return res.json(user);
 	}
 
@@ -226,11 +225,22 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 				message: 'unable to upload',
 			});
 		}
-		console.log(req.file);
-		res.send({
-			url:
-				'http://localhost:4000/api/image/' +
-				req.file?.filename.slice(0, -4),
+
+		const URL =
+			'http://localhost:4000/api/image/' +
+			req.file?.filename.slice(0, -4);
+
+		User.findByIdAndUpdate(res.locals.user.id, { avatar: URL }, (err) => {
+			if (err) {
+				res.statusCode = 404;
+				return res.json({
+					message: 'An error occured',
+				});
+			}
+
+			return res.send({
+				url: URL,
+			});
 		});
 	});
 });

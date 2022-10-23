@@ -8,6 +8,8 @@ import Home from './pages/home/Home';
 import RequireAuth from './utils/RequireAuth';
 import Profile from './pages/profile/Profile';
 import UserInParams from './pages/user/UserInParams';
+import { Provider } from 'react-redux';
+import store from './redux/store';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -15,27 +17,30 @@ const root = ReactDOM.createRoot(
 
 root.render(
 	<React.StrictMode>
-		{/* <Provider store={store}> */}
-		<BrowserRouter>
-			<Routes>
-				<Route path='/' element={<Landing />} />
-				<Route
-					path='/signup'
-					element={<Authentication type='SignUp' />}
-				/>
-				<Route
-					path='/signin'
-					element={<Authentication type='SignIn' />}
-				/>
+		<Provider store={store}>
+			<BrowserRouter>
+				<Routes>
+					<Route path='/' element={<Landing />} />
+					<Route
+						path='/signup'
+						element={<Authentication type='SignUp' />}
+					/>
+					<Route
+						path='/signin'
+						element={<Authentication type='SignIn' />}
+					/>
 
-				{/* Requires Auth */}
-				<Route element={<RequireAuth />}>
-					<Route path='/home' element={<Home />} />
-					<Route path='/profile' element={<Profile />}></Route>
-					<Route path='/user/:id' element={<UserInParams />}></Route>
-				</Route>
-			</Routes>
-		</BrowserRouter>
-		{/* </Provider> */}
+					{/* Requires Auth */}
+					<Route element={<RequireAuth />}>
+						<Route path='/home' element={<Home />} />
+						<Route path='/profile' element={<Profile />}></Route>
+						<Route
+							path='/user/:id'
+							element={<UserInParams />}
+						></Route>
+					</Route>
+				</Routes>
+			</BrowserRouter>
+		</Provider>
 	</React.StrictMode>
 );

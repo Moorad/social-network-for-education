@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import background from '../../assets/images/background.jpg';
 import axios from 'axios';
@@ -19,6 +19,7 @@ export default function User(props: propTypes) {
 		posts: [],
 		avatar: '',
 	});
+	const fileRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		axios
@@ -39,12 +40,52 @@ export default function User(props: propTypes) {
 			});
 	}, []);
 
+	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+		if (e.target.files) {
+			const imagePreview = URL.createObjectURL(e.target.files[0]);
+			const imageFile = e.target.files[0];
+
+			const formData = new FormData();
+
+			formData.append('file', imageFile);
+
+			axios
+				.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
+					headers: {
+						authorization: `Bearer ${localStorage.getItem(
+							'token'
+						)}`,
+					},
+					data: formData,
+				})
+				.then(() => {
+					setUser({
+						...user,
+						avatar: imagePreview,
+					});
+				})
+				.catch((err) => {
+					console.log(err);
+				});
+		}
+	}
+
 	function handleAvatarClick() {
-		console.log('clicked');
+		if (fileRef.current) {
+			fileRef.current.click();
+		}
 	}
 
 	return (
 		<div className='overflow-hidden h-screen'>
+			<input
+				type='file'
+				onChange={(e) => handleImageUpload(e)}
+				ref={fileRef}
+				accept='.png'
+				className='hidden'
+			/>
+
 			<MainNavBar active={1}>
 				<div className='text-gray-800'>
 					<img
