@@ -10,6 +10,7 @@ import Profile from './pages/profile/Profile';
 import UserInParams from './pages/user/UserInParams';
 import { Provider } from 'react-redux';
 import store from './redux/store';
+import NotFound from './pages/notFound/NotFound';
 
 const root = ReactDOM.createRoot(
 	document.getElementById('root') as HTMLElement
@@ -39,6 +40,8 @@ root.render(
 							element={<UserInParams />}
 						></Route>
 					</Route>
+
+					<Route path='*' element={<NotFound />} />
 				</Routes>
 			</BrowserRouter>
 		</Provider>
