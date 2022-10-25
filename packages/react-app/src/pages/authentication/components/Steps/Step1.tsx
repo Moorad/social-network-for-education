@@ -19,13 +19,18 @@ export default function Step1(props: propTypes) {
 		// setIsFetching(true);
 		if (displayNameRef.current && emailRef.current && passwordRef.current) {
 			axios
-				.post(`${process.env.REACT_APP_API_URL}/api/auth/register`, {
-					displayName: displayNameRef.current.value,
-					email: emailRef.current.value.toLowerCase(),
-					password: passwordRef.current.value,
-				})
-				.then((res) => {
-					localStorage.setItem('token', res.data.accessToken);
+				.post(
+					`${process.env.REACT_APP_API_URL}/api/auth/register`,
+					{
+						displayName: displayNameRef.current.value,
+						email: emailRef.current.value.toLowerCase(),
+						password: passwordRef.current.value,
+					},
+					{
+						withCredentials: true,
+					}
+				)
+				.then(() => {
 					// setIsFetching(false);
 					props.next();
 				})

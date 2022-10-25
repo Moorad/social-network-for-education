@@ -14,12 +14,17 @@ export default function SignIn() {
 		setError('');
 		if (emailRef.current && passwordRef.current) {
 			axios
-				.post(`${process.env.REACT_APP_API_URL}/api/auth/login`, {
-					email: emailRef.current.value.toLowerCase(),
-					password: passwordRef.current.value,
-				})
-				.then((res) => {
-					localStorage.setItem('token', res.data.accessToken);
+				.post(
+					`${process.env.REACT_APP_API_URL}/api/auth/login`,
+					{
+						email: emailRef.current.value.toLowerCase(),
+						password: passwordRef.current.value,
+					},
+					{
+						withCredentials: true,
+					}
+				)
+				.then(() => {
 					navigate('/home');
 				})
 				.catch((res) => {

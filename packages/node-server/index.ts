@@ -42,7 +42,7 @@ const app = express();
 
 app.use(
 	cors({
-		origin: true,
+		origin: 'http://localhost:3000',
 		credentials: true,
 	})
 );
@@ -122,6 +122,10 @@ app.post('/api/auth/login', async (req, res) => {
 					process.env.SECRET_TOKEN || ''
 				);
 
+				res.cookie('token', accessToken, {
+					httpOnly: true,
+					secure: false,
+				});
 				res.json({
 					accessToken: accessToken,
 				});
@@ -140,6 +144,13 @@ app.post('/api/auth/login', async (req, res) => {
 	}
 });
 
+app.get('/api/auth/logout', (req, res) => {
+	res.clearCookie('token');
+	res.json({
+		message: 'ok',
+	});
+});
+
 app.get('/api/image/:id', (req, res) => {
 	mediaExists(req.params.id, 'png')
 		.then((path) => {
@@ -155,20 +166,19 @@ app.get('/api/image/:id', (req, res) => {
 
 // Authentication middleware
 function authenticateToken(req: Request, res: Response, next: NextFunction) {
-	const authHeader = req.headers['authorization'];
+	const authCookie: string = req.cookies['token'];
 
-	if (!authHeader) {
+	if (!authCookie) {
 		res.statusCode = 401;
 		return res.json({
 			message: 'No authentication token provided',
 		});
 	}
 
-	const token = authHeader.split(' ')[1];
-
-	jwt.verify(token, process.env.SECRET_TOKEN || '', (err, user) => {
+	jwt.verify(authCookie, process.env.SECRET_TOKEN || '', (err, user) => {
 		if (err) {
 			res.statusCode = 403;
+			res.clearCookie('token');
 			return res.json({
 				message: 'Invalid authentication token',
 			});

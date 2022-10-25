@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useLayoutEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { useLocation, Navigate, Outlet } from 'react-router-dom';
+import Loading from '../components/Loading';
 import { setUser } from '../redux/userSlice';
 
 function RequireAuth() {
@@ -22,6 +23,7 @@ function RequireAuth() {
 				headers: {
 					authorization: `Bearer ${token}`,
 				},
+				withCredentials: true,
 			})
 			.then((res) => {
 				if (res.status == 200) {
@@ -36,7 +38,7 @@ function RequireAuth() {
 	}, []);
 
 	if (isFetching) {
-		return <div>loading</div>;
+		return <Loading />;
 	}
 
 	return validToken ? (

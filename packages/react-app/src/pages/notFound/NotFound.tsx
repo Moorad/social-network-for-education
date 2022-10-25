@@ -1,6 +1,4 @@
 import React from 'react';
-import LandingNavBar from '../../components/NavBars/LandingNavBar';
-import MainNavBar from '../../components/NavBars/MainNavBar';
 import undraw_404 from '../../assets/images/undraw_404.svg';
 import { Link } from 'react-router-dom';
 

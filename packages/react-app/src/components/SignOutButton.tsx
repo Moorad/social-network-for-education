@@ -1,17 +1,12 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import useLogout from '../utils/hooks/useLogout';
 
 export default function SignOutButton() {
-	console.log(process.env);
-	const navigate = useNavigate();
-	function handleClick() {
-		localStorage.clear();
-		navigate('/');
-	}
+	const logout = useLogout();
 
 	return (
 		<button
-			onClick={handleClick}
+			onClick={logout}
 			className='bg-gray-500 text-white py-2 px-4 rounded'
 		>
 			Sign Out

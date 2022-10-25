@@ -33,11 +33,7 @@ export default function User(props: propTypes) {
 				.get(
 					`${process.env.REACT_APP_API_URL}/api/user?id=${props.id}`,
 					{
-						headers: {
-							authorization: `Bearer ${localStorage.getItem(
-								'token'
-							)}`,
-						},
+						withCredentials: true,
 					}
 				)
 				.then((res) => {
@@ -64,11 +60,7 @@ export default function User(props: propTypes) {
 
 			axios
 				.post(`${process.env.REACT_APP_API_URL}/api/upload`, formData, {
-					headers: {
-						authorization: `Bearer ${localStorage.getItem(
-							'token'
-						)}`,
-					},
+					withCredentials: true,
 					data: formData,
 				})
 				.then(() => {
