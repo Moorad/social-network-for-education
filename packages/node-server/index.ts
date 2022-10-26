@@ -125,6 +125,7 @@ app.post('/api/auth/login', async (req, res) => {
 				res.cookie('token', accessToken, {
 					httpOnly: true,
 					secure: false,
+					maxAge: 2592000000, // 30 days
 				});
 				res.json({
 					accessToken: accessToken,
@@ -255,4 +256,44 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 			});
 		});
 	});
+});
+
+app.get('/api/search', authenticateToken, async (req, res) => {
+	const term = req.query['term'];
+
+	try {
+		if (typeof term === 'string') {
+			const docs = await User.find({
+				$text: {
+					$search: term,
+				},
+			})
+				.limit(5)
+				.exec();
+
+			const users = [];
+			if (docs) {
+				for (let i = 0; i < docs.length; i++) {
+					users.push({
+						displayName: docs[i].displayName,
+						_id: docs[i]._id,
+						avatar: docs[i].avatar,
+					});
+				}
+			}
+
+			return res.json({
+				results: users,
+			});
+		}
+
+		res.statusCode = 400;
+		return res.json({
+			message: 'invalid query type',
+		});
+	} catch (err) {
+		res.json({
+			results: [],
+		});
+	}
 });

@@ -29,6 +29,7 @@ const userSchema = new Schema({
 		default: 'http://localhost:4000/api/image/default',
 	},
 });
+userSchema.index({ displayName: 'text' });
 
 const User = model<IUser>('user', userSchema);
 
