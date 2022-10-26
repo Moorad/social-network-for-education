@@ -23,6 +23,7 @@ const upload = multer({
 	storage: multerWriteMedia(),
 	fileFilter: multerFileFilter,
 }).single('file');
+const fullLogs = false;
 
 if (process.env.DB) {
 	mongoose.connect(process.env.DB);
@@ -48,7 +49,17 @@ app.use(
 );
 
 app.use(express.json());
-app.use(morgan('dev'));
+app.use(
+	morgan('dev', {
+		skip(req) {
+			if (fullLogs) return false;
+
+			if (req.path == '/api/search') return true;
+
+			return false;
+		},
+	})
+);
 app.use(cookieParser());
 
 app.listen(process.env.PORT || '4000', () => {
