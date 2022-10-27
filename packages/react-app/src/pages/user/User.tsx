@@ -4,8 +4,8 @@ import background from '../../assets/images/background.jpg';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
-import { useSelector } from 'react-redux';
-import { selectUser } from '../../redux/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectUser, setAvatar } from '../../redux/userSlice';
 
 type propTypes = {
 	id?: string;
@@ -22,6 +22,7 @@ export default function User(props: propTypes) {
 		posts: [],
 		avatar: '',
 	});
+	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
 
@@ -51,7 +52,6 @@ export default function User(props: propTypes) {
 
 	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files) {
-			const imagePreview = URL.createObjectURL(e.target.files[0]);
 			const imageFile = e.target.files[0];
 
 			const formData = new FormData();
@@ -63,10 +63,11 @@ export default function User(props: propTypes) {
 					withCredentials: true,
 					data: formData,
 				})
-				.then(() => {
+				.then((res) => {
+					dispatch(setAvatar(res.data.url));
 					setUser({
 						...user,
-						avatar: imagePreview,
+						avatar: res.data.url,
 					});
 				})
 				.catch((err) => {
@@ -88,7 +89,7 @@ export default function User(props: propTypes) {
 					type='file'
 					onChange={(e) => handleImageUpload(e)}
 					ref={fileRef}
-					accept='.png'
+					accept='.png,.jpg,.jpeg'
 					className='hidden'
 				/>
 			)}

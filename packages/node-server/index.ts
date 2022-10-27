@@ -8,6 +8,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
+import path from 'path';
 
 import User, { IUserSafe } from './Models/User';
 import {
@@ -164,7 +165,7 @@ app.get('/api/auth/logout', (req, res) => {
 });
 
 app.get('/api/image/:id', (req, res) => {
-	mediaExists(req.params.id, 'png')
+	mediaExists(req.params.id)
 		.then((path) => {
 			res.sendFile(path);
 		})
@@ -252,7 +253,8 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 
 		const URL =
 			'http://localhost:4000/api/image/' +
-			req.file?.filename.slice(0, -4);
+			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+			path.basename(req.file!.filename, path.extname(req.file!.filename));
 
 		User.findByIdAndUpdate(res.locals.user.id, { avatar: URL }, (err) => {
 			if (err) {

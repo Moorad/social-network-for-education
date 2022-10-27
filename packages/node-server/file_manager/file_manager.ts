@@ -1,26 +1,28 @@
-import fs from 'fs';
+import fs from 'fs/promises';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import multer from 'multer';
 import mime from 'mime-types';
 
-export function mediaExists(filename: string, fileExtension: string) {
-	return new Promise<string>((resolve, reject) => {
-		const resolvedPath = path.join(
+const ALLOWED_FILE_TYPES = ['png', 'jpg', 'jpeg'];
+
+export async function mediaExists(filename: string) {
+	try {
+		const parentFolder = path.join(
 			__dirname,
 			'../..',
-			'./file_manager/media',
-			`./${filename}.${fileExtension}`
+			'./file_manager/media'
 		);
-		fs.stat(resolvedPath, (err) => {
-			if (err == null) {
-				resolve(resolvedPath);
-			} else {
-				console.log(err);
-				reject('File could not be resolved');
-			}
-		});
-	});
+		const files = await fs.readdir(parentFolder);
+		const filter = files.filter(
+			(f) =>
+				path.basename(f, path.extname(f)) == filename &&
+				ALLOWED_FILE_TYPES.includes(path.extname(f).slice(1))
+		);
+		return path.join(parentFolder, filter[0]);
+	} catch (err) {
+		throw 'File could not be found';
+	}
 }
 
 export function multerWriteMedia() {
@@ -39,9 +41,7 @@ export function multerFileFilter(
 	file: Express.Multer.File,
 	cb: multer.FileFilterCallback
 ) {
-	const allowedExtensions = ['png'];
-
-	if (allowedExtensions.includes(mime.extension(file.mimetype) || '')) {
+	if (ALLOWED_FILE_TYPES.includes(mime.extension(file.mimetype) || '')) {
 		return cb(null, true);
 	}
 	// To reject this file pass `false`, like so:
