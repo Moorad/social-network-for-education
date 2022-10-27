@@ -50,7 +50,7 @@ export default function User(props: propTypes) {
 		}
 	}, []);
 
-	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+	function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files) {
 			const imageFile = e.target.files[0];
 
@@ -87,7 +87,7 @@ export default function User(props: propTypes) {
 			{props.me && (
 				<input
 					type='file'
-					onChange={(e) => handleImageUpload(e)}
+					onChange={(e) => handleAvatarUpload(e)}
 					ref={fileRef}
 					accept='.png,.jpg,.jpeg'
 					className='hidden'
@@ -96,14 +96,29 @@ export default function User(props: propTypes) {
 
 			<MainNavBar active={props.me ? 1 : -1}>
 				<div className='text-gray-800'>
-					<img
-						src={background}
-						alt='background image'
-						className='h-64 w-full object-cover'
-					/>
+					<div className='bg-gray-100 h-64 relative'>
+						{props.me && (
+							<div
+								className='absolute h-full w-full bg-gray-800/[.5] opacity-0 hover:opacity-100 cursor-pointer '
+								// onClick={handleAvatarClick}
+							>
+								<div className='flex w-full h-full justify-center items-center'>
+									<FontAwesomeIcon
+										icon={faCamera}
+										className='text-white text-5xl'
+									/>
+								</div>
+							</div>
+						)}
+						<img
+							src={background}
+							alt='background image'
+							className='h-full w-full object-cover'
+						/>
+					</div>
 					<div className='flex px-40 justify-between items-end h-24'>
 						<div className='flex items-end gap-10'>
-							<div className='translate-y-4 select-none'>
+							<div className='translate-y-4 select-none h-44 w-44 rounded-full bg-gray-200'>
 								{props.me && (
 									<div
 										className='absolute h-44 w-44 bg-gray-800/[.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer '
@@ -119,8 +134,7 @@ export default function User(props: propTypes) {
 								)}
 								<img
 									src={user.avatar}
-									alt='profile picture'
-									className='h-44 w-44 max-w-max border rounded-full overflow-hidden'
+									className='w-full rounded-full overflow-hidden'
 								/>
 							</div>
 							<div>
