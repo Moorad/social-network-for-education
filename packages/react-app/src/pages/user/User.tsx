@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../../redux/userSlice';
+import { formatNumber } from '../../utils/format';
 
 type propTypes = {
 	id?: string;
@@ -134,7 +135,7 @@ export default function User(props: propTypes) {
 								)}
 								<img
 									src={user.avatar}
-									className='w-full rounded-full overflow-hidden'
+									className='h-44 aspect-square rounded-full overflow-hidden'
 								/>
 							</div>
 							<div>
@@ -149,19 +150,19 @@ export default function User(props: propTypes) {
 						<div className='flex gap-10'>
 							<div className='text-center'>
 								<div className='font-semibold text-xl'>
-									{user.followerCount}
+									{formatNumber(user.followerCount)}
 								</div>
 								<div>Followers</div>
 							</div>
 							<div className='text-center'>
 								<div className='font-semibold text-xl'>
-									{user.followingCount}
+									{formatNumber(user.followingCount)}
 								</div>
 								<div>Following</div>
 							</div>
 							<div className='text-center'>
 								<div className='font-semibold text-xl'>
-									{user.posts.length}
+									{formatNumber(user.posts.length)}
 								</div>
 								<div>posts</div>
 							</div>

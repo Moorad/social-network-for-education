@@ -66,7 +66,7 @@ export default function GeneralSearchBar() {
 									>
 										<img
 											src={item.avatar}
-											className='w-6 inline mr-3 rounded-full'
+											className='w-6 aspect-square inline mr-3 rounded-full'
 										/>
 										{item.displayName}
 									</Combobox.Option>
