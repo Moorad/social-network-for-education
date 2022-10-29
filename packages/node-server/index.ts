@@ -26,8 +26,8 @@ const upload = multer({
 }).single('file');
 const fullLogs = false;
 
-if (process.env.DB) {
-	mongoose.connect(process.env.DB);
+if (process.env.DB && process.env.DB_NAME) {
+	mongoose.connect(process.env.DB + process.env.DB_NAME);
 } else {
 	throw 'No database URI environment variable configured';
 }
