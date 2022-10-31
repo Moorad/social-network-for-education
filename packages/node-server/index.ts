@@ -218,28 +218,26 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 		userId = res.locals.user.id;
 	}
 
-	try {
-		const doc = await User.findById(userId).exec();
+	const doc = await User.findById(userId).exec();
 
-		if (doc) {
-			const user: IUserSafe = {
-				displayName: doc.displayName,
-				description: doc.description,
-				label: doc.label,
-				followerCount: doc.followerCount,
-				followingCount: doc.followingCount,
-				posts: doc.posts,
-				avatar: doc.avatar,
-				_id: doc._id,
-			};
-			return res.json(user);
-		}
-	} catch (err) {
-		res.statusCode = 404;
-		return res.json({
-			message: 'User was not found',
-		});
+	if (doc) {
+		const user: IUserSafe = {
+			displayName: doc.displayName,
+			description: doc.description,
+			label: doc.label,
+			followerCount: doc.followerCount,
+			followingCount: doc.followingCount,
+			posts: doc.posts,
+			avatar: doc.avatar,
+			_id: doc._id,
+		};
+		return res.json(user);
 	}
+
+	res.statusCode = 404;
+	return res.json({
+		message: 'User was not found',
+	});
 });
 
 app.post('/api/upload', authenticateToken, (req, res) => {

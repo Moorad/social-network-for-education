@@ -12,17 +12,8 @@ function RequireAuth() {
 	const dispatch = useDispatch();
 
 	useLayoutEffect(() => {
-		const token = localStorage.getItem('token');
-		if (!token) {
-			setValidToken(false);
-			setIsFetching(false);
-		}
-
 		axios
 			.get(process.env.REACT_APP_API_URL + '/api/user', {
-				headers: {
-					authorization: `Bearer ${token}`,
-				},
 				withCredentials: true,
 			})
 			.then((res) => {
