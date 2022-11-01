@@ -33,10 +33,10 @@ PORT=THIS_IS_OPTIONAL
 Create .env file in `packages/react-app` with
 
 ```
-REACT_APP_API_URL=URL_TO_NODE_SERVER
+NEXT_PUBLIC_API_URL=URL_TO_NODE_SERVER
 ```
 
-for dev purposes use "http://localhost:4000" for `REACT_APP_API_URL` if no `PORT` env variable set
+for dev purposes use "http://localhost:4000" for `NEXT_PUBLIC_API_URL` if no `PORT` env variable set
 
 ## Usage
 

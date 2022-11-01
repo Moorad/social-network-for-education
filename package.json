@@ -7,7 +7,7 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"start-react": "yarn --cwd ./packages/react-app start",
+		"start-react": "yarn --cwd ./packages/react-app dev",
 		"start-server": "yarn --cwd ./packages/node-server start",
 		"tools": "yarn --cwd ./packages/node-server tools"
 	},
