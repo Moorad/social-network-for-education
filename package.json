@@ -1,19 +1,20 @@
 {
-  "name": "cs-project",
-  "version": "1.0.0",
-  "main": "index.js",
-  "repository": "https://github.com/Moorad/cs-project",
-  "author": "Moorad <moorad2003@gmail.com>",
-  "license": "MIT",
-  "private": true,
-  "scripts": {
-	"start-react": "yarn --cwd ./packages/react-app start",
-	"start-server": "yarn --cwd ./packages/node-server start"
-  },
-  "devDependencies": {
-    "lerna": "^5.5.4"
-  },
-  "workspaces": [
-    "packages/*"
-  ]
+	"name": "cs-project",
+	"version": "1.0.0",
+	"main": "index.js",
+	"repository": "https://github.com/Moorad/cs-project",
+	"author": "Moorad <moorad2003@gmail.com>",
+	"license": "MIT",
+	"private": true,
+	"scripts": {
+		"start-react": "yarn --cwd ./packages/react-app start",
+		"start-server": "yarn --cwd ./packages/node-server start",
+		"tools": "yarn --cwd ./packages/node-server tools"
+	},
+	"devDependencies": {
+		"lerna": "^5.5.4"
+	},
+	"workspaces": [
+		"packages/*"
+	]
 }

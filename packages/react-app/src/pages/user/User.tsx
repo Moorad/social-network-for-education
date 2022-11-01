@@ -13,6 +13,14 @@ type propTypes = {
 	me?: boolean;
 };
 
+interface IPost {
+	title: string;
+	description: string;
+	posterId: string;
+	created: Date;
+	likes: number;
+}
+
 export default function User(props: propTypes) {
 	const [user, setUser] = useState({
 		displayName: '',
@@ -23,6 +31,8 @@ export default function User(props: propTypes) {
 		posts: [],
 		avatar: '',
 	});
+
+	const [postData, setPostData] = useState<IPost[]>([]);
 	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
@@ -49,7 +59,27 @@ export default function User(props: propTypes) {
 					}
 				});
 		}
+
+		if (user.posts.length == 0) {
+			fetchPosts();
+		}
 	}, []);
+
+	function fetchPosts() {
+		axios
+			.get(
+				`${process.env.REACT_APP_API_URL}/api/user_posts${
+					props.id ? `?id=${props.id}` : ''
+				}`,
+				{
+					withCredentials: true,
+				}
+			)
+			.then((res) => {
+				console.log(res);
+				setPostData(res.data.posts);
+			});
+	}
 
 	function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files) {
@@ -182,7 +212,17 @@ export default function User(props: propTypes) {
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
 					<div className='text-center m-20 text-gray-500'>
-						Posts go here
+						{postData.length == 0
+							? 'The user did not create any posts yet :('
+							: postData.map((e, i) => (
+									<div
+										key={i}
+										className='border-gray-400 border'
+									>
+										<div>{e.title}</div>
+										<div>{e.description}</div>
+									</div>
+							  ))}
 					</div>
 				</div>
 			</MainNavBar>

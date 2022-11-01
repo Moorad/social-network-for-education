@@ -16,6 +16,7 @@ import {
 	multerFileFilter,
 	multerWriteMedia,
 } from './file_manager/file_manager';
+import Post from './Models/Post';
 
 dotenv.config();
 
@@ -270,7 +271,7 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 });
 
 app.get('/api/search', authenticateToken, async (req, res) => {
-	const term = req.query['term'];
+	const term: any = req.query['term'];
 
 	try {
 		if (typeof term === 'string') {
@@ -307,4 +308,44 @@ app.get('/api/search', authenticateToken, async (req, res) => {
 			results: [],
 		});
 	}
+});
+
+app.post('/api/create_post', authenticateToken, async (req, res) => {
+	const post = new Post({
+		title: req.body.title,
+		description: req.body.description,
+		posterId: res.locals.user.id,
+	});
+
+	await post.save();
+
+	await User.findByIdAndUpdate(res.locals.user.id, {
+		$push: { posts: post._id },
+	}).exec();
+
+	res.json({
+		message: 'ok',
+	});
+});
+
+app.get('/api/user_posts', authenticateToken, async (req, res) => {
+	let userId;
+
+	if (req.query.id) {
+		userId = req.query.id;
+	} else {
+		userId = res.locals.user.id;
+	}
+
+	const posts = await Post.find({ posterId: userId }).exec();
+
+	if (posts == null) {
+		return res.json({
+			posts: [],
+		});
+	}
+
+	return res.json({
+		posts: posts,
+	});
 });

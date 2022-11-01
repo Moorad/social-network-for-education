@@ -10,6 +10,9 @@ import {
 	IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { Link } from 'react-router-dom';
+import PostModal from '../PostModal';
+import { useDispatch } from 'react-redux';
+import { showPostModal } from '../../redux/modalsSlice';
 
 const navigation = [
 	{ name: 'Home', href: '/home', icon: faHouseChimney },
@@ -20,22 +23,30 @@ const navigation = [
 ];
 
 export default function SideNavBar(props: { active: number }) {
+	const dispatch = useDispatch();
+
 	return (
-		<div className='flex flex-col w-20 h-full bg-gray-800 items-center py-4'>
-			<div className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500'>
-				<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
+		<>
+			<PostModal />
+			<div className='flex flex-col w-20 h-full bg-gray-800 items-center py-4'>
+				<div
+					className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500'
+					onClick={() => dispatch(showPostModal())}
+				>
+					<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
+				</div>
+				{navigation.map((e, i) => {
+					return (
+						<SideBarButton
+							icon={e.icon}
+							active={i == props.active}
+							key={i}
+							href={e.href}
+						/>
+					);
+				})}
 			</div>
-			{navigation.map((e, i) => {
-				return (
-					<SideBarButton
-						icon={e.icon}
-						active={i == props.active}
-						key={i}
-						href={e.href}
-					/>
-				);
-			})}
-		</div>
+		</>
 	);
 }
 
