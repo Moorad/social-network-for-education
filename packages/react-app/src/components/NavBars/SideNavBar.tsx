@@ -30,7 +30,7 @@ export default function SideNavBar(props: { active: number }) {
 			<PostModal />
 			<div className='flex flex-col w-20 h-full bg-gray-800 items-center py-4'>
 				<div
-					className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500'
+					className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500 hover:bg-blue-400'
 					onClick={() => dispatch(showPostModal())}
 				>
 					<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
@@ -59,13 +59,13 @@ type sideBarButtonTypes = {
 function SideBarButton(props: sideBarButtonTypes) {
 	let extraClasses = '';
 	if (props.active) {
-		extraClasses = 'bg-gray-700';
+		extraClasses = 'bg-gray-600';
 	}
 
 	return (
 		<Link to={props.href}>
 			<div
-				className={`w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 ${extraClasses}`}
+				className={`w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 hover:bg-gray-700 ${extraClasses}`}
 			>
 				<FontAwesomeIcon icon={props.icon}></FontAwesomeIcon>
 			</div>

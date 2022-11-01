@@ -7,13 +7,14 @@ import { faCamera } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../../redux/userSlice';
 import { formatNumber } from '../../utils/format';
+import Post from '../../components/Post';
 
 type propTypes = {
 	id?: string;
 	me?: boolean;
 };
 
-interface IPost {
+export interface IPost {
 	title: string;
 	description: string;
 	posterId: string;
@@ -114,7 +115,7 @@ export default function User(props: propTypes) {
 	}
 
 	return (
-		<div className='overflow-hidden h-screen'>
+		<div>
 			{props.me && (
 				<input
 					type='file'
@@ -165,7 +166,7 @@ export default function User(props: propTypes) {
 								)}
 								<img
 									src={user.avatar}
-									className='h-44 aspect-square rounded-full overflow-hidden'
+									className='h-44 aspect-square rounded-full outline-white outline-8 outline'
 								/>
 							</div>
 							<div>
@@ -211,18 +212,10 @@ export default function User(props: propTypes) {
 					<div className='px-40'>
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
-					<div className='text-center m-20 text-gray-500'>
+					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem]'>
 						{postData.length == 0
 							? 'The user did not create any posts yet :('
-							: postData.map((e, i) => (
-									<div
-										key={i}
-										className='border-gray-400 border'
-									>
-										<div>{e.title}</div>
-										<div>{e.description}</div>
-									</div>
-							  ))}
+							: postData.map((e, i) => <Post data={e} key={i} />)}
 					</div>
 				</div>
 			</MainNavBar>
