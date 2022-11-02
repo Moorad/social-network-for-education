@@ -10,13 +10,14 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import path from 'path';
 
-import User, { IUserSafe } from './Models/User';
+import User from './Models/User';
 import {
 	mediaExists,
 	multerFileFilter,
 	multerWriteMedia,
 } from './file_manager/file_manager';
 import Post from './Models/Post';
+import { IUserSafe } from 'common';
 
 dotenv.config();
 
@@ -342,6 +343,21 @@ app.get('/api/user_posts', authenticateToken, async (req, res) => {
 	if (posts == null) {
 		return res.json({
 			posts: [],
+		});
+	}
+
+	const doc = await User.findById(userId).exec();
+
+	if (doc) {
+		const user = {
+			displayName: doc.displayName,
+			avatar: doc.avatar,
+			_id: doc._id,
+		};
+
+		return res.json({
+			posts: posts,
+			user: user,
 		});
 	}
 

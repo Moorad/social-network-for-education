@@ -7,19 +7,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
 import Post from './Post';
+import { IPost, IUserMinimal } from 'common';
 
 type propTypes = {
 	id?: string;
 	me?: boolean;
 };
 
-export interface IPost {
-	title: string;
-	description: string;
-	posterId: string;
-	created: Date;
-	likes: number;
-}
+type IPostWithUser = {
+	posts: IPost[];
+	user: IUserMinimal;
+} | null;
 
 export default function User(props: propTypes) {
 	const [user, setUser] = useState({
@@ -32,7 +30,7 @@ export default function User(props: propTypes) {
 		avatar: '',
 	});
 
-	const [postData, setPostData] = useState<IPost[]>([]);
+	const [postData, setPostData] = useState<IPostWithUser>(null);
 	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
@@ -76,7 +74,7 @@ export default function User(props: propTypes) {
 				}
 			)
 			.then((res) => {
-				setPostData(res.data.posts);
+				setPostData(res.data);
 			});
 	}
 
@@ -215,9 +213,15 @@ export default function User(props: propTypes) {
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
 					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem]'>
-						{postData.length == 0
+						{postData?.posts.length == 0
 							? 'The user did not create any posts yet :('
-							: postData.map((e, i) => <Post data={e} key={i} />)}
+							: postData?.posts.map((e, i) => (
+									<Post
+										post={e}
+										user={postData.user}
+										key={i}
+									/>
+							  ))}
 					</div>
 				</div>
 			</MainNavBar>

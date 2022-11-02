@@ -1,12 +1,5 @@
+import { IPost } from 'common';
 import { Schema, model } from 'mongoose';
-
-interface IPost {
-	title: string;
-	description: string;
-	posterId: Schema.Types.ObjectId;
-	created: Date;
-	likes: number;
-}
 
 const postSchema = new Schema({
 	title: { type: String, required: true },
@@ -14,6 +7,7 @@ const postSchema = new Schema({
 	posterId: { type: Schema.Types.ObjectId, required: true },
 	created: { type: Date, default: Date.now },
 	likes: { type: Number, default: 0 },
+	comments: { type: [Schema.Types.ObjectId], default: [] },
 });
 
 postSchema.index({ title: 'text' });

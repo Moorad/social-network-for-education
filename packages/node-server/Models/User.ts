@@ -1,19 +1,5 @@
+import { IUser } from 'common';
 import { Schema, model } from 'mongoose';
-
-interface IUser {
-	displayName: string;
-	email: string;
-	password: string;
-	description: string;
-	label: string;
-	followerCount: number;
-	followingCount: number;
-	posts: Schema.Types.ObjectId[];
-	avatar: string;
-	_id: Schema.Types.ObjectId;
-}
-
-export type IUserSafe = Omit<IUser, 'email' | 'password'>;
 
 const userSchema = new Schema({
 	displayName: { type: String, required: true },
