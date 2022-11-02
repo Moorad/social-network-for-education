@@ -1,9 +1,21 @@
 import { faComment, faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React from 'react';
+import React, { useState } from 'react';
 import { IPost, IUserMinimal } from 'common';
-import { formatNumber } from '../utils/format';
+import { formatNumber, formatToRelativeTime } from '../utils/format';
 export default function Post(props: { post: IPost; user: IUserMinimal }) {
+	const [liked, setLiked] = useState(false);
+
+	function handleLiking() {
+		if (!liked) {
+			setLiked(true);
+			props.post.likes++;
+		} else {
+			setLiked(false);
+			props.post.likes--;
+		}
+	}
+
 	return (
 		<div className='border-gray-300 border rounded-lg p-5 text-left'>
 			<div className='text-gray-900 font-semibold text-lg'>
@@ -17,14 +29,28 @@ export default function Post(props: { post: IPost; user: IUserMinimal }) {
 						{props.user.displayName}
 					</div>
 					<div>•</div>
-					<div>2h</div>
+					<div>{formatToRelativeTime(props.post.created)}</div>
 				</div>
 			</div>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
 					<div className='flex gap-2 items-center'>
-						<FontAwesomeIcon icon={faHeart} />
-						<div>{formatNumber(props.post.likes)}</div>
+						{liked ? (
+							<FontAwesomeIcon
+								icon={faHeart}
+								onClick={() => handleLiking()}
+								className='cursor-pointer text-red-400'
+							/>
+						) : (
+							<FontAwesomeIcon
+								icon={faHeart}
+								onClick={() => handleLiking()}
+								className='cursor-pointer'
+							/>
+						)}
+						<div className='select-none'>
+							{formatNumber(props.post.likes)}
+						</div>
 					</div>
 					<div className='flex gap-2 items-center'>
 						<FontAwesomeIcon icon={faComment} />
