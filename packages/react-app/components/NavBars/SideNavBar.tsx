@@ -28,7 +28,7 @@ export default function SideNavBar(props: { active: number }) {
 	return (
 		<>
 			<PostModal />
-			<div className='flex flex-col w-20 h-full bg-gray-800 items-center py-4'>
+			<div className='flex flex-col w-20 bg-gray-800 items-center py-4'>
 				<div
 					className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500 hover:bg-blue-400'
 					onClick={() => dispatch(showPostModal())}

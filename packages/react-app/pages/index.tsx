@@ -6,7 +6,7 @@ export default class Index extends Component {
 	render() {
 		// document.body.classList.add('', 'overflow-hidden');
 		return (
-			<div className='h-screen bg-gray-900'>
+			<div className='h-screen bg-gray-900 overflow-hidden'>
 				{/* <div>
 					<div
 						className='absolute w-96 h-96 bg-indigo-500 rounded-full opacity-60 -z-50'

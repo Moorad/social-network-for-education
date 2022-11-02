@@ -17,7 +17,7 @@ type propTypes = {
 export default function MainNavBar(props: propTypes) {
 	const avatar = useSelector(selectAvatar);
 	return (
-		<div>
+		<div className='flex flex-col h-screen'>
 			<div className='flex justify-between shadow'>
 				<div className=''>
 					<Link href='/home'>
@@ -31,9 +31,11 @@ export default function MainNavBar(props: propTypes) {
 				</div>
 			</div>
 
-			<div className='flex h-screen'>
+			<div className='flex flex-1 h-0'>
 				<SideNavBar active={props.active} />
-				<div className='flex-1 overflow-y-auto'>{props.children}</div>
+				<div className='flex-1 h-full overflow-y-auto'>
+					{props.children}
+				</div>
 			</div>
 		</div>
 	);
