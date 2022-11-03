@@ -5,13 +5,14 @@ import Loading from '../../components/Loading';
 import User from '../../components/User';
 
 export default function UserProfile() {
-	const router = useRouter();
+	const { query, isReady } = useRouter();
 	const { isLoading } = useAuth();
-	const { userId } = router.query;
 
 	if (isLoading) {
 		return <Loading />;
 	}
 
-	return <User id={userId as string} />;
+	if (isReady) {
+		return <User id={query.userId as string} />;
+	}
 }
