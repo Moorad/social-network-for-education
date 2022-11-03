@@ -212,16 +212,22 @@ export default function User(props: propTypes) {
 					<div className='px-40'>
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
-					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem]'>
+					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem] gap-5'>
 						{postData?.posts.length == 0
 							? 'The user did not create any posts yet :('
-							: postData?.posts.map((e, i) => (
-									<Post
-										post={e}
-										user={postData.user}
-										key={i}
-									/>
-							  ))}
+							: postData?.posts
+									.sort(
+										(a, b) =>
+											new Date(b.created).getTime() -
+											new Date(a.created).getTime()
+									)
+									.map((e, i) => (
+										<Post
+											post={e}
+											user={postData.user}
+											key={i}
+										/>
+									))}
 					</div>
 				</div>
 			</MainNavBar>

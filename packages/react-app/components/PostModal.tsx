@@ -1,5 +1,6 @@
 import { Dialog } from '@headlessui/react';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import React, { FormEvent, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { hidePostModal, selectShowPost } from '../redux/modalsSlice';
@@ -11,6 +12,7 @@ export default function PostModal() {
 	const showPost = useSelector(selectShowPost);
 	const avatar = useSelector(selectAvatar);
 	const dispatch = useDispatch();
+	const router = useRouter();
 
 	function handleSubmission(e: FormEvent) {
 		e.preventDefault();
@@ -28,7 +30,9 @@ export default function PostModal() {
 					}
 				)
 				.then((res) => {
-					console.log(res);
+					if (res.status == 200) {
+						router.reload();
+					}
 				});
 		}
 	}
