@@ -2,7 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import MainNavBar from './NavBars/MainNavBar';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCamera } from '@fortawesome/free-solid-svg-icons';
+import {
+	faCamera,
+	faCirclePlus,
+	faFaceSadTear,
+	faLock,
+} from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
@@ -126,11 +131,48 @@ export default function User(props: propTypes) {
 
 	function renderPosts() {
 		if (user.isPrivate) {
-			return 'Private account';
+			return (
+				<div>
+					<FontAwesomeIcon icon={faLock} className='text-lg' />
+					<div className='text-lg'>This account is private</div>
+				</div>
+			);
+		}
+
+		if (user.posts.length == 0 && props.me) {
+			return (
+				<div className='flex flex-col gap-5 border-2 border-gray-400 border-dashed w-[30rem] m-auto p-5 rounded-lg'>
+					<FontAwesomeIcon
+						icon={faCirclePlus}
+						className='text-5xl text-gray-500'
+					/>
+					<div>
+						<div className='text-gray-900 font-bold'>
+							Create a post
+						</div>
+						<div className='text-gray-600'>
+							Its seems like you do have any posts. Create your
+							first post now!
+						</div>
+					</div>
+					<div>
+						<button className='bg-blue-500 text-white py-2 px-7 rounded-md'>
+							Create
+						</button>
+					</div>
+				</div>
+			);
 		}
 
 		if (user.posts.length == 0) {
-			return 'The user did not create any posts yet :(';
+			return (
+				<div>
+					<FontAwesomeIcon icon={faFaceSadTear} className='text-lg' />
+					<div className='text-lg'>
+						This account does not have any posts
+					</div>
+				</div>
+			);
 		}
 
 		return postData?.posts
