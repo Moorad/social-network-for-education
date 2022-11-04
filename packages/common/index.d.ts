@@ -7,7 +7,7 @@ export interface IPost {
 	comments: Schema.Types.ObjectId[];
 }
 
-interface IUser {
+export interface IUser {
 	displayName: string;
 	email: string;
 	password: string;
@@ -18,6 +18,7 @@ interface IUser {
 	posts: Schema.Types.ObjectId[];
 	avatar: string;
 	_id: Schema.Types.ObjectId;
+	isPrivate: boolean;
 }
 
 export type IUserSafe = Omit<IUser, 'email' | 'password'>;

@@ -1,4 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IUserSafe } from 'common';
 import { RootState } from './store';
 
 export const userSlice = createSlice({
@@ -12,9 +13,10 @@ export const userSlice = createSlice({
 		posts: [],
 		avatar: '',
 		_id: '',
-	},
+		isPrivate: false,
+	} as IUserSafe,
 	reducers: {
-		setUser: (state, action) => {
+		setUser: (state, action: PayloadAction<IUserSafe>) => {
 			state.displayName = action.payload.displayName;
 			state.description = action.payload.description;
 			state.label = action.payload.label;
@@ -23,6 +25,7 @@ export const userSlice = createSlice({
 			state.posts = action.payload.posts;
 			state.avatar = action.payload.avatar;
 			state._id = action.payload._id;
+			state.isPrivate = action.payload.isPrivate;
 		},
 
 		setAvatar: (state, action) => {

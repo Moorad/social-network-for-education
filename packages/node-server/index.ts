@@ -232,6 +232,7 @@ app.get('/api/user', authenticateToken, async (req, res) => {
 			posts: doc.posts,
 			avatar: doc.avatar,
 			_id: doc._id,
+			isPrivate: doc.isPrivate,
 		};
 		return res.json(user);
 	}
@@ -272,7 +273,7 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 });
 
 app.get('/api/search', authenticateToken, async (req, res) => {
-	const term: any = req.query['term'];
+	const term = req.query['term'];
 
 	try {
 		if (typeof term === 'string') {

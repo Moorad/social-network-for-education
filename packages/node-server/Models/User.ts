@@ -9,11 +9,12 @@ const userSchema = new Schema({
 	label: { type: String, default: 'No label' },
 	followerCount: { type: Number, default: 0 },
 	followingCount: { type: Number, default: 0 },
-	posts: [Schema.Types.ObjectId],
+	posts: { type: [Schema.Types.ObjectId], default: [] },
 	avatar: {
 		type: String,
 		default: 'http://localhost:4000/api/image/default',
 	},
+	isPrivate: { type: Boolean, default: false },
 });
 userSchema.index({ displayName: 'text' });
 

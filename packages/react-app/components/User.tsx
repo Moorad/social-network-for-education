@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
 import Post from './Post';
-import { IPost, IUserMinimal } from 'common';
+import { IPost, IUserMinimal, IUserSafe } from 'common';
 
 type propTypes = {
 	id?: string;
@@ -20,7 +20,7 @@ type IPostWithUser = {
 } | null;
 
 export default function User(props: propTypes) {
-	const [user, setUser] = useState({
+	const [user, setUser] = useState<IUserSafe>({
 		displayName: '',
 		description: '',
 		label: 'No label',
@@ -28,8 +28,10 @@ export default function User(props: propTypes) {
 		followingCount: 0,
 		posts: [],
 		avatar: '',
+		_id: '',
+		isPrivate: false,
 	});
-
+	const firstRender = useRef<boolean>(true);
 	const [postData, setPostData] = useState<IPostWithUser>(null);
 	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
@@ -57,11 +59,18 @@ export default function User(props: propTypes) {
 					}
 				});
 		}
+	}, []);
 
-		if (user.posts.length == 0) {
+	useEffect(() => {
+		if (firstRender.current) {
+			firstRender.current = false;
+			return;
+		}
+
+		if (user.posts.length > 0 && (!user.isPrivate || props.me)) {
 			fetchPosts();
 		}
-	}, []);
+	}, [user]);
 
 	function fetchPosts() {
 		axios
@@ -96,10 +105,11 @@ export default function User(props: propTypes) {
 					}
 				)
 				.then((res) => {
-					dispatch(setAvatar(res.data.url));
+					const url: string = res.data.url;
+					dispatch(setAvatar(url));
 					setUser({
 						...user,
-						avatar: res.data.url,
+						avatar: url,
 					});
 				})
 				.catch((err) => {
@@ -112,6 +122,24 @@ export default function User(props: propTypes) {
 		if (fileRef.current) {
 			fileRef.current.click();
 		}
+	}
+
+	function renderPosts() {
+		if (user.isPrivate) {
+			return 'Private account';
+		}
+
+		if (user.posts.length == 0) {
+			return 'The user did not create any posts yet :(';
+		}
+
+		return postData?.posts
+			.sort(
+				(a, b) =>
+					new Date(b.created).getTime() -
+					new Date(a.created).getTime()
+			)
+			.map((e, i) => <Post post={e} user={postData.user} key={i} />);
 	}
 
 	return (
@@ -193,7 +221,9 @@ export default function User(props: propTypes) {
 							</div>
 							<div className='text-center'>
 								<div className='font-semibold text-xl'>
-									{formatNumber(user.posts.length)}
+									{user.isPrivate
+										? '-'
+										: formatNumber(user.posts.length)}
 								</div>
 								<div>posts</div>
 							</div>
@@ -213,21 +243,7 @@ export default function User(props: propTypes) {
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
 					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem] gap-5'>
-						{postData?.posts.length == 0
-							? 'The user did not create any posts yet :('
-							: postData?.posts
-									.sort(
-										(a, b) =>
-											new Date(b.created).getTime() -
-											new Date(a.created).getTime()
-									)
-									.map((e, i) => (
-										<Post
-											post={e}
-											user={postData.user}
-											key={i}
-										/>
-									))}
+						{renderPosts()}
 					</div>
 				</div>
 			</MainNavBar>

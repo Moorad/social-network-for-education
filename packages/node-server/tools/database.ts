@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import User from '../Models/User';
 import { faker } from '@faker-js/faker';
+import Post from '../Models/Post';
 
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
@@ -32,6 +33,15 @@ export async function resetDB() {
 		avatar: 'http://localhost:4000/api/image/d741bf93-672a-4b04-83ad-fbb90009f211',
 	});
 
+	const bobPost = new Post({
+		title: 'Good moring everybody',
+		description: 'Today is going to be a good day! 👊👊😎😎🧃🧃',
+		posterId: bob._id,
+	});
+
+	bob.posts.push(bobPost._id);
+
+	await bobPost.save();
 	await bob.save();
 	console.log('Bob added to the database');
 
@@ -47,6 +57,15 @@ export async function resetDB() {
 		avatar: 'http://localhost:4000/api/image/70bb12c5-5084-4f73-8302-451a2764e3e2',
 	});
 
+	const mikePost = new Post({
+		title: 'My first post',
+		description: 'This is my first post on this thing.',
+		posterId: micheal._id,
+	});
+
+	micheal.posts.push(mikePost._id);
+
+	await mikePost.save();
 	await micheal.save();
 	console.log('Micheal added to the database');
 
@@ -77,8 +96,22 @@ export async function populateWithFakeData(userCount: number) {
 			avatar: faker.image.image(undefined, undefined, true),
 			followerCount: Number(faker.datatype.bigInt({ max: 3000000 })),
 			followingCount: faker.datatype.number({ max: 2000 }),
-			posts: [],
 		});
+
+		const numOfPosts = Math.floor(Math.random() * 5);
+
+		for (let j = 0; j < numOfPosts; j++) {
+			const post = new Post({
+				title: faker.lorem.sentence(),
+				description: faker.lorem.paragraph(),
+				posterId: user._id,
+				created: faker.date.past(),
+			});
+
+			user.posts.push(post._id);
+
+			await post.save();
+		}
 
 		await user.save();
 
