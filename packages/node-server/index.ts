@@ -273,7 +273,7 @@ app.post('/api/upload', authenticateToken, (req, res) => {
 });
 
 app.get('/api/search', authenticateToken, async (req, res) => {
-	const term = req.query['term'];
+	const term = req.query.term;
 
 	try {
 		if (typeof term === 'string') {
@@ -339,7 +339,21 @@ app.get('/api/user_posts', authenticateToken, async (req, res) => {
 		userId = res.locals.user.id;
 	}
 
-	const posts = await Post.find({ posterId: userId }).exec();
+	const posts = await Post.find(
+		{ posterId: userId },
+		{
+			title: 1,
+			description: 1,
+			posterId: 1,
+			created: 1,
+			likeCount: 1,
+			comments: 1,
+			_id: 1,
+			likes: {
+				$elemMatch: { $eq: res.locals.user.id },
+			},
+		}
+	).exec();
 
 	if (posts == null) {
 		return res.json({
@@ -364,5 +378,30 @@ app.get('/api/user_posts', authenticateToken, async (req, res) => {
 
 	return res.json({
 		posts: posts,
+	});
+});
+
+app.get('/api/like_post', authenticateToken, async (req, res) => {
+	const postId = req.query.postId;
+
+	const alreadyLiked = await Post.findOne({
+		_id: postId,
+		likes: res.locals.user.id,
+	});
+
+	if (!alreadyLiked) {
+		await Post.findByIdAndUpdate(postId, {
+			$inc: { likeCount: 1 },
+			$push: { likes: res.locals.user.id },
+		});
+	} else {
+		await Post.findByIdAndUpdate(postId, {
+			$inc: { likeCount: -1 },
+			$pull: { likes: res.locals.user.id },
+		});
+	}
+
+	res.json({
+		message: 'ok',
 	});
 });

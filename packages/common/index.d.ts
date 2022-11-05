@@ -3,8 +3,10 @@ export interface IPost {
 	description: string;
 	posterId: string;
 	created: Date;
-	likes: number;
+	likeCount: number;
+	likes: Schema.Types.ObjectId[];
 	comments: Schema.Types.ObjectId[];
+	_id: Schema.Types.ObjectId;
 }
 
 export interface IUser {

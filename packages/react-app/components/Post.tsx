@@ -3,17 +3,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { IPost, IUserMinimal } from 'common';
 import { formatNumber, formatToRelativeTime } from '../utils/format';
+import { useSelector } from 'react-redux';
+import { selectId } from '../redux/userSlice';
+import axios from 'axios';
 export default function Post(props: { post: IPost; user: IUserMinimal }) {
-	const [liked, setLiked] = useState(false);
+	const userId = useSelector(selectId);
+	const [liked, setLiked] = useState(props.post.likes.includes(userId));
 
 	function handleLiking() {
-		if (!liked) {
-			setLiked(true);
-			props.post.likes++;
-		} else {
-			setLiked(false);
-			props.post.likes--;
-		}
+		axios
+			.get(
+				`${process.env.NEXT_PUBLIC_API_URL}/api/like_post?postId=${props.post._id}`,
+				{
+					withCredentials: true,
+				}
+			)
+			.then((res) => {
+				if (res.status == 200) {
+					if (!liked) {
+						props.post.likeCount++;
+						setLiked(true);
+					} else {
+						props.post.likeCount--;
+						setLiked(false);
+					}
+				}
+			});
 	}
 
 	return (
@@ -49,7 +64,7 @@ export default function Post(props: { post: IPost; user: IUserMinimal }) {
 							/>
 						)}
 						<div className='select-none'>
-							{formatNumber(props.post.likes)}
+							{formatNumber(props.post.likeCount)}
 						</div>
 					</div>
 					<div className='flex gap-2 items-center'>
