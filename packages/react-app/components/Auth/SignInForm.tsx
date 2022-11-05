@@ -14,7 +14,7 @@ export default function SignIn() {
 		if (emailRef.current && passwordRef.current) {
 			axios
 				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/auth/login`,
+					`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
 					{
 						email: emailRef.current.value.toLowerCase(),
 						password: passwordRef.current.value,

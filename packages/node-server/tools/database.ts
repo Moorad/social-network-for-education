@@ -30,7 +30,7 @@ export async function resetDB() {
 		label: 'Hardcore Gamer',
 		followerCount: 0,
 		followingCount: 10,
-		avatar: 'http://localhost:4000/api/image/d741bf93-672a-4b04-83ad-fbb90009f211',
+		avatar: 'http://localhost:4000/resource/d741bf93-672a-4b04-83ad-fbb90009f211',
 	});
 
 	const bobPost = new Post({
@@ -54,7 +54,7 @@ export async function resetDB() {
 		label: 'First Year Undergrad',
 		followerCount: 209,
 		followingCount: 3,
-		avatar: 'http://localhost:4000/api/image/70bb12c5-5084-4f73-8302-451a2764e3e2',
+		avatar: 'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
 	});
 
 	const mikePost = new Post({

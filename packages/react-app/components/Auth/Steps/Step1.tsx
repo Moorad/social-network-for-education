@@ -20,7 +20,7 @@ export default function Step1(props: propTypes) {
 		if (displayNameRef.current && emailRef.current && passwordRef.current) {
 			axios
 				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/auth/register`,
+					`${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
 					{
 						displayName: displayNameRef.current.value,
 						email: emailRef.current.value.toLowerCase(),

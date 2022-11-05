@@ -47,12 +47,9 @@ export default function User(props: propTypes) {
 			setUser(reduxUser);
 		} else {
 			axios
-				.get(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/user?id=${props.id}`,
-					{
-						withCredentials: true,
-					}
-				)
+				.get(`${process.env.NEXT_PUBLIC_API_URL}/user?id=${props.id}`, {
+					withCredentials: true,
+				})
 				.then((res) => {
 					if (res.status == 200) {
 						setUser(res.data);
@@ -80,7 +77,7 @@ export default function User(props: propTypes) {
 	function fetchPosts() {
 		axios
 			.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/user_posts${
+				`${process.env.NEXT_PUBLIC_API_URL}/user/posts${
 					props.id ? `?id=${props.id}` : ''
 				}`,
 				{
@@ -102,7 +99,7 @@ export default function User(props: propTypes) {
 
 			axios
 				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/upload`,
+					`${process.env.NEXT_PUBLIC_API_URL}/resource/upload`,
 					formData,
 					{
 						withCredentials: true,

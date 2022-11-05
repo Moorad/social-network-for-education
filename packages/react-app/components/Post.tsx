@@ -13,7 +13,7 @@ export default function Post(props: { post: IPost; user: IUserMinimal }) {
 	function handleLiking() {
 		axios
 			.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/api/like_post?postId=${props.post._id}`,
+				`${process.env.NEXT_PUBLIC_API_URL}/post/like?postId=${props.post._id}`,
 				{
 					withCredentials: true,
 				}

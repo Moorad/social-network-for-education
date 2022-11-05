@@ -18,7 +18,7 @@ export default function GeneralSearchBar() {
 		if (query != '') {
 			axios
 				.get(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/search?term=${query}`,
+					`${process.env.NEXT_PUBLIC_API_URL}/utils/search?term=${query}`,
 					{
 						withCredentials: true,
 					}

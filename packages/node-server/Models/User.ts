@@ -12,7 +12,7 @@ const userSchema = new Schema({
 	posts: { type: [Schema.Types.ObjectId], default: [] },
 	avatar: {
 		type: String,
-		default: 'http://localhost:4000/api/image/default',
+		default: 'http://localhost:4000/resource/default',
 	},
 	isPrivate: { type: Boolean, default: false },
 });

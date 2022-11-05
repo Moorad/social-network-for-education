@@ -20,7 +20,7 @@ export default function PostModal() {
 		if (titleRef.current && descriptionRef.current) {
 			axios
 				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/api/create_post`,
+					`${process.env.NEXT_PUBLIC_API_URL}/post`,
 					{
 						title: titleRef.current.value,
 						description: descriptionRef.current.value,
