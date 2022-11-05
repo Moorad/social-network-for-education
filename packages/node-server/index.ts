@@ -107,6 +107,12 @@ app.post('/api/auth/register', (req, res) => {
 		};
 		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
 
+		res.cookie('token', accessToken, {
+			httpOnly: true,
+			secure: false,
+			maxAge: 2592000000, // 30 days
+		});
+
 		res.json({
 			accessToken: accessToken,
 		});
