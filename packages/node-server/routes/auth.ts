@@ -8,6 +8,10 @@ const router = express.Router();
 const SALT_ROUNDS = 10;
 
 router.post('/register', (req, res) => {
+	if (!req.body.displayName || !req.body.email || !req.body.password) {
+		return res.sendStatus(400);
+	}
+
 	bcrypt.hash(req.body.password, SALT_ROUNDS, async (err, hash) => {
 		if (err) {
 			res.statusCode = 500;
@@ -58,6 +62,10 @@ router.post('/register', (req, res) => {
 });
 
 router.post('/login', async (req, res) => {
+	if (!req.body.email || !req.body.password) {
+		return res.sendStatus(400);
+	}
+
 	const user = await User.findOne({ email: req.body.email }).exec();
 	if (user) {
 		// User exists
