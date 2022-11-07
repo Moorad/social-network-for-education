@@ -1,5 +1,6 @@
 import { IUser } from 'common';
 import { Schema, model } from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
 
 const userSchema = new Schema({
 	displayName: { type: String, required: true },
@@ -17,6 +18,7 @@ const userSchema = new Schema({
 	isPrivate: { type: Boolean, default: false },
 });
 userSchema.index({ displayName: 'text' });
+userSchema.plugin(uniqueValidator);
 
 const User = model<IUser>('user', userSchema);
 

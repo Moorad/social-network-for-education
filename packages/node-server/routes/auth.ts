@@ -1,7 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import User from '../Models/User';
-import { MongoServerError } from 'mongodb';
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
@@ -27,9 +26,10 @@ router.post('/register', (req, res) => {
 		});
 
 		try {
+			await user.validate();
 			await user.save();
 		} catch (dbErr) {
-			if ((dbErr as MongoServerError).code == 11000) {
+			if ((dbErr as Error).name == 'ValidationError') {
 				res.statusCode = 403;
 				res.json({
 					message: 'Email is already registered',
