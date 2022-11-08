@@ -21,7 +21,7 @@
 	"scripts": {
 		"start": "tsc && node dist/server.js",
 		"tools": "npx tsc && node dist/tools/interface.js",
-		"test": "tsc && NODE_ENV=test mocha ./dist/tests"
+		"test": "tsc && NODE_ENV=test mocha ./dist/tests --exit"
 	},
 	"devDependencies": {
 		"@faker-js/faker": "^7.6.0",
