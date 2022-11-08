@@ -5,6 +5,10 @@ import { authenticateToken } from './auth';
 const router = express.Router();
 
 router.post('/', authenticateToken, async (req, res) => {
+	if (!req.body.title || !req.body.description) {
+		return res.sendStatus(400);
+	}
+
 	const post = new Post({
 		title: req.body.title,
 		description: req.body.description,

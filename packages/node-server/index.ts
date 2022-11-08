@@ -5,7 +5,7 @@ import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
-import postsRouter from './routes/posts';
+import postsRouter from './routes/post';
 import resourceRouter from './routes/resource';
 import utilsRouter from './routes/utils';
 import { startUpCheck } from './utils/start_up';
