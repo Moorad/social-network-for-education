@@ -18,6 +18,7 @@ export function connectToDB(dbName: string) {
 
 export async function resetDB() {
 	await mongoose.connection.db.dropDatabase();
+	await User.ensureIndexes();
 	console.log('Database dropped and recreated.');
 
 	// Create Bob
