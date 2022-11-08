@@ -29,6 +29,10 @@ router.get('/:id', (req, res) => {
 
 router.post('/upload', authenticateToken, (req, res) => {
 	upload(req, res, (err) => {
+		if (!req.file) {
+			return res.sendStatus(400);
+		}
+
 		if (err) {
 			res.statusCode = 400;
 			return res.json({
@@ -38,8 +42,7 @@ router.post('/upload', authenticateToken, (req, res) => {
 
 		const URL =
 			'http://localhost:4000/resource/' +
-			// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-			path.basename(req.file!.filename, path.extname(req.file!.filename));
+			path.basename(req.file.filename, path.extname(req.file.filename));
 
 		User.findByIdAndUpdate(res.locals.user.id, { avatar: URL }, (err) => {
 			if (err) {
