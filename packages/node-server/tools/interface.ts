@@ -1,6 +1,7 @@
 import * as dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { connectToDB, populateWithFakeData, resetDB } from './database';
+import { resetFiles } from './files';
 
 dotenv.config();
 
@@ -36,9 +37,18 @@ async function main() {
 					break;
 			}
 		}
-	}
+		await mongoose.connection.close();
+	} else if (args[0] == 'files') {
+		args = args.slice(1);
 
-	await mongoose.connection.close();
+		for (let i = 0; i < args.length; i++) {
+			switch (args[i]) {
+				case '--reset':
+					await resetFiles();
+					break;
+			}
+		}
+	}
 }
 
 main();

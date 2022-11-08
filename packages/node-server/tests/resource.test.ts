@@ -36,7 +36,7 @@ describe('/resource API routes', () => {
 
 		it('should test /:id with a test account image', (done) => {
 			chai.request(app)
-				.get('/resource/7653f136-c125-46d8-a5c5-19952bdd8c32')
+				.get('/resource/70bb12c5-5084-4f73-8302-451a2764e3e2')
 				.end((err, res) => {
 					chai.expect(res.status).to.equal(200);
 					res.body.should.be.instanceof(Buffer);

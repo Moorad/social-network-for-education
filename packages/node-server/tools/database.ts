@@ -70,7 +70,7 @@ export async function resetDB() {
 	await micheal.save();
 	console.log('Micheal added to the database');
 
-	console.log('Reset successful');
+	console.log('Database reset complete.');
 }
 
 export async function populateWithFakeData(userCount: number) {
