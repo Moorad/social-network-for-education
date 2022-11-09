@@ -1,8 +1,42 @@
+import { IUserMinimal } from 'common';
 import express from 'express';
 import Post from '../Models/Post';
 import User from '../Models/User';
 import { authenticateToken } from './auth';
 const router = express.Router();
+
+router.get('/', authenticateToken, async (req, res) => {
+	if (!req.query.id) {
+		return res.sendStatus(400);
+	}
+
+	try {
+		const post = await Post.findById(req.query.id).exec();
+
+		if (post == null) {
+			return res.sendStatus(404);
+		}
+
+		const userInDB = await User.findById(post.posterId).exec();
+
+		if (userInDB == null) {
+			return res.sendStatus(404);
+		}
+
+		const user: IUserMinimal = {
+			displayName: userInDB.displayName,
+			avatar: userInDB.avatar,
+			_id: userInDB._id,
+		};
+
+		return res.json({
+			post: post,
+			user: user,
+		});
+	} catch (err) {
+		return res.sendStatus(404);
+	}
+});
 
 router.post('/', authenticateToken, async (req, res) => {
 	if (!req.body.title || !req.body.description) {

@@ -6,7 +6,14 @@ import { formatNumber, formatToRelativeTime } from '../utils/format';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
 import axios from 'axios';
-export default function Post(props: { post: IPost; user: IUserMinimal }) {
+
+const MAX_CHARACTER_LENGTH = 400;
+
+export default function Post(props: {
+	post: IPost;
+	user: IUserMinimal;
+	fullText: boolean;
+}) {
 	const userId = useSelector(selectId);
 	const [liked, setLiked] = useState(props.post.likes.includes(userId));
 
@@ -31,12 +38,23 @@ export default function Post(props: { post: IPost; user: IUserMinimal }) {
 			});
 	}
 
+	function renderText() {
+		if (props.fullText) {
+			return props.post.description;
+		} else {
+			return (
+				props.post.description.substring(0, MAX_CHARACTER_LENGTH) +
+				'...'
+			);
+		}
+	}
+
 	return (
 		<div className='border-gray-300 border rounded-lg p-5 text-left'>
 			<div className='text-gray-900 font-semibold text-lg'>
 				{props.post.title}
 			</div>
-			<div className='text-gray-800 mt-3'>{props.post.description}</div>
+			<div className='text-gray-800 mt-3'>{renderText()}</div>
 			<div className='flex items-center gap-3 mt-4'>
 				<img src={props.user.avatar} className='w-9 rounded-full' />
 				<div className='flex gap-2'>
@@ -60,25 +78,37 @@ export default function Post(props: { post: IPost; user: IUserMinimal }) {
 							<FontAwesomeIcon
 								icon={faHeart}
 								onClick={() => handleLiking()}
-								className='cursor-pointer'
+								className='cursor-pointer text-gray-400'
 							/>
 						)}
-						<div className='select-none'>
+						<div className='select-none text-gray-800'>
 							{formatNumber(props.post.likeCount)}
 						</div>
 					</div>
 					<div className='flex gap-2 items-center'>
-						<FontAwesomeIcon icon={faComment} />
-						<div>{formatNumber(props.post.comments.length)}</div>
+						<FontAwesomeIcon
+							icon={faComment}
+							className='text-gray-400'
+						/>
+						<div className='text-gray-800'>
+							{formatNumber(props.post.comments.length)}
+						</div>
 					</div>
 					<div className='flex gap-2 items-center'>
-						<FontAwesomeIcon icon={faShare} />
-						<div>Share</div>
+						<FontAwesomeIcon
+							icon={faShare}
+							className='text-gray-400'
+						/>
+						<div className='text-gray-800'>Share</div>
 					</div>
 				</div>
 
-				<div>102 views</div>
+				<div className='text-gray-400'>102 views</div>
 			</div>
 		</div>
 	);
 }
+
+Post.defaultProps = {
+	fullText: false,
+};

@@ -87,3 +87,7 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 		</Menu>
 	);
 }
+
+MainNavBar.defaultProps = {
+	active: -1,
+};
