@@ -5,6 +5,7 @@ import { IPost, IUserMinimal } from 'common';
 import { formatNumber, formatToRelativeTime } from '../utils/format';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
+import router from 'next/router';
 import axios from 'axios';
 
 const MAX_CHARACTER_LENGTH = 400;
@@ -17,7 +18,8 @@ export default function Post(props: {
 	const userId = useSelector(selectId);
 	const [liked, setLiked] = useState(props.post.likes.includes(userId));
 
-	function handleLiking() {
+	function handleLiking(e: React.MouseEvent) {
+		e.stopPropagation();
 		axios
 			.get(
 				`${process.env.NEXT_PUBLIC_API_URL}/post/like?postId=${props.post._id}`,
@@ -49,12 +51,25 @@ export default function Post(props: {
 		}
 	}
 
+	function handleClick() {
+		if (props.fullText) {
+			return;
+		}
+
+		router.push(`/post/${props.post._id}`);
+	}
+
 	return (
-		<div className='border-gray-300 border rounded-lg p-5 text-left'>
+		<div
+			className='border-gray-300 border rounded-lg p-5 text-left cursor-pointer'
+			onClick={handleClick}
+		>
 			<div className='text-gray-900 font-semibold text-lg'>
 				{props.post.title}
 			</div>
-			<div className='text-gray-800 mt-3'>{renderText()}</div>
+			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
+				{renderText()}
+			</div>
 			<div className='flex items-center gap-3 mt-4'>
 				<img src={props.user.avatar} className='w-9 rounded-full' />
 				<div className='flex gap-2'>
@@ -71,13 +86,13 @@ export default function Post(props: {
 						{liked ? (
 							<FontAwesomeIcon
 								icon={faHeart}
-								onClick={() => handleLiking()}
+								onClick={(e) => handleLiking(e)}
 								className='cursor-pointer text-red-400'
 							/>
 						) : (
 							<FontAwesomeIcon
 								icon={faHeart}
-								onClick={() => handleLiking()}
+								onClick={(e) => handleLiking(e)}
 								className='cursor-pointer text-gray-400'
 							/>
 						)}
