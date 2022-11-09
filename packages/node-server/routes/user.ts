@@ -31,6 +31,8 @@ router.get('/', authenticateToken, async (req, res) => {
 				isPrivate: doc.isPrivate,
 			};
 			return res.json(user);
+		} else {
+			return res.sendStatus(404);
 		}
 	} catch (err) {
 		res.statusCode = 404;

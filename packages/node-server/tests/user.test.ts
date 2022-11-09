@@ -89,6 +89,16 @@ describe('/user API routes', () => {
 					done();
 				});
 		});
+
+		it('should test /user/ with a valid ObjectID structure that does not exist in the database', (done) => {
+			chai.request(app)
+				.get('/user?id=6366deff5c1ae5ecca48a3aa')
+				.set('Cookie', cookie)
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(404);
+					done();
+				});
+		});
 	});
 
 	describe('/posts API tests', () => {

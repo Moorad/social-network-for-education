@@ -9,7 +9,8 @@
 	"scripts": {
 		"start-react": "yarn --cwd ./packages/react-app dev",
 		"start-server": "yarn --cwd ./packages/node-server start",
-		"tools": "yarn --cwd ./packages/node-server tools"
+		"tools": "yarn --cwd ./packages/node-server tools",
+		"test": "yarn --cwd ./packages/node-server test"
 	},
 	"devDependencies": {
 		"lerna": "^5.5.4"
