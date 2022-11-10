@@ -36,7 +36,7 @@ before((done) => {
 });
 
 describe('/post API routes', () => {
-	describe('/post/ API tests', () => {
+	describe('POST /post/ API tests', () => {
 		it('should test post creation through /posts/', (done) => {
 			chai.request(app)
 				.post('/post/')
@@ -95,6 +95,52 @@ describe('/post API routes', () => {
 		});
 	});
 
+	describe('GET /post API tests', () => {
+		it('should test /post with a post id', (done) => {
+			chai.request(app)
+				.get(`/post?id=${michealPostId}`)
+				.set('Cookie', cookie)
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(200);
+
+					res.body.should.have.all.keys('post', 'user');
+					chai.expect(res.body.post).to.not.be.empty;
+					chai.expect(res.body.user).to.not.be.empty;
+					done();
+				});
+		});
+
+		it('should test /post with an invalid post id', (done) => {
+			chai.request(app)
+				.get('/post?id=123')
+				.set('Cookie', cookie)
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(404);
+					done();
+				});
+		});
+
+		it('should test /post with missing id', (done) => {
+			chai.request(app)
+				.get('/post')
+				.set('Cookie', cookie)
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(400);
+					done();
+				});
+		});
+
+		it('should test /post with a valid ObjectID structure that does not exist in the database', (done) => {
+			chai.request(app)
+				.get('/post?id=6366deff5c1ae5ecca48a3aa')
+				.set('Cookie', cookie)
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(404);
+					done();
+				});
+		});
+	});
+
 	describe('/like API tests', () => {
 		it("should test liking another user's post", (done) => {
 			chai.request(app)
@@ -108,15 +154,13 @@ describe('/post API routes', () => {
 
 		it("should test like that was set on the previous test's post", (done) => {
 			chai.request(app)
-				.get(`/user/posts?id=${michealId}`)
+				.get(`/post?id=${michealPostId}`)
 				.set('Cookie', cookie)
 				.end((err, res) => {
 					chai.expect(res.status).to.equal(200);
 
-					res.body.posts[0].should.have
-						.property('likes')
-						.with.length(1);
-					res.body.posts[0].likeCount.should.equal(1);
+					res.body.post.should.have.property('likes').with.length(1);
+					res.body.post.likeCount.should.equal(1);
 					done();
 				});
 		});
@@ -133,16 +177,14 @@ describe('/post API routes', () => {
 
 		it("should test unlike that was set on the previous test's post", (done) => {
 			chai.request(app)
-				.get(`/user/posts?id=${michealId}`)
+				.get(`/post?id=${michealPostId}`)
 				.set('Cookie', cookie)
 				.end((err, res) => {
 					chai.expect(res.status).to.equal(200);
 
-					res.body.posts[0].should.have
-						.property('likes')
-						.with.length(0);
+					res.body.post.should.have.property('likes').with.length(0);
 
-					res.body.posts[0].likeCount.should.equal(0);
+					res.body.post.likeCount.should.equal(0);
 					done();
 				});
 		});

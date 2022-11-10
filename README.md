@@ -24,6 +24,8 @@ You will also need to setup a mongodb server. If you are using WSL use the mongo
 
 Create .env file in `packages/node-server` with
 
+If you are using Node version older than 14 please change .tsconfig target to the [appropriate version](https://github.com/microsoft/TypeScript/wiki/Node-Target-Mapping)
+
 ```
 DB=YOUR_MONGODB_URI
 SECRET_TOKEN=RANDOM_STRING_OF_CHARACTERS_FOR_USER_AUTH
@@ -53,3 +55,12 @@ yarn start-react
 ```
 
 Navigate to http://localhost:4000 (you will be directed there automatically with `yarn start-react`).
+
+## Testing
+
+For backend endpoint tests
+
+```
+cd ./packages/node-server
+yarn test
+```

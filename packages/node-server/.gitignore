@@ -1,6 +1,8 @@
 node_modules
 dist/
 .env
+coverage
+.nyc_output
 
 # Ignore all files in media except default.png
 file_manager/media/*
