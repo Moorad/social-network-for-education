@@ -74,6 +74,9 @@ export async function resetDB() {
 }
 
 export async function populateWithFakeData(userCount: number) {
+	const allPosts = [];
+	const allPeople = [];
+
 	if (isNaN(userCount)) {
 		console.log('Invalid populate user count.');
 		return;
@@ -95,9 +98,10 @@ export async function populateWithFakeData(userCount: number) {
 			password: faker.internet.password(),
 			label: faker.name.jobTitle(),
 			avatar: faker.image.image(undefined, undefined, true),
-			followerCount: Number(faker.datatype.bigInt({ max: 3000000 })),
+			followerCount: Number(faker.datatype.bigInt({ max: 2000 })),
 			followingCount: faker.datatype.number({ max: 2000 }),
 		});
+		allPeople.push(user._id);
 
 		const numOfPosts = Math.floor(Math.random() * 5);
 
@@ -110,12 +114,26 @@ export async function populateWithFakeData(userCount: number) {
 			});
 
 			user.posts.push(post._id);
-
+			allPosts.push(post._id);
 			await post.save();
 		}
 
 		await user.save();
 
 		console.log(`${i + 1} - ${user.displayName} added to DB`);
+	}
+
+	for (let i = 0; i < allPosts.length; i++) {
+		const peopleLiked = Math.floor(Math.random() * allPeople.length);
+
+		for (let j = 0; j < peopleLiked; j++) {
+			const randomUser =
+				allPeople[Math.floor(Math.random() * allPeople.length)];
+			await Post.findByIdAndUpdate(allPosts[i], {
+				$push: { likes: randomUser },
+				$inc: { likeCount: 1 },
+			}).exec();
+		}
+		console.log(`The post ${allPosts[i]} was liked ${peopleLiked} times`);
 	}
 }
