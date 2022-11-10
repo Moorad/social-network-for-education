@@ -85,4 +85,40 @@ router.get('/like', authenticateToken, async (req, res) => {
 	});
 });
 
+router.get('/comments', authenticateToken, async (req, res) => {
+	const postId = req.query.postId;
+
+	if (!postId) {
+		return res.sendStatus(400);
+	}
+
+	try {
+		const post = await Post.findById(postId).exec();
+
+		if (post == null) {
+			return res.sendStatus(404);
+		}
+
+		const comments = [];
+
+		for (let i = 0; i < post.comments.length; i++) {
+			const user = await User.findById(post.comments[i].posterId).exec();
+			comments.push({
+				content: post.comments[i].content,
+				user: {
+					_id: user?._id,
+					displayName: user?.displayName,
+					avatar: user?.avatar,
+				},
+			});
+		}
+
+		res.json({
+			comments: comments,
+		});
+	} catch (err) {
+		return res.sendStatus(404);
+	}
+});
+
 export default router;

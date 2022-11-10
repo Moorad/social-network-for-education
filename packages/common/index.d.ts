@@ -6,7 +6,8 @@ export interface IPost {
 	likeCount: number;
 	likes: Schema.Types.ObjectId[];
 	comments: {
-		_id: string;
+		_id: Schema.Types.ObjectId;
+		posterId: Schema.Types.ObjectId;
 		content: string;
 	}[];
 	commentCount: number;

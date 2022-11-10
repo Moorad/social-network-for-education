@@ -12,6 +12,7 @@ const postSchema = new Schema({
 	comments: {
 		type: [
 			{
+				posterId: Schema.Types.ObjectId,
 				content: String,
 			},
 		],
