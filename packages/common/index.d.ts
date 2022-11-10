@@ -5,7 +5,11 @@ export interface IPost {
 	created: Date;
 	likeCount: number;
 	likes: Schema.Types.ObjectId[];
-	comments: Schema.Types.ObjectId[];
+	comments: {
+		_id: string;
+		content: string;
+	}[];
+	commentCount: number;
 	_id: Schema.Types.ObjectId;
 }
 

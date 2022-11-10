@@ -8,7 +8,15 @@ const postSchema = new Schema({
 	created: { type: Date, default: Date.now },
 	likeCount: { type: Number, default: 0 },
 	likes: { type: [Schema.Types.ObjectId], default: [] },
-	comments: { type: [Schema.Types.ObjectId], default: [] },
+	commentCount: { type: Number, default: 0 },
+	comments: {
+		type: [
+			{
+				content: String,
+			},
+		],
+		default: [],
+	},
 });
 
 postSchema.index({ title: 'text' });

@@ -41,7 +41,10 @@ export default function Post(props: {
 	}
 
 	function renderText() {
-		if (props.fullText) {
+		if (
+			props.fullText ||
+			props.post.description.length <= MAX_CHARACTER_LENGTH
+		) {
 			return props.post.description;
 		} else {
 			return (
@@ -106,7 +109,7 @@ export default function Post(props: {
 							className='text-gray-400'
 						/>
 						<div className='text-gray-800'>
-							{formatNumber(props.post.comments.length)}
+							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
 					<div className='flex gap-2 items-center'>
