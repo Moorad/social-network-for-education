@@ -79,8 +79,10 @@ export default function Post(props: {
 					<div className='text-gray-700 font-medium'>
 						{props.user.displayName}
 					</div>
-					<div>•</div>
-					<div>{formatToRelativeTime(props.post.created)}</div>
+					<div className='text-gray-500'>•</div>
+					<div className='text-gray-500'>
+						{formatToRelativeTime(props.post.created)}
+					</div>
 				</div>
 			</div>
 			<div className='flex justify-between mt-5'>

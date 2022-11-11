@@ -61,7 +61,25 @@ export default function post() {
 			return <Loading />;
 		}
 
-		return comments.map((e, i) => <Comment key={i} data={e} />);
+		return comments.map((e, i) => {
+			return (
+				<div
+					key={i}
+					className={
+						i != comments.length - 1
+							? 'border-b border-gray-300'
+							: ''
+					}
+				>
+					<Comment
+						key={i}
+						content={e.content}
+						user={e.user}
+						isAuthor={e.user._id == data?.user._id}
+					/>
+				</div>
+			);
+		});
 	}
 
 	if (isLoading) {
@@ -73,12 +91,28 @@ export default function post() {
 			<MainNavBar>
 				<div className='flex'>
 					<div className='flex-1 flex flex-col items-center'>
-						<div className='w-3/4'>
-							<div className='m-5'>{renderPost()}</div>
-							<div className='m-5'>
-								Comments: {data?.post.commentCount}
+						<div className='w-3/4 m-5'>
+							<div className='my-5'>{renderPost()}</div>
+							<div>
+								<div className='my-5 border-gray-300 border rounded-lg relative'>
+									<textarea
+										className='w-full h-32 p-5 rounded-lg'
+										placeholder='Write a comment'
+									></textarea>
+									<button className='bg-blue-500 text-white px-5 py-2 rounded-md text-sm absolute bottom-0 right-0 m-3'>
+										Send
+									</button>
+								</div>
 							</div>
-							<div className='m-5'>{renderComments()}</div>
+							<div className='my-5 border-gray-300 border rounded-lg p-5 '>
+								<div className='text-lg font-semibold text-gray-800'>
+									Comments{' '}
+									<span className='bg-blue-200 text-blue-600 px-3 rounded-full text-sm '>
+										{data?.post.commentCount}
+									</span>
+								</div>
+								<div>{renderComments()}</div>
+							</div>
 						</div>
 					</div>
 					<div className='w-64 bg-gray-200'>

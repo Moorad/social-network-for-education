@@ -4,28 +4,32 @@ import { IUserMinimal } from 'common';
 import React from 'react';
 
 type propTypes = {
-	data: { content: string; user: IUserMinimal };
+	content: string;
+	user: IUserMinimal;
+	isAuthor: boolean;
 };
 
 export default function Comment(props: propTypes) {
 	return (
-		<div className='border-gray-300 p-5 text-left cursor-pointer'>
+		<div className='border-gray-300 py-5 text-left cursor-pointer'>
 			<div className='flex items-center gap-3 mt-4'>
-				<img
-					src={props.data.user.avatar}
-					className='w-9 rounded-full'
-				/>
-				<div className='flex gap-2'>
+				<img src={props.user.avatar} className='w-9 rounded-full' />
+				<div className='flex gap-2 items-center'>
 					<div className='text-gray-700 font-medium'>
-						{props.data.user.displayName}
+						{props.user.displayName}
 					</div>
-					<div>•</div>
+					{props.isAuthor && (
+						<span className='bg-emerald-100 text-emerald-600 text-white text-sm px-2 rounded-full'>
+							Original author
+						</span>
+					)}
+					<div className='text-gray-500'>•</div>
 					{/* <div>{formatToRelativeTime(props.post.created)}</div> */}
-					2h
+					<div className='text-gray-500'>2h</div>
 				</div>
 			</div>
 			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
-				{props.data.content}
+				{props.content}
 			</div>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
@@ -41,3 +45,7 @@ export default function Comment(props: propTypes) {
 		</div>
 	);
 }
+
+Comment.defaultProps = {
+	isAuthor: false,
+};
