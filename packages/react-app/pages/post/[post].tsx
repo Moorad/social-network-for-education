@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { IPost, IUserMinimal } from 'common';
-import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import router, { useRouter } from 'next/router';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import Comment from '../../components/Comment';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
@@ -32,6 +32,7 @@ export default function post() {
 	const { isLoading } = useAuth();
 	const [data, setData] = useState<SinglePostWithUser>(null);
 	const [comments, setComments] = useState<Comments>(null);
+	const commentRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
 		if (!isReady) return;
@@ -89,6 +90,25 @@ export default function post() {
 		});
 	}
 
+	function handleSubmission(e: FormEvent) {
+		e.preventDefault();
+		axios
+			.post(
+				`${process.env.NEXT_PUBLIC_API_URL}/post/comment?postId=${data?.post._id}`,
+				{
+					content: commentRef.current?.value,
+				},
+				{
+					withCredentials: true,
+				}
+			)
+			.then((res) => {
+				if (res.status == 200) {
+					router.reload();
+				}
+			});
+	}
+
 	if (isLoading) {
 		return <Loading />;
 	}
@@ -102,13 +122,19 @@ export default function post() {
 							<div className='my-5'>{renderPost()}</div>
 							<div>
 								<div className='my-5 border-gray-300 border rounded-lg relative'>
-									<textarea
-										className='w-full h-32 p-5 rounded-lg'
-										placeholder='Write a comment'
-									></textarea>
-									<button className='bg-blue-500 text-white px-5 py-2 rounded-md text-sm absolute bottom-0 right-0 m-3'>
-										Send
-									</button>
+									<form onSubmit={handleSubmission}>
+										<textarea
+											className='w-full h-32 p-5 rounded-lg'
+											placeholder='Write a comment'
+											ref={commentRef}
+										></textarea>
+										<button
+											className='bg-blue-500 text-white px-5 py-2 rounded-md text-sm absolute bottom-0 right-0 m-3'
+											type='submit'
+										>
+											Send
+										</button>
+									</form>
 								</div>
 							</div>
 							<div className='my-5 border-gray-300 border rounded-lg p-5 '>

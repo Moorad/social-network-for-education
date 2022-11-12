@@ -121,4 +121,33 @@ router.get('/comments', authenticateToken, async (req, res) => {
 	}
 });
 
+router.post('/comment', authenticateToken, async (req, res) => {
+	if (!req.body.content || !req.query.postId) {
+		return res.sendStatus(400);
+	}
+
+	try {
+		const post = await Post.findOneAndUpdate(
+			{ postId: req.query.postId },
+			{
+				$inc: { commentCount: 1 },
+				$push: {
+					comments: {
+						posterId: res.locals.user.id,
+						content: req.body.content,
+					},
+				},
+			}
+		).exec();
+
+		if (post == null) {
+			return res.sendStatus(404);
+		}
+
+		return res.sendStatus(200);
+	} catch (err) {
+		return res.sendStatus(404);
+	}
+});
+
 export default router;
