@@ -19,8 +19,6 @@ export interface IPost {
 
 export interface IUser {
 	displayName: string;
-	email: string;
-	password: string;
 	description: string;
 	label: string;
 	followerCount: number;
@@ -31,6 +29,6 @@ export interface IUser {
 	isPrivate: boolean;
 }
 
-export type IUserSafe = Omit<IUser, 'email' | 'password'>;
+export type IUserSafe = Omit<IUser>;
 
 export type IUserMinimal = Pick<IUser, 'displayName' | 'avatar' | '_id'>;

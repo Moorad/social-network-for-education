@@ -28,7 +28,7 @@ describe('/auth API routes', () => {
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
 					chai.expect(res.status).to.equal(200);
-					accessToken = res.body.accessToken;
+					accessToken = res.body.token;
 					done();
 				});
 		});
@@ -43,7 +43,7 @@ describe('/auth API routes', () => {
 				})
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
-					chai.expect(res.status).to.equal(403);
+					chai.expect(res.status).to.equal(409);
 					done();
 				});
 		});
@@ -74,7 +74,7 @@ describe('/auth API routes', () => {
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
 					chai.expect(res.status).to.equal(200);
-					res.body.accessToken.should.be.a('string');
+					res.body.token.should.be.a('string');
 					done();
 				});
 		});

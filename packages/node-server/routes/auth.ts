@@ -1,52 +1,74 @@
 import express, { NextFunction, Request, Response } from 'express';
-import bcrypt from 'bcrypt';
-import User from '../Models/User';
+import passport from 'passport';
 import jwt from 'jsonwebtoken';
+import { loginLocalStrategy, registerLocalStrategy } from '../utils/passport';
 
 const router = express.Router();
-const SALT_ROUNDS = 10;
 
-router.post('/register', (req, res) => {
-	if (!req.body.displayName || !req.body.email || !req.body.password) {
-		return res.sendStatus(400);
-	}
+passport.use('login', loginLocalStrategy);
+passport.use('register', registerLocalStrategy);
 
-	bcrypt.hash(req.body.password, SALT_ROUNDS, async (err, hash) => {
-		if (err) {
-			res.statusCode = 500;
-			return res.json({
-				message: err.message,
-			});
-		}
-
-		const user = new User({
-			displayName: req.body.displayName,
-			email: req.body.email,
-			password: hash,
-		});
-
-		try {
-			await user.validate();
-			await user.save();
-		} catch (dbErr) {
-			if ((dbErr as Error).name == 'ValidationError') {
-				res.statusCode = 403;
-				res.json({
-					message: 'Email is already registered',
-				});
-			} else {
-				res.statusCode = 500;
-				res.json({
-					message: (dbErr as Error).message,
-				});
+router.post('/login', (req, res, next) => {
+	passport.authenticate('login', { session: false }, (err, user, info) => {
+		if (err || !user) {
+			if (info.message == 'Invalid email or password') {
+				return res.sendStatus(403);
 			}
 
-			return;
+			return res.sendStatus(400);
+		}
+
+		req.login(user, { session: false }, (err) => {
+			if (err) {
+				return res.sendStatus(500);
+			}
+
+			const payload = {
+				id: user.userId.toString(),
+			};
+
+			const accessToken = jwt.sign(
+				payload,
+				process.env.SECRET_TOKEN || ''
+			);
+
+			res.cookie('token', accessToken, {
+				httpOnly: true,
+				secure: false,
+				maxAge: 2592000000, // 30 days
+			});
+
+			res.json({
+				token: accessToken,
+			});
+		});
+	})(req, res, next);
+});
+
+router.post('/register', (req, res, next) => {
+	passport.authenticate('register', { session: false }, async (err, data) => {
+		if (err || !data) {
+			return res.sendStatus(400);
+		}
+
+		if (!req.body.displayName) {
+			return res.sendStatus(400);
+		}
+
+		data.user.displayName = req.body.displayName;
+
+		try {
+			await data.login.save();
+			await data.user.save();
+		} catch (err) {
+			console.log(err);
+			return res.sendStatus(409);
 		}
 
 		const payload = {
-			id: user._id.toString(),
+			id: data.login.userId.toString(),
 		};
+
 		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
 
 		res.cookie('token', accessToken, {
@@ -55,60 +77,10 @@ router.post('/register', (req, res) => {
 			maxAge: 2592000000, // 30 days
 		});
 
-		res.json({
-			accessToken: accessToken,
+		return res.json({
+			token: accessToken,
 		});
-	});
-});
-
-router.post('/login', async (req, res) => {
-	if (!req.body.email || !req.body.password) {
-		return res.sendStatus(400);
-	}
-
-	const user = await User.findOne({ email: req.body.email }).exec();
-	if (user) {
-		// User exists
-		bcrypt.compare(req.body.password, user.password, (err, result) => {
-			if (err) {
-				res.statusCode = 500;
-				res.json({
-					message: err.message,
-				});
-				return;
-			}
-
-			if (result) {
-				// Credentials correct
-				const payload = {
-					id: user._id.toString(),
-				};
-				const accessToken = jwt.sign(
-					payload,
-					process.env.SECRET_TOKEN || ''
-				);
-
-				res.cookie('token', accessToken, {
-					httpOnly: true,
-					secure: false,
-					maxAge: 2592000000, // 30 days
-				});
-				res.json({
-					accessToken: accessToken,
-				});
-			} else {
-				res.statusCode = 403;
-				res.json({
-					message: 'Invalid credentials',
-				});
-			}
-		});
-	} else {
-		res.statusCode = 403;
-		res.json({
-			message: 'Invalid credentials',
-		});
-	}
+	})(req, res, next);
 });
 
 router.get('/logout', (req, res) => {
