@@ -1,11 +1,10 @@
 import { faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { IUserMinimal } from 'common';
+import { CommentType } from '../pages/post/[post]';
 import React from 'react';
+import { formatToRelativeTime } from '../utils/format';
 
-type propTypes = {
-	content: string;
-	user: IUserMinimal;
+type propTypes = CommentType & {
 	isAuthor: boolean;
 };
 
@@ -24,12 +23,13 @@ export default function Comment(props: propTypes) {
 						</span>
 					)}
 					<div className='text-gray-500'>•</div>
-					{/* <div>{formatToRelativeTime(props.post.created)}</div> */}
-					<div className='text-gray-500'>2h</div>
+					<div className='text-gray-500'>
+						{formatToRelativeTime(props.data.created)}
+					</div>
 				</div>
 			</div>
 			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
-				{props.content}
+				{props.data.content}
 			</div>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
@@ -38,7 +38,9 @@ export default function Comment(props: propTypes) {
 							icon={faHeart}
 							className='cursor-pointer text-gray-400'
 						/>
-						<div className='select-none text-gray-800'>0</div>
+						<div className='select-none text-gray-800'>
+							{props.data.likeCount}
+						</div>
 					</div>
 				</div>
 			</div>

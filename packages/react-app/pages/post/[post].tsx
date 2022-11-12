@@ -13,12 +13,19 @@ type SinglePostWithUser = {
 	user: IUserMinimal;
 } | null;
 
-type Comments =
-	| {
-			content: string;
-			user: IUserMinimal;
-	  }[]
-	| null;
+export type CommentType = {
+	user: IUserMinimal;
+	data: {
+		content: string;
+		_id: string;
+		posterId: string;
+		likeCount: number;
+		likes: string[];
+		created: Date;
+	};
+};
+
+type Comments = CommentType[] | null;
 
 export default function post() {
 	const { query, isReady } = useRouter();
@@ -73,7 +80,7 @@ export default function post() {
 				>
 					<Comment
 						key={i}
-						content={e.content}
+						data={e.data}
 						user={e.user}
 						isAuthor={e.user._id == data?.user._id}
 					/>

@@ -1,7 +1,7 @@
 export interface IPost {
 	title: string;
 	description: string;
-	posterId: string;
+	posterId: Schema.Types.ObjectId;
 	created: Date;
 	likeCount: number;
 	likes: Schema.Types.ObjectId[];
@@ -9,6 +9,9 @@ export interface IPost {
 		_id: Schema.Types.ObjectId;
 		posterId: Schema.Types.ObjectId;
 		content: string;
+		created: { type: Date; default: Date.now };
+		likes: [Schema.Types.ObjectId];
+		likeCount: Number;
 	}[];
 	commentCount: number;
 	_id: Schema.Types.ObjectId;

@@ -104,7 +104,7 @@ router.get('/comments', authenticateToken, async (req, res) => {
 		for (let i = 0; i < post.comments.length; i++) {
 			const user = await User.findById(post.comments[i].posterId).exec();
 			comments.push({
-				content: post.comments[i].content,
+				data: post.comments[i],
 				user: {
 					_id: user?._id,
 					displayName: user?.displayName,

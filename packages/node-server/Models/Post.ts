@@ -14,6 +14,9 @@ const postSchema = new Schema({
 			{
 				posterId: Schema.Types.ObjectId,
 				content: String,
+				created: { type: Date, default: Date.now },
+				likes: { type: [Schema.Types.ObjectId], default: [] },
+				likeCount: { type: Number, default: 0 },
 			},
 		],
 		default: [],

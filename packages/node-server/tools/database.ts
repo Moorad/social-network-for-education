@@ -34,18 +34,6 @@ export async function resetDB() {
 		avatar: 'http://localhost:4000/resource/d741bf93-672a-4b04-83ad-fbb90009f211',
 	});
 
-	const bobPost = new Post({
-		title: 'Good moring everybody',
-		description: 'Today is going to be a good day! 👊👊😎😎🧃🧃',
-		posterId: bob._id,
-	});
-
-	bob.posts.push(bobPost._id);
-
-	await bobPost.save();
-	await bob.save();
-	console.log('Bob added to the database');
-
 	const micheal = new User({
 		displayName: 'Micheal',
 		email: 'mike@mail.com',
@@ -58,13 +46,36 @@ export async function resetDB() {
 		avatar: 'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
 	});
 
+	const bobPost = new Post({
+		title: 'Good moring everybody',
+		description: 'Today is going to be a good day! 👊👊😎😎🧃🧃',
+		posterId: bob._id,
+		comments: [
+			{
+				content: 'Nice post',
+				posterId: micheal._id,
+			},
+		],
+		commentCount: 1,
+	});
+
+	bob.posts.push(bobPost._id);
+
 	const mikePost = new Post({
 		title: 'My first post',
 		description: 'This is my first post on this thing.',
 		posterId: micheal._id,
+		comments: [
+			{ content: 'You are so awesome man!!! 🏆🏆🏆', posterId: bob._id },
+		],
+		commentCount: 1,
 	});
 
 	micheal.posts.push(mikePost._id);
+
+	await bobPost.save();
+	await bob.save();
+	console.log('Bob added to the database');
 
 	await mikePost.save();
 	await micheal.save();
