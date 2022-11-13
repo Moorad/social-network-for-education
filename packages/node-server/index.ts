@@ -1,4 +1,6 @@
 import * as dotenv from 'dotenv';
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -9,8 +11,6 @@ import postsRouter from './routes/post';
 import resourceRouter from './routes/resource';
 import utilsRouter from './routes/utils';
 import { startUpCheck } from './utils/start_up';
-
-dotenv.config();
 
 const fullLogs = false;
 

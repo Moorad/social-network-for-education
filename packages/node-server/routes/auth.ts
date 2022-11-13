@@ -1,12 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
-import { loginLocalStrategy, registerLocalStrategy } from '../utils/passport';
+import '../utils/passport';
 
 const router = express.Router();
-
-passport.use('login', loginLocalStrategy);
-passport.use('register', registerLocalStrategy);
 
 router.post('/login', (req, res, next) => {
 	passport.authenticate('login', { session: false }, (err, user, info) => {
@@ -82,6 +79,32 @@ router.post('/register', (req, res, next) => {
 		});
 	})(req, res, next);
 });
+
+router.get('/google', passport.authenticate('google'));
+
+router.get(
+	'/google/callback',
+	passport.authenticate('google', { session: false }),
+	(req, res) => {
+		if (!req.user) {
+			return res.sendStatus(404);
+		}
+
+		const payload = {
+			id: req.user.toString(),
+		};
+
+		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
+
+		res.cookie('token', accessToken, {
+			httpOnly: true,
+			secure: false,
+			maxAge: 2592000000, // 30 days
+		});
+
+		return res.redirect('http://localhost:3000/home');
+	}
+);
 
 router.get('/logout', (req, res) => {
 	res.clearCookie('token');

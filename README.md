@@ -28,8 +28,13 @@ If you are using Node version older than 14 please change .tsconfig target to th
 
 ```
 DB=YOUR_MONGODB_URI
+DB_NAME=YOUR_DB_NAME
 SECRET_TOKEN=RANDOM_STRING_OF_CHARACTERS_FOR_USER_AUTH
 PORT=THIS_IS_OPTIONAL
+
+# This is for sign in via Google. Generate data from https://console.cloud.google.com/apis/credentials
+GOOGLE_CLIENT_ID=YOUR_GOOGLE_PROJECT_CLIENT_ID
+GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_PROJECT_CLIENT_SECRET
 ```
 
 Create .env file in `packages/react-app` with

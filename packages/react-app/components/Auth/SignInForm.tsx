@@ -2,6 +2,9 @@ import React, { FormEvent, useRef, useState } from 'react';
 import ErrorPrompt from './ErrorPrompt';
 import axios from 'axios';
 import router from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
+import Link from 'next/link';
 
 export default function SignIn() {
 	const [error, setError] = useState('');
@@ -63,13 +66,42 @@ export default function SignIn() {
 					ref={passwordRef}
 				/>
 				<ErrorPrompt message={error} />
-				<div className='flex justify-end text-sm gap-3 text-white mt-14'>
+				<div className='flex justify-end text-sm gap-3 text-white mt-4'>
 					<button
 						type='submit'
 						className='bg-blue-500 py-2 px-6 rounded'
 					>
 						Submit
 					</button>
+				</div>
+				<div className='flex flex-col gap-6 mt-2'>
+					{/* This is the divider */}
+					<div className='relative flex items-center'>
+						<div className='flex-grow border-gray-300 border-t'></div>
+						<span className='flex-shrink mx-4 text-gray-500 text-sm'>
+							Or
+						</span>
+						<div className='flex-grow border-t border-gray-300'></div>
+					</div>
+
+					<div className='flex gap-2'>
+						<Link
+							href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+						>
+							<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
+								<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-500 text-center'>
+									<FontAwesomeIcon icon={faGoogle} />
+								</span>
+								Google
+							</button>
+						</Link>
+						<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
+							<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700'>
+								<FontAwesomeIcon icon={faSquareFacebook} />
+							</span>
+							Facebook
+						</button>
+					</div>
 				</div>
 			</form>
 		</div>
