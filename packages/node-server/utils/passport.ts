@@ -12,7 +12,7 @@ const FacebookStategy = passportFacebook.Strategy;
 const SALT_ROUNDS = 10;
 
 passport.use(
-	'register',
+	'login',
 	new LocalStrategy(
 		{ usernameField: 'email' },
 		async (email, password, done) => {
@@ -52,7 +52,7 @@ passport.use(
 );
 
 passport.use(
-	'login',
+	'register',
 	new LocalStrategy(
 		{ usernameField: 'email' },
 		async (email, password, done) => {

@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/login', (req, res, next) => {
 	passport.authenticate('login', { session: false }, (err, user, info) => {
 		if (err || !user) {
-			if (info.message == 'Invalid email or password') {
+			if (info && info.message == 'Invalid email or password') {
 				return res.sendStatus(403);
 			}
 
