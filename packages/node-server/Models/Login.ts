@@ -12,10 +12,10 @@ interface Login extends Document {
 
 const LoginSchema = new Schema<Login>({
 	userId: { type: Schema.Types.ObjectId, required: true },
-	email: { type: String, default: '', unique: true },
-	password: { type: String, default: '' },
-	googleId: { type: String, default: '' },
-	facebookId: { type: String, default: '' },
+	email: { type: String, default: null, unique: true },
+	password: { type: String, default: null },
+	googleId: { type: String, default: null },
+	facebookId: { type: String, default: null },
 	strategy: {
 		type: String,
 		enum: ['Local', 'Google', 'Facebook'],

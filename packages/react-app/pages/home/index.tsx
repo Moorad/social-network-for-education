@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import { useSelector } from 'react-redux';
 import { selectDisplayName } from '../../redux/userSlice';
@@ -9,6 +9,16 @@ import Loading from '../../components/Loading';
 export default function home() {
 	const { isLoading } = useAuth();
 	const displayName = useSelector(selectDisplayName);
+
+	useEffect(() => {
+		// Removes the #_=_ hash from facebook login
+		// https://developers.facebook.com/support/bugs/318390728250352/
+		window.history.replaceState(
+			'',
+			document.title,
+			window.location.pathname
+		);
+	}, []);
 
 	if (isLoading) {
 		return <Loading />;

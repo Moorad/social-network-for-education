@@ -95,12 +95,16 @@ export default function SignIn() {
 								Google
 							</button>
 						</Link>
-						<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
-							<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700'>
-								<FontAwesomeIcon icon={faSquareFacebook} />
-							</span>
-							Facebook
-						</button>
+						<Link
+							href={`${process.env.NEXT_PUBLIC_API_URL}/auth/facebook`}
+						>
+							<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
+								<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700'>
+									<FontAwesomeIcon icon={faSquareFacebook} />
+								</span>
+								Facebook
+							</button>
+						</Link>
 					</div>
 				</div>
 			</form>

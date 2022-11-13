@@ -1,12 +1,14 @@
 import passport from 'passport';
 import passportLocal from 'passport-local';
 import passportGoogle from 'passport-google-oauth20';
+import passportFacebook from 'passport-facebook';
 import bcrypt from 'bcrypt';
 import Login from '../Models/Login';
 import User from '../Models/User';
 
 const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
+const FacebookStategy = passportFacebook.Strategy;
 const SALT_ROUNDS = 10;
 
 passport.use(
@@ -75,6 +77,7 @@ passport.use(
 		}
 	)
 );
+
 passport.use(
 	'google',
 	new GoogleStrategy(
@@ -106,10 +109,49 @@ passport.use(
 
 					return done(null, newLogin.userId);
 				} else {
-					done(null, login.userId);
+					return done(null, login.userId);
 				}
 			} catch (err) {
 				done('Something wrong happened');
+			}
+		}
+	)
+);
+
+passport.use(
+	'facebook',
+	new FacebookStategy(
+		{
+			clientID: process.env.FACEBOOK_CLIENT_ID || '',
+			clientSecret: process.env.FACEBOOK_CLIENT_SECRET || '',
+			callbackURL: 'http://localhost:4000/auth/facebook/callback',
+		},
+		async (access, refresh, profile, done) => {
+			try {
+				const login = await Login.findOne({
+					facebookId: profile.id,
+				}).exec();
+
+				if (login == null) {
+					const user = new User({
+						displayName: profile.displayName,
+					});
+
+					const newLogin = new Login({
+						userId: user._id,
+						facebookId: profile.id,
+						strategy: 'Facebook',
+					});
+
+					await newLogin.save();
+					await user.save();
+
+					return done(null, newLogin.userId);
+				} else {
+					return done(null, login.userId);
+				}
+			} catch (err) {
+				done(err);
 			}
 		}
 	)

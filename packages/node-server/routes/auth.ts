@@ -106,6 +106,32 @@ router.get(
 	}
 );
 
+router.get('/facebook', passport.authenticate('facebook'));
+
+router.get(
+	'/facebook/callback',
+	passport.authenticate('facebook', { session: false }),
+	(req, res) => {
+		if (!req.user) {
+			return res.sendStatus(404);
+		}
+
+		const payload = {
+			id: req.user.toString(),
+		};
+
+		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
+
+		res.cookie('token', accessToken, {
+			httpOnly: true,
+			secure: false,
+			maxAge: 2592000000, // 30 days
+		});
+
+		return res.redirect('http://localhost:3000/home');
+	}
+);
+
 router.get('/logout', (req, res) => {
 	res.clearCookie('token');
 	res.json({
