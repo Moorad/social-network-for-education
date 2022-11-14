@@ -1,12 +1,12 @@
 import { IUserSafe } from 'common';
-import express from 'express';
+import express, { Request, Response } from 'express';
 import Post from '../Models/Post';
 import User from '../Models/User';
 import { authenticateToken } from './auth';
 
 const router = express.Router();
 
-router.get('/', authenticateToken, async (req, res) => {
+router.get('/', authenticateToken, async (req: Request, res: Response) => {
 	let userId;
 
 	if (req.query.id) {
@@ -14,7 +14,6 @@ router.get('/', authenticateToken, async (req, res) => {
 	} else {
 		userId = res.locals.user.id;
 	}
-
 	try {
 		const doc = await User.findById(userId).exec();
 

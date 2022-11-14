@@ -49,10 +49,6 @@ router.post('/register', validate(LocalRegister), (req, res, next) => {
 			return res.sendStatus(400);
 		}
 
-		if (!req.body.displayName) {
-			return res.sendStatus(400);
-		}
-
 		data.user.displayName = req.body.displayName;
 
 		try {

@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
+import { isValidObjectId } from 'mongoose';
 import { AnyZodObject, z } from 'zod';
+import { CommentZod, PostZod } from '../Models/Post';
 
 export const LocalRegister = z.object({
 	body: z.object({
@@ -26,6 +28,49 @@ export const LocalLogin = z.object({
 			.string({ required_error: 'Password is required' })
 			.min(1, 'Password must not be empty'),
 	}),
+});
+
+export const SearchTerm = z.object({
+	query: z.object({
+		term: z.string({
+			required_error: 'Term query is required',
+		}),
+	}),
+});
+
+export const ObjectIDInQuery = z.object({
+	query: z.object({
+		id: z
+			.string({
+				required_error: 'ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
+export const PostIDInQuery = z.object({
+	query: z.object({
+		postId: z
+			.string({
+				required_error: 'Post ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
+export const CreateComment = z.object({
+	body: CommentZod.pick({ content: true }),
+	query: z.object({
+		postId: z
+			.string({
+				required_error: 'Post ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
+export const CreatePost = z.object({
+	body: PostZod.pick({ title: true, description: true }),
 });
 
 // Validation middleware

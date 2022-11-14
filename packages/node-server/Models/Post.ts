@@ -1,7 +1,45 @@
-import { IPost } from 'common';
 import { Schema, model } from 'mongoose';
+import { z } from 'zod';
 
-const postSchema = new Schema({
+export const CommentZod = z.object({
+	_id: z.instanceof(Schema.Types.ObjectId),
+	posterId: z.instanceof(Schema.Types.ObjectId),
+	content: z
+		.string({
+			required_error: 'Content is required',
+		})
+		.min(1, 'Content must not be empty'),
+	created: z.string(),
+	likeCount: z.number(),
+	likes: z.array(z.instanceof(Schema.Types.ObjectId)),
+	// commentCount: z.number(),
+	// comments: z.array(z.instanceof(Schema.Types.ObjectId))
+});
+
+export type commentType = z.infer<typeof CommentZod>;
+
+export const PostZod = z.object({
+	title: z
+		.string({
+			required_error: 'Title is required',
+		})
+		.min(1, 'Title must not be empty'),
+	description: z
+		.string({
+			required_error: 'Description is required',
+		})
+		.min(1, 'Description must not be empty'),
+	posterId: z.instanceof(Schema.Types.ObjectId),
+	created: z.date(),
+	likeCount: z.number(),
+	likes: z.array(z.instanceof(Schema.Types.ObjectId)),
+	commentCount: z.number(),
+	comments: z.array(CommentZod),
+});
+
+export type postType = z.infer<typeof PostZod>;
+
+const postSchema = new Schema<postType>({
 	title: { type: String, required: true },
 	description: { type: String, required: true },
 	posterId: { type: Schema.Types.ObjectId, required: true },
@@ -25,6 +63,6 @@ const postSchema = new Schema({
 
 postSchema.index({ title: 'text' });
 
-const Post = model<IPost>('post', postSchema);
+const Post = model<postType>('post', postSchema);
 
 export default Post;

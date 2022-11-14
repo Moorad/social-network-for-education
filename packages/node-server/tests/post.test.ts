@@ -115,7 +115,7 @@ describe('/post API routes', () => {
 				.get('/post?id=123')
 				.set('Cookie', cookie)
 				.end((err, res) => {
-					chai.expect(res.status).to.equal(404);
+					chai.expect(res.status).to.equal(400);
 					done();
 				});
 		});
@@ -194,7 +194,7 @@ describe('/post API routes', () => {
 				.get('/post/like?postId=123')
 				.set('Cookie', cookie)
 				.end((err, res) => {
-					chai.expect(res.status).to.equal(404);
+					chai.expect(res.status).to.equal(400);
 				});
 		});
 	});

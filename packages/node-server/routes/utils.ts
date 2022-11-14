@@ -1,13 +1,20 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import User from '../Models/User';
+import { SearchTerm, validate } from '../utils/validation';
 import { authenticateToken } from './auth';
 const router = express.Router();
 
-router.get('/search', authenticateToken, async (req, res) => {
-	const term = req.query.term;
+router.get(
+	'/search',
+	[validate(SearchTerm), authenticateToken],
+	async (req: Request, res: Response) => {
+		const term = req.query.term;
 
-	try {
-		if (typeof term === 'string') {
+		if (typeof term !== 'string') {
+			return res.sendStatus(400);
+		}
+
+		try {
 			const docs = await User.find({
 				$text: {
 					$search: term,
@@ -30,17 +37,12 @@ router.get('/search', authenticateToken, async (req, res) => {
 			return res.json({
 				results: users,
 			});
+		} catch (err) {
+			res.json({
+				results: [],
+			});
 		}
-
-		res.statusCode = 400;
-		return res.json({
-			message: 'invalid query type',
-		});
-	} catch (err) {
-		res.json({
-			results: [],
-		});
 	}
-});
+);
 
 export default router;
