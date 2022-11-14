@@ -1,16 +1,19 @@
 import { model, Schema } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
+import { z } from 'zod';
 
-interface Login extends Document {
-	userId: Schema.Types.ObjectId;
-	email: string;
-	password: string;
-	googleId: string;
-	facebookId: string;
-	strategy: 'Local' | 'Google' | 'Facebook';
-}
+export const LoginZod = z.object({
+	userId: z.instanceof(Schema.Types.ObjectId),
+	email: z.string().nullable(),
+	password: z.string().nullable(),
+	googleId: z.string().nullable(),
+	facebookId: z.string().nullable(),
+	strategy: z.enum(['Local', 'Google', 'Facebook']),
+});
 
-const LoginSchema = new Schema<Login>({
+export type LoginType = z.infer<typeof LoginZod>;
+
+const LoginSchema = new Schema<LoginType>({
 	userId: { type: Schema.Types.ObjectId, required: true },
 	email: { type: String, default: null, unique: true },
 	password: { type: String, default: null },
@@ -22,8 +25,9 @@ const LoginSchema = new Schema<Login>({
 		required: true,
 	},
 });
+
 LoginSchema.plugin(mongooseUniqueValidator);
 
-const Login = model<Login>('login', LoginSchema);
+const Login = model<LoginType>('login', LoginSchema);
 
 export default Login;

@@ -55,7 +55,7 @@ describe('/utils API routes', () => {
 				.send({
 					displayName: 'Lilian Bernhard',
 					email: 'lil@mail.com',
-					password: 'lil123',
+					password: 'lil123456',
 				})
 				.set('Content-Type', 'application/json')
 				.end(() => {

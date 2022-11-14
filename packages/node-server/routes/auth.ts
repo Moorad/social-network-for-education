@@ -2,10 +2,11 @@ import express, { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import '../utils/passport';
+import { LocalLogin, LocalRegister, validate } from '../utils/validation';
 
 const router = express.Router();
 
-router.post('/login', (req, res, next) => {
+router.post('/login', validate(LocalLogin), (req, res, next) => {
 	passport.authenticate('login', { session: false }, (err, user, info) => {
 		if (err || !user) {
 			if (info && info.message == 'Invalid email or password') {
@@ -42,7 +43,7 @@ router.post('/login', (req, res, next) => {
 	})(req, res, next);
 });
 
-router.post('/register', (req, res, next) => {
+router.post('/register', validate(LocalRegister), (req, res, next) => {
 	passport.authenticate('register', { session: false }, async (err, data) => {
 		if (err || !data) {
 			return res.sendStatus(400);
@@ -58,7 +59,6 @@ router.post('/register', (req, res, next) => {
 			await data.login.save();
 			await data.user.save();
 		} catch (err) {
-			console.log(err);
 			return res.sendStatus(409);
 		}
 

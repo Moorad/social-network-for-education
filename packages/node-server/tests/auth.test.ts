@@ -23,7 +23,7 @@ describe('/auth API routes', () => {
 				.send({
 					displayName: 'Test',
 					email: 'test@mail.com',
-					password: 'test123',
+					password: 'test123456',
 				})
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
@@ -39,7 +39,7 @@ describe('/auth API routes', () => {
 				.send({
 					displayName: 'Test',
 					email: 'test@mail.com',
-					password: 'test123',
+					password: 'test123456',
 				})
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
@@ -52,8 +52,53 @@ describe('/auth API routes', () => {
 			chai.request(app)
 				.post('/auth/register')
 				.send({
-					email: 'test@mail.com',
+					email: 'test2@mail.com',
 					password: 'test123',
+				})
+				.set('Content-Type', 'application/json')
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(400);
+					done();
+				});
+		});
+
+		it('should test /register with an invalid email structure', (done) => {
+			chai.request(app)
+				.post('/auth/register')
+				.send({
+					displayName: 'Test 2',
+					email: 'test',
+					password: 'test123456',
+				})
+				.set('Content-Type', 'application/json')
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(400);
+					done();
+				});
+		});
+
+		it('should test /register with an invalid password length', (done) => {
+			chai.request(app)
+				.post('/auth/register')
+				.send({
+					displayName: 'Test 2',
+					email: 'test2@mail.com',
+					password: 'test123',
+				})
+				.set('Content-Type', 'application/json')
+				.end((err, res) => {
+					chai.expect(res.status).to.equal(400);
+					done();
+				});
+		});
+
+		it('should test /register with an empty display name', (done) => {
+			chai.request(app)
+				.post('/auth/register')
+				.send({
+					displayName: '',
+					email: 'test2@mail.com',
+					password: 'test123456',
 				})
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
@@ -69,7 +114,7 @@ describe('/auth API routes', () => {
 				.post('/auth/login')
 				.send({
 					email: 'test@mail.com',
-					password: 'test123',
+					password: 'test123456',
 				})
 				.set('Content-Type', 'application/json')
 				.end((err, res) => {
