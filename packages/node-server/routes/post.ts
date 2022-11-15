@@ -61,9 +61,7 @@ router.post(
 			$push: { posts: post._id },
 		}).exec();
 
-		res.json({
-			message: 'ok',
-		});
+		res.sendStatus(200);
 	}
 );
 
@@ -91,9 +89,7 @@ router.get(
 				}).exec();
 			}
 
-			res.json({
-				message: 'ok',
-			});
+			res.sendStatus(200);
 		} catch (err) {
 			res.sendStatus(404);
 		}

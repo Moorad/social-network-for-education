@@ -130,16 +130,11 @@ router.get(
 
 router.get('/logout', (req, res) => {
 	res.clearCookie('token');
-	res.json({
-		message: 'ok',
-	});
+	res.sendStatus(200);
 });
 
 router.get('/token', authenticateToken, (req, res) => {
-	res.statusCode = 200;
-	res.json({
-		message: 'ok',
-	});
+	res.sendStatus(200);
 });
 
 // Authentication middleware
@@ -151,19 +146,13 @@ export function authenticateToken(
 	const authCookie: string = req.cookies['token'];
 
 	if (!authCookie) {
-		res.statusCode = 401;
-		return res.json({
-			message: 'No authentication token provided',
-		});
+		return res.sendStatus(401);
 	}
 
 	jwt.verify(authCookie, process.env.SECRET_TOKEN || '', (err, user) => {
 		if (err) {
-			res.statusCode = 403;
 			res.clearCookie('token');
-			return res.json({
-				message: 'Invalid authentication token',
-			});
+			return res.sendStatus(403);
 		}
 
 		res.locals.user = user;

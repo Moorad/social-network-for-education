@@ -19,11 +19,8 @@ router.get('/:id', (req, res) => {
 		.then((path) => {
 			res.sendFile(path);
 		})
-		.catch((err) => {
-			res.statusCode = 404;
-			res.json({
-				message: err,
-			});
+		.catch(() => {
+			res.sendStatus(404);
 		});
 });
 
@@ -34,10 +31,7 @@ router.post('/upload', authenticateToken, (req, res) => {
 		}
 
 		if (err) {
-			res.statusCode = 400;
-			return res.json({
-				message: 'unable to upload',
-			});
+			return res.sendStatus(400);
 		}
 
 		const URL =
@@ -46,10 +40,7 @@ router.post('/upload', authenticateToken, (req, res) => {
 
 		User.findByIdAndUpdate(res.locals.user.id, { avatar: URL }, (err) => {
 			if (err) {
-				res.statusCode = 404;
-				return res.json({
-					message: 'An error occured',
-				});
+				return res.sendStatus(404);
 			}
 
 			return res.send({

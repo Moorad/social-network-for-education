@@ -34,10 +34,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 			return res.sendStatus(404);
 		}
 	} catch (err) {
-		res.statusCode = 404;
-		return res.json({
-			message: 'User was not found',
-		});
+		res.sendStatus(404);
 	}
 });
 
