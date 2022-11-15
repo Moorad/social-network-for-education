@@ -3,6 +3,7 @@ import User from '../Models/User';
 import { faker } from '@faker-js/faker';
 import Post from '../Models/Post';
 import Login from '../Models/Login';
+import bcrypt from 'bcrypt';
 
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
@@ -22,11 +23,12 @@ export async function resetDB() {
 	await User.ensureIndexes();
 	console.log('Database dropped and recreated.');
 
+	const bobPassword = await bcrypt.hash('bob123', 10);
+
 	// Create Bob
 	const bobLogin = new Login({
 		email: 'bob@mail.com',
-		password:
-			'$2b$10$uo2iiQ7JrffJLoFUTljLGO64xhF3H8ZYLEPi0kniVdLDTps6UW1Iu',
+		password: bobPassword,
 		strategy: 'Local',
 	});
 
@@ -42,10 +44,11 @@ export async function resetDB() {
 	bobLogin.userId = bob._id;
 	bobLogin.save();
 
+	const michealPassword = await bcrypt.hash('mike123', 10);
+
 	const michealLogin = new Login({
 		email: 'mike@mail.com',
-		password:
-			'$2b$10$bSkwRCdAZztTji8RbYuEy.myMmcknv7TqEQ2aH8iiJ5dUt/yUIySO',
+		password: michealPassword,
 		strategy: 'Local',
 	});
 
@@ -114,9 +117,11 @@ export async function populateWithFakeData(userCount: number) {
 		const firstName = faker.name.firstName();
 		const lastName = faker.name.lastName();
 
+		const password = await bcrypt.hash(faker.internet.password(), 10);
+
 		const userLogin = new Login({
 			email: faker.internet.email(firstName, lastName),
-			password: faker.internet.password(),
+			password: password,
 			strategy: 'Local',
 		});
 

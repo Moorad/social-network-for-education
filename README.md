@@ -35,6 +35,10 @@ PORT=THIS_IS_OPTIONAL
 # This is for sign in via Google. Generate data from https://console.cloud.google.com/apis/credentials
 GOOGLE_CLIENT_ID=YOUR_GOOGLE_PROJECT_CLIENT_ID
 GOOGLE_CLIENT_SECRET=YOUR_GOOGLE_PROJECT_CLIENT_SECRET
+
+# This is for sign in via Facebook. Generate data from https://developers.facebook.com/apps
+FACEBOOK_CLIENT_ID=YOUR_FACEBOOK_APP_CLIENT_ID
+FACEBOOK_CLIENT_SECRET=YOUR_FACEBOOK_APP_CLIENT_SECRET
 ```
 
 Create .env file in `packages/react-app` with
