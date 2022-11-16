@@ -1,4 +1,3 @@
-import { IUserSafe } from 'common';
 import express, { Request, Response } from 'express';
 import Post from '../Models/Post';
 import User from '../Models/User';
@@ -18,7 +17,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 		const doc = await User.findById(userId).exec();
 
 		if (doc) {
-			const user: IUserSafe = {
+			const user = {
 				displayName: doc.displayName,
 				description: doc.description,
 				label: doc.label,
@@ -26,6 +25,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 				followingCount: doc.followingCount,
 				posts: doc.posts,
 				avatar: doc.avatar,
+				background: doc.background,
 				_id: doc._id,
 				isPrivate: doc.isPrivate,
 			};

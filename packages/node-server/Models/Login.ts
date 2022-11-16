@@ -1,9 +1,9 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Types } from 'mongoose';
 import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { z } from 'zod';
 
 export const LoginZod = z.object({
-	userId: z.instanceof(Schema.Types.ObjectId),
+	userId: z.instanceof(Types.ObjectId),
 	email: z.string().nullable(),
 	password: z.string().nullable(),
 	googleId: z.string().nullable(),
