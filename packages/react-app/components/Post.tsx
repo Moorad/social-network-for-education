@@ -62,6 +62,25 @@ export default function Post(props: {
 		router.push(`/post/${props.post._id}`);
 	}
 
+	function handleShare(e: React.MouseEvent) {
+		e.stopPropagation();
+
+		const shareData = {
+			title: 'My App',
+			text: props.post.title,
+			url: `${window.location.origin}/post/${props.post._id}`,
+		};
+
+		try {
+			navigator.share(shareData);
+			console.log('Share is clicked');
+		} catch (err) {
+			return alert(
+				'Your browser does not support the native web share API.'
+			);
+		}
+	}
+
 	return (
 		<div
 			className='border-gray-300 border rounded-lg p-5 text-left cursor-pointer'
@@ -114,7 +133,10 @@ export default function Post(props: {
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
-					<div className='flex gap-2 items-center'>
+					<div
+						className='flex gap-2 items-center'
+						onClick={(e) => handleShare(e)}
+					>
 						<FontAwesomeIcon
 							icon={faShare}
 							className='text-gray-400'
