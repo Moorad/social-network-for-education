@@ -1,3 +1,6 @@
+import type { UserMinimal, UserType } from 'node-server/Models/User';
+import type { PostType } from 'node-server/Models/Post';
+
 import React, { useEffect, useRef, useState } from 'react';
 import MainNavBar from './NavBars/MainNavBar';
 import axios from 'axios';
@@ -12,7 +15,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { selectUser, setAvatar } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
 import Post from './Post';
-import { IPost, IUserMinimal, IUserSafe } from 'common';
 
 type propTypes = {
 	id?: string;
@@ -20,12 +22,13 @@ type propTypes = {
 };
 
 type IPostWithUser = {
-	posts: IPost[];
-	user: IUserMinimal;
+	posts: PostType[];
+	user: UserMinimal;
 } | null;
 
 export default function User(props: propTypes) {
-	const [user, setUser] = useState<IUserSafe>({
+	const [user, setUser] = useState<UserType>({
+		_id: '',
 		displayName: '',
 		description: '',
 		label: 'No label',
@@ -33,7 +36,6 @@ export default function User(props: propTypes) {
 		followingCount: 0,
 		posts: [],
 		avatar: '',
-		_id: '',
 		background: '',
 		isPrivate: false,
 	});

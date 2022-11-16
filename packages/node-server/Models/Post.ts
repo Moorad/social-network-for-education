@@ -2,8 +2,8 @@ import { Schema, model, Types } from 'mongoose';
 import { z } from 'zod';
 
 export const CommentZod = z.object({
-	_id: z.instanceof(Types.ObjectId),
-	posterId: z.instanceof(Types.ObjectId),
+	_id: z.string().or(z.instanceof(Types.ObjectId)),
+	posterId: z.string().or(z.instanceof(Types.ObjectId)),
 	content: z
 		.string({
 			required_error: 'Content is required',
@@ -11,14 +11,15 @@ export const CommentZod = z.object({
 		.min(1, 'Content must not be empty'),
 	created: z.string(),
 	likeCount: z.number(),
-	likes: z.array(z.instanceof(Types.ObjectId)),
+	likes: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	// commentCount: z.number(),
 	// comments: z.array(z.instanceof(Types.ObjectId))
 });
 
-export type commentType = z.infer<typeof CommentZod>;
+export type CommentType = z.infer<typeof CommentZod>;
 
 export const PostZod = z.object({
+	_id: z.string().or(z.instanceof(Types.ObjectId)),
 	title: z
 		.string({
 			required_error: 'Title is required',
@@ -29,17 +30,17 @@ export const PostZod = z.object({
 			required_error: 'Description is required',
 		})
 		.min(1, 'Description must not be empty'),
-	posterId: z.instanceof(Types.ObjectId),
+	posterId: z.string().or(z.instanceof(Types.ObjectId)),
 	created: z.date(),
 	likeCount: z.number(),
-	likes: z.array(z.instanceof(Types.ObjectId)),
+	likes: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	commentCount: z.number(),
 	comments: z.array(CommentZod),
 });
 
-export type postType = z.infer<typeof PostZod>;
+export type PostType = z.infer<typeof PostZod>;
 
-const postSchema = new Schema<postType>({
+const postSchema = new Schema<PostType>({
 	title: { type: String, required: true },
 	description: { type: String, required: true },
 	posterId: { type: Schema.Types.ObjectId, required: true },
@@ -63,6 +64,6 @@ const postSchema = new Schema<postType>({
 
 postSchema.index({ title: 'text' });
 
-const Post = model<postType>('post', postSchema);
+const Post = model<PostType>('post', postSchema);
 
 export default Post;

@@ -1,7 +1,6 @@
-import { IUserMinimal } from 'common';
 import express, { Request, Response } from 'express';
 import Post from '../Models/Post';
-import User from '../Models/User';
+import User, { UserMinimal } from '../Models/User';
 import {
 	CreateComment,
 	CreatePost,
@@ -29,7 +28,7 @@ router.get(
 				return res.sendStatus(404);
 			}
 
-			const user: IUserMinimal = {
+			const user: UserMinimal = {
 				displayName: userInDB.displayName,
 				avatar: userInDB.avatar,
 				_id: userInDB._id,

@@ -1,5 +1,6 @@
+import type { UserType } from 'node-server/Models/User';
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { IUserSafe } from 'common';
 import { RootState } from './store';
 
 export const userSlice = createSlice({
@@ -14,19 +15,11 @@ export const userSlice = createSlice({
 		avatar: '',
 		_id: '',
 		isPrivate: false,
-	} as IUserSafe,
+		background: ''
+	} as UserType,
 	reducers: {
-		setUser: (state, action: PayloadAction<IUserSafe>) => {
-			state.displayName = action.payload.displayName;
-			state.description = action.payload.description;
-			state.label = action.payload.label;
-			state.followerCount = action.payload.followerCount;
-			state.followingCount = action.payload.followingCount;
-			state.posts = action.payload.posts;
-			state.avatar = action.payload.avatar;
-			state._id = action.payload._id;
-			state.isPrivate = action.payload.isPrivate;
-			state.background = action.payload.background;
+		setUser: (state, action: PayloadAction<UserType>) => {
+			return { ...action.payload };
 		},
 
 		setAvatar: (state, action) => {

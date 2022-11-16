@@ -1,7 +1,9 @@
+import type { PostType } from 'node-server/Models/Post';
+import type { UserMinimal } from 'node-server/Models/User';
+
 import { faComment, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
-import { IPost, IUserMinimal } from 'common';
 import { formatNumber, formatToRelativeTime } from '../utils/format';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
@@ -12,8 +14,8 @@ import ShareButton from './ShareButton';
 const MAX_CHARACTER_LENGTH = 400;
 
 export default function Post(props: {
-	post: IPost;
-	user: IUserMinimal;
+	post: PostType;
+	user: UserMinimal;
 	fullText: boolean;
 }) {
 	const userId = useSelector(selectId);
@@ -115,7 +117,7 @@ export default function Post(props: {
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
-					<ShareButton postId={props.post._id} postTitle={props.post.title} />
+					<ShareButton postId={props.post._id as string} postTitle={props.post.title} />
 				</div>
 
 				<div className='text-gray-400'>102 views</div>

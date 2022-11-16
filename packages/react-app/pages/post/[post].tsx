@@ -1,5 +1,7 @@
+import type { PostType } from 'node-server/Models/Post';
+import type { UserMinimal } from 'node-server/Models/User';
+
 import axios from 'axios';
-import { IPost, IUserMinimal } from 'common';
 import router, { useRouter } from 'next/router';
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import Comment from '../../components/Comment';
@@ -9,12 +11,12 @@ import Post from '../../components/Post';
 import useAuth from '../../utils/hooks/useAuth';
 
 type SinglePostWithUser = {
-	post: IPost;
-	user: IUserMinimal;
+	post: PostType;
+	user: UserMinimal;
 } | null;
 
 export type CommentType = {
-	user: IUserMinimal;
+	user: UserMinimal;
 	data: {
 		content: string;
 		_id: string;

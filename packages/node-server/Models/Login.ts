@@ -3,7 +3,7 @@ import mongooseUniqueValidator from 'mongoose-unique-validator';
 import { z } from 'zod';
 
 export const LoginZod = z.object({
-	userId: z.instanceof(Types.ObjectId),
+	userId: z.string().or(z.instanceof(Types.ObjectId)),
 	email: z.string().nullable(),
 	password: z.string().nullable(),
 	googleId: z.string().nullable(),
