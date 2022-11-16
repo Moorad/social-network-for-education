@@ -1,4 +1,4 @@
-import { faComment, faHeart, faShare } from '@fortawesome/free-solid-svg-icons';
+import { faComment, faHeart } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useState } from 'react';
 import { IPost, IUserMinimal } from 'common';
@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
 import router from 'next/router';
 import axios from 'axios';
+import ShareButton from './ShareButton';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -62,25 +63,6 @@ export default function Post(props: {
 		router.push(`/post/${props.post._id}`);
 	}
 
-	function handleShare(e: React.MouseEvent) {
-		e.stopPropagation();
-
-		const shareData = {
-			title: 'My App',
-			text: props.post.title,
-			url: `${window.location.origin}/post/${props.post._id}`,
-		};
-
-		try {
-			navigator.share(shareData);
-			console.log('Share is clicked');
-		} catch (err) {
-			return alert(
-				'Your browser does not support the native web share API.'
-			);
-		}
-	}
-
 	return (
 		<div
 			className='border-gray-300 border rounded-lg p-5 text-left cursor-pointer'
@@ -133,16 +115,7 @@ export default function Post(props: {
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
-					<div
-						className='flex gap-2 items-center'
-						onClick={(e) => handleShare(e)}
-					>
-						<FontAwesomeIcon
-							icon={faShare}
-							className='text-gray-400'
-						/>
-						<div className='text-gray-800'>Share</div>
-					</div>
+					<ShareButton postId={props.post._id} postTitle={props.post.title} />
 				</div>
 
 				<div className='text-gray-400'>102 views</div>
