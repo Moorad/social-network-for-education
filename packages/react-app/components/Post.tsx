@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
 import router from 'next/router';
 import axios from 'axios';
+import ShareButton from './ShareButton';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -114,13 +115,7 @@ export default function Post(props: {
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
-					<div className='flex gap-2 items-center'>
-						<FontAwesomeIcon
-							icon={faShare}
-							className='text-gray-400'
-						/>
-						<div className='text-gray-800'>Share</div>
-					</div>
+					<ShareButton/>
 				</div>
 
 				<div className='text-gray-400'>102 views</div>
