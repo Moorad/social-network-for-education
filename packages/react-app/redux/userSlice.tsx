@@ -26,6 +26,7 @@ export const userSlice = createSlice({
 			state.avatar = action.payload.avatar;
 			state._id = action.payload._id;
 			state.isPrivate = action.payload.isPrivate;
+			state.background = action.payload.background;
 		},
 
 		setAvatar: (state, action) => {

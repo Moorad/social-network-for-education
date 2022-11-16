@@ -4,6 +4,7 @@ import path from 'path';
 export async function resetFiles() {
 	const skipFiles = [
 		'default.png',
+		'default_bg.png',
 		'd741bf93-672a-4b04-83ad-fbb90009f211.png',
 		'70bb12c5-5084-4f73-8302-451a2764e3e2.png',
 	];

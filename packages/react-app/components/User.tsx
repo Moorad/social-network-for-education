@@ -34,6 +34,7 @@ export default function User(props: propTypes) {
 		posts: [],
 		avatar: '',
 		_id: '',
+		background: '',
 		isPrivate: false,
 	});
 	const firstRender = useRef<boolean>(true);
@@ -41,6 +42,7 @@ export default function User(props: propTypes) {
 	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
+	const forRef = useRef<string>('Avatar');
 
 	useEffect(() => {
 		if (props.me) {
@@ -77,8 +79,7 @@ export default function User(props: propTypes) {
 	function fetchPosts() {
 		axios
 			.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/user/posts${
-					props.id ? `?id=${props.id}` : ''
+				`${process.env.NEXT_PUBLIC_API_URL}/user/posts${props.id ? `?id=${props.id}` : ''
 				}`,
 				{
 					withCredentials: true,
@@ -89,7 +90,7 @@ export default function User(props: propTypes) {
 			});
 	}
 
-	function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files) {
 			const imageFile = e.target.files[0];
 
@@ -99,7 +100,7 @@ export default function User(props: propTypes) {
 
 			axios
 				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/resource/upload`,
+					`${process.env.NEXT_PUBLIC_API_URL}/resource/upload?for=${forRef.current}`,
 					formData,
 					{
 						withCredentials: true,
@@ -108,11 +109,18 @@ export default function User(props: propTypes) {
 				)
 				.then((res) => {
 					const url: string = res.data.url;
-					dispatch(setAvatar(url));
-					setUser({
-						...user,
-						avatar: url,
-					});
+					if (forRef.current == 'Avatar') {
+						dispatch(setAvatar(url));
+						setUser({
+							...user,
+							avatar: url,
+						});
+					} else {
+						setUser({
+							...user,
+							background: url,
+						});
+					}
 				})
 				.catch((err) => {
 					console.log(err);
@@ -120,7 +128,10 @@ export default function User(props: propTypes) {
 		}
 	}
 
-	function handleAvatarClick() {
+	function handleUploadClick(_for: ('Avatar' | 'Profile_Background')) {
+		if (forRef.current) {
+			forRef.current = _for;
+		}
 		if (fileRef.current) {
 			fileRef.current.click();
 		}
@@ -186,7 +197,7 @@ export default function User(props: propTypes) {
 			{props.me && (
 				<input
 					type='file'
-					onChange={(e) => handleAvatarUpload(e)}
+					onChange={(e) => handleImageUpload(e)}
 					ref={fileRef}
 					accept='.png,.jpg,.jpeg'
 					className='hidden'
@@ -199,7 +210,7 @@ export default function User(props: propTypes) {
 						{props.me && (
 							<div
 								className='absolute h-full w-full bg-gray-800/[.5] opacity-0 hover:opacity-100 cursor-pointer '
-								// onClick={handleAvatarClick}
+								onClick={() => handleUploadClick('Profile_Background')}
 							>
 								<div className='flex w-full h-full justify-center items-center'>
 									<FontAwesomeIcon
@@ -210,7 +221,7 @@ export default function User(props: propTypes) {
 							</div>
 						)}
 						<img
-							src='/background.jpg'
+							src={user.background}
 							alt='background image'
 							className='h-full w-full object-cover'
 						/>
@@ -221,7 +232,7 @@ export default function User(props: propTypes) {
 								{props.me && (
 									<div
 										className='absolute h-44 w-44 bg-gray-800/[.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer '
-										onClick={handleAvatarClick}
+										onClick={() => handleUploadClick('Avatar')}
 									>
 										<div className='flex w-full h-full justify-center items-center'>
 											<FontAwesomeIcon

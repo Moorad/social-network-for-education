@@ -73,6 +73,12 @@ export const CreatePost = z.object({
 	body: PostZod.pick({ title: true, description: true }),
 });
 
+export const uploadFile = z.object({
+	query: z.object({
+		for: z.enum(['Avatar', 'Profile_Background']),
+	}),
+});
+
 // Validation middleware
 /* eslint-disable indent */
 export const validate =
