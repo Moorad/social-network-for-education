@@ -61,7 +61,7 @@ describe('/resource API routes', () => {
 				'../../file_manager/media/70bb12c5-5084-4f73-8302-451a2764e3e2.png'
 			);
 			chai.request(app)
-				.post('/resource/upload')
+				.post('/resource/upload?for=Avatar')
 				.set('Content-Type', 'multipart/form-data')
 				.set('Cookie', cookie)
 				.attach('file', imagePath)
@@ -90,7 +90,7 @@ describe('/resource API routes', () => {
 		it('should test /upload with file type that is not allowed', (done) => {
 			const exeFile = Buffer.from('data');
 			chai.request(app)
-				.post('/resource/upload')
+				.post('/resource/upload?for=Avatar')
 				.set('Cookie', cookie)
 				.attach('file', exeFile, 'test.exe')
 				.end((err, res) => {

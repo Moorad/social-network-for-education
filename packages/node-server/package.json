@@ -24,7 +24,7 @@
 		"zod": "^3.19.1"
 	},
 	"scripts": {
-		"start": "tsc && node dist/file_manager/utils/processing.js",
+		"start": "tsc && node dist/server.js",
 		"tools": "npx tsc && node dist/tools/interface.js",
 		"test": "tsc && NODE_ENV=test mocha ./dist/tests --exit"
 	},

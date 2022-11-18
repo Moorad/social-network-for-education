@@ -46,7 +46,8 @@ describe('/user API routes', () => {
 						'posts',
 						'avatar',
 						'_id',
-						'isPrivate'
+						'isPrivate',
+						'background'
 					);
 					res.body.should.not.have.property('email');
 					res.body.should.not.have.property('password');
@@ -71,7 +72,8 @@ describe('/user API routes', () => {
 						'posts',
 						'avatar',
 						'_id',
-						'isPrivate'
+						'isPrivate',
+						'background'
 					);
 
 					res.body.should.not.have.property('email');
