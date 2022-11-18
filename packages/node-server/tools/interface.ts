@@ -22,6 +22,8 @@ async function main() {
 				console.log('Invalid DB name');
 				return;
 			}
+		} else if (args[0] == '--main') {
+			DB_NAME = '/cs-project';
 		}
 
 		await connectToDB(DB_NAME);
@@ -48,6 +50,12 @@ async function main() {
 					break;
 			}
 		}
+	} else if (args[0] == 'full-reset') {
+		DB_NAME = '/cs-project';
+		await connectToDB(DB_NAME);
+		await resetDB();
+		await resetFiles();
+		process.exit();
 	}
 }
 
