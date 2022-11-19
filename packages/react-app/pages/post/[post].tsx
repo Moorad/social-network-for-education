@@ -75,25 +75,30 @@ export default function post() {
 			return <Loading />;
 		}
 
-		return comments.map((e, i) => {
-			return (
-				<div
-					key={i}
-					className={
-						i != comments.length - 1
-							? 'border-b border-gray-300'
-							: ''
-					}
-				>
-					<Comment
+		return comments.sort(
+			(a, b) =>
+				new Date(b.data.created).getTime() -
+				new Date(a.data.created).getTime()
+		)
+			.map((e, i) => {
+				return (
+					<div
 						key={i}
-						data={e.data}
-						user={e.user}
-						isAuthor={e.user._id == data?.user._id}
-					/>
-				</div>
-			);
-		});
+						className={
+							i != comments.length - 1
+								? 'border-b border-gray-300'
+								: ''
+						}
+					>
+						<Comment
+							key={i}
+							data={e.data}
+							user={e.user}
+							isAuthor={e.user._id == data?.user._id}
+						/>
+					</div>
+				);
+			});
 	}
 
 	function handleSubmission(e: FormEvent) {
