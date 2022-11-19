@@ -55,11 +55,14 @@ router.get('/posts', authenticateToken, async (req, res) => {
 				description: 1,
 				posterId: 1,
 				created: 1,
-				likeCount: 1,
-				comments: 1,
 				_id: 1,
+				viewCount: 1,
+				likeCount: 1,
 				commentCount: 1,
 				likes: {
+					$elemMatch: { $eq: res.locals.user.id },
+				},
+				views: {
 					$elemMatch: { $eq: res.locals.user.id },
 				},
 			}

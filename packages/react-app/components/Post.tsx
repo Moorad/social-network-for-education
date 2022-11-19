@@ -120,7 +120,7 @@ export default function Post(props: {
 					<ShareButton postId={props.post._id as string} postTitle={props.post.title} />
 				</div>
 
-				<div className='text-gray-400'>102 views</div>
+				<div className='text-gray-400'>{props.post.viewCount} views</div>
 			</div>
 		</div>
 	);

@@ -161,18 +161,37 @@ export async function populateWithFakeData(userCount: number) {
 		console.log(`${i + 1} - ${user.displayName} added to DB`);
 	}
 
-	// Interactions (likes)
+	// Interactions
 	for (let i = 0; i < allPosts.length; i++) {
-		const peopleLiked = Math.floor(Math.random() * allPeople.length);
+		// Number of view, likes and comments
+		const viewCount = Math.floor(Math.random() * allPeople.length);
+		const likeCount = Math.floor(Math.random() * viewCount);
+		const commentCount = Math.floor(Math.random() * viewCount);
 
-		for (let j = 0; j < peopleLiked; j++) {
-			const randomUser =
-				allPeople[Math.floor(Math.random() * allPeople.length)];
-			await Post.findByIdAndUpdate(allPosts[i], {
-				$push: { likes: randomUser },
-				$inc: { likeCount: 1 },
-			}).exec();
+		// Generate random comments
+		const comments = [];
+		const peopleComments = faker.helpers.arrayElements(
+			allPeople,
+			commentCount
+		);
+		for (let i = 0; i < commentCount; i++) {
+			comments.push({
+				posterId: peopleComments[i],
+				content: faker.lorem.paragraph(),
+			});
 		}
-		console.log(`The post ${allPosts[i]} was liked ${peopleLiked} times`);
+
+		await Post.findByIdAndUpdate(allPosts[i], {
+			likeCount: likeCount,
+			viewCount: viewCount,
+			commentCount: commentCount,
+			comments: comments,
+		}).exec();
+
+		console.log(`The post ${allPosts[i]} was viewed ${viewCount} times`);
+		console.log(`The post ${allPosts[i]} was liked ${likeCount} times`);
+		console.log(
+			`The post ${allPosts[i]} was commented ${commentCount} times`
+		);
 	}
 }

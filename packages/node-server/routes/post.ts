@@ -162,4 +162,33 @@ router.post(
 	}
 );
 
+router.get(
+	'/view',
+	[validate(PostIDInQuery), authenticateToken],
+	async (req: Request, res: Response) => {
+		const postId = req.query.postId;
+
+		try {
+			const alreadyViewed = await Post.findOne({
+				_id: postId,
+				views: res.locals.user.id,
+			}).exec();
+
+			if (alreadyViewed) {
+				return res.sendStatus(202);
+			}
+
+			await Post.findByIdAndUpdate(postId, {
+				$inc: { viewCount: 1 },
+				$push: { views: res.locals.user.id },
+			}).exec();
+
+			res.sendStatus(200);
+		} catch (err) {
+			console.log(err);
+			res.sendStatus(404);
+		}
+	}
+);
+
 export default router;

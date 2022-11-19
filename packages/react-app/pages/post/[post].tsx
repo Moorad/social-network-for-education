@@ -56,6 +56,10 @@ export default function post() {
 			.then((res) => {
 				setComments(res.data.comments);
 			});
+
+		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/post/view?postId=${query.post}`, {
+			withCredentials: true
+		});
 	}, [isReady]);
 
 	function renderPost() {
