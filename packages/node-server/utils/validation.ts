@@ -83,6 +83,14 @@ export const CreatePost = z.object({
 	body: PostZod.pick({ title: true, description: true }),
 });
 
+export const FeedType = z.object({
+	query: z.object({
+		type: z.enum(['following', 'explore']),
+		skip: z.string().optional(),
+		limit: z.string().optional(),
+	}),
+});
+
 export const uploadFile = z.object({
 	query: z.object({
 		for: z.enum(['Avatar', 'Profile_Background']),

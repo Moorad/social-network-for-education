@@ -1,7 +1,7 @@
 import express, { Request, Response } from 'express';
 import Post from '../Models/Post';
 import User from '../Models/User';
-import { UserIDInQuery, validate } from '../utils/validation';
+import { FeedType, UserIDInQuery, validate } from '../utils/validation';
 import { authenticateToken } from './auth';
 
 const router = express.Router();
@@ -143,6 +143,54 @@ router.get(
 		} catch (err) {
 			res.sendStatus(404);
 		}
+	}
+);
+
+router.get(
+	'/feed',
+	[validate(FeedType), authenticateToken],
+	async (req: Request, res: Response) => {
+		let skip = 0;
+		let limit = 0;
+
+		if (req.query.skip) {
+			skip = Number(req.query.skip as string);
+		}
+
+		if (req.query.limit) {
+			limit = Number(req.query.limit as string);
+		}
+
+		if (req.query.type != 'following') {
+			return res.sendStatus(501);
+		}
+
+		const user = await User.findById(res.locals.user.id).exec();
+
+		if (user == null) {
+			return res.sendStatus(404);
+		}
+
+		const posts = await Post.aggregate([
+			{ $match: { posterId: { $in: user.followings } } },
+			{
+				$lookup: {
+					from: 'users',
+					localField: 'posterId',
+					foreignField: '_id',
+					pipeline: [
+						{ $project: { _id: 1, displayName: 1, avatar: 1 } },
+					],
+					as: 'user',
+				},
+			},
+			{ $unwind: '$user' },
+			{ $sort: { created: -1 } },
+			{ $skip: skip },
+			{ $limit: limit },
+		]).exec();
+
+		return res.json(posts);
 	}
 );
 

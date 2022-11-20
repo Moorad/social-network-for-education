@@ -36,8 +36,8 @@ export async function resetDB() {
 		displayName: 'Bob',
 		description: "I'm Bob 😎. Nice to meet you 🤝",
 		label: 'Hardcore Gamer',
-		followerCount: 0,
-		followingCount: 10,
+		followerCount: 1,
+		followingCount: 1,
 		avatar: 'http://localhost:4000/resource/d741bf93-672a-4b04-83ad-fbb90009f211',
 	});
 
@@ -56,13 +56,19 @@ export async function resetDB() {
 		displayName: 'Micheal',
 		description: "I'm Micheal, The 2nd test account.",
 		label: 'First Year Undergrad',
-		followerCount: 209,
-		followingCount: 3,
+		followerCount: 1,
+		followingCount: 1,
 		avatar: 'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
 	});
 
 	michealLogin.userId = micheal._id;
 	michealLogin.save();
+
+	bob.followers.push(micheal._id);
+	bob.followings.push(micheal._id);
+
+	micheal.followers.push(bob._id);
+	micheal.followings.push(bob._id);
 
 	const bobPost = new Post({
 		title: 'Good moring everybody',
