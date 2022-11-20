@@ -33,7 +33,7 @@ export default function MainNavBar(props: propTypes) {
 
 			<div className='flex flex-1 h-0'>
 				<SideNavBar active={props.active} />
-				<div className='flex-1 h-full overflow-y-auto'>
+				<div className='flex-1 h-full overflow-y-auto' id='main-section'>
 					{props.children}
 				</div>
 			</div>
