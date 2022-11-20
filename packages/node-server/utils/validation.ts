@@ -58,6 +58,16 @@ export const PostIDInQuery = z.object({
 	}),
 });
 
+export const UserIDInQuery = z.object({
+	query: z.object({
+		userId: z
+			.string({
+				required_error: 'User ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
 export const CreateComment = z.object({
 	body: CommentZod.pick({ content: true }),
 	query: z.object({

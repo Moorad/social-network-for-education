@@ -7,6 +7,7 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faCamera,
+	faCheck,
 	faCirclePlus,
 	faFaceSadTear,
 	faLock,
@@ -38,6 +39,8 @@ export default function User(props: propTypes) {
 		avatar: '',
 		background: '',
 		isPrivate: false,
+		followers: [],
+		followings: [],
 	});
 	const firstRender = useRef<boolean>(true);
 	const [postData, setPostData] = useState<IPostWithUser>(null);
@@ -45,6 +48,7 @@ export default function User(props: propTypes) {
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
 	const forRef = useRef<string>('Avatar');
+	const [following, setFollowing] = useState(false);
 
 	useEffect(() => {
 		if (props.me) {
@@ -57,6 +61,10 @@ export default function User(props: propTypes) {
 				.then((res) => {
 					if (res.status == 200) {
 						setUser(res.data);
+
+						if (res.data.followers.includes(reduxUser._id)) {
+							setFollowing(true);
+						}
 					}
 				})
 				.catch((err) => {
@@ -194,6 +202,26 @@ export default function User(props: propTypes) {
 			.map((e, i) => <Post post={e} user={postData.user} key={i} />);
 	}
 
+	function handleFollow() {
+		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/follow?userId=${user._id}`, {
+			withCredentials: true
+		}).then(() => {
+			if (following) {
+				setFollowing(false);
+				setUser({
+					...user,
+					followerCount: user.followerCount - 1
+				});
+			} else {
+				setFollowing(true);
+				setUser({
+					...user,
+					followerCount: user.followerCount + 1
+				});
+			}
+		});
+	}
+
 	return (
 		<div>
 			{props.me && (
@@ -282,7 +310,9 @@ export default function User(props: propTypes) {
 						</div>
 						<div>
 							{!props.me && (
-								<button className='bg-blue-500 text-white py-2 px-7 rounded-md'>
+								following ? <button className='text-gray-500 border-gray-300 border py-2 px-7 rounded-md' onClick={() => handleFollow()}>
+									<FontAwesomeIcon icon={faCheck} /> Following
+								</button> : <button className='bg-blue-500 text-white py-2 px-7 rounded-md' onClick={() => handleFollow()}>
 									Follow
 								</button>
 							)}
