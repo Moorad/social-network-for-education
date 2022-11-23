@@ -22,7 +22,7 @@ export default function MainNavBar(props: propTypes) {
 				<div className=''>
 					<Link href='/home'>
 						<div className='bg-blue-500 w-20 h-20 flex justify-center align-middle items-center'>
-							<img src='/logo.png' className='m-autoa h-12'></img>
+							<img src='/logos/logo.png' className='m-autoa h-12'></img>
 						</div>
 					</Link>
 				</div>

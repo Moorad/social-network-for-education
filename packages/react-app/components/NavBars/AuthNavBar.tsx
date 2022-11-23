@@ -18,7 +18,7 @@ export default function AuthNavBar(props: { type: authTypes }) {
 				<div className='inline-flex items-center gap-3 font-medium'>
 					<Link href='/'>
 						<div className='bg-blue-500 p-2 rounded-lg'>
-							<img src='/logo.png' className='w-auto h-12'></img>
+							<img src='/logos/logo.png' className='w-auto h-12'></img>
 						</div>
 					</Link>
 				</div>
