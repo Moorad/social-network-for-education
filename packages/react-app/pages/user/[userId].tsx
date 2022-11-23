@@ -6,9 +6,9 @@ import User from '../../components/User';
 
 export default function UserProfile() {
 	const { query, isReady } = useRouter();
-	const { isLoading } = useAuth();
+	const { fetching } = useAuth();
 
-	if (isLoading) {
+	if (fetching) {
 		return <Loading />;
 	}
 

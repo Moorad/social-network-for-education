@@ -31,7 +31,7 @@ type Comments = CommentType[] | null;
 
 export default function post() {
 	const { query, isReady } = useRouter();
-	const { isLoading } = useAuth();
+	const { fetching } = useAuth();
 	const [data, setData] = useState<SinglePostWithUser>(null);
 	const [comments, setComments] = useState<Comments>(null);
 	const commentRef = useRef<HTMLTextAreaElement>(null);
@@ -120,7 +120,7 @@ export default function post() {
 			});
 	}
 
-	if (isLoading) {
+	if (fetching) {
 		return <Loading />;
 	}
 

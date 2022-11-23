@@ -11,7 +11,7 @@ import { UserMinimal } from 'node-server/Models/User';
 type APIResponseType = PostType & { user: UserMinimal }
 
 export default function home() {
-	const { isLoading } = useAuth();
+	const { fetching } = useAuth();
 	const [posts, setPosts] = useState<APIResponseType[]>([]);
 	const [skip, setSkip] = useState(0);
 	const [viewedAll, setViewedAll] = useState(false);
@@ -44,6 +44,8 @@ export default function home() {
 				setPosts(posts.concat(res.data));
 				setViewedAll(res.data.length < 10);
 			}
+		}).catch(() => {
+			// Do something
 		});
 	}, [skip]);
 
@@ -57,7 +59,7 @@ export default function home() {
 		}
 	}
 
-	if (isLoading) {
+	if (fetching) {
 		return <Loading />;
 	}
 

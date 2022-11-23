@@ -4,29 +4,45 @@ import { useDispatch } from 'react-redux';
 import { setUser } from '../../redux/userSlice';
 import router from 'next/router';
 
-export default function useAuth() {
-	const [isLoading, setIsLoading] = useState(true);
+export default function useAuth(redirect = true) {
+	const [fetching, setFetching] = useState(true);
+	const [authenticated, setAuthenticated] = useState(false);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		axios
 			.get(process.env.NEXT_PUBLIC_API_URL + '/user', {
-				withCredentials: true,
+				withCredentials: true
 			})
 			.then((res) => {
+				// User authenticated
 				if (res.status == 200) {
 					dispatch(setUser(res.data));
-				} else {
-					router.push('/signin');
+					setAuthenticated(true);
+					setFetching(false);
+				} else { // User is not authenticated 
+					setAuthenticated(false);
+
+					if (redirect) {
+						router.push('/signin');
+					} else {
+						setFetching(false);
+					}
 				}
 			})
 			.catch(() => {
-				router.push('/signin');
-			})
-			.finally(() => setIsLoading(false));
+				setAuthenticated(false);
+
+				if (redirect) {
+					router.push('/signin');
+				} else {
+					setFetching(false);
+				}
+			});
 	}, []);
 
 	return {
-		isLoading: isLoading,
+		fetching: fetching,
+		authenticated: authenticated
 	};
 }

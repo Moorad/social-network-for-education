@@ -4,9 +4,9 @@ import User from '../../components/User';
 import useAuth from '../../utils/hooks/useAuth';
 
 export default function Profile() {
-	const { isLoading } = useAuth();
+	const { fetching } = useAuth();
 
-	if (isLoading) {
+	if (fetching) {
 		return <Loading />;
 	}
 
