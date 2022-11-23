@@ -137,9 +137,10 @@ router.post(
 	'/comment',
 	[validate(CreateComment), authenticateToken],
 	async (req: Request, res: Response) => {
+		console.log(req);
 		try {
 			const post = await Post.findOneAndUpdate(
-				{ postId: req.query.postId },
+				{ _id: req.query.postId },
 				{
 					$inc: { commentCount: 1 },
 					$push: {
