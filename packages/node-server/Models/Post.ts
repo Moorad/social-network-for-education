@@ -1,23 +1,6 @@
 import { Schema, model, Types } from 'mongoose';
 import { z } from 'zod';
 
-export const CommentZod = z.object({
-	_id: z.string().or(z.instanceof(Types.ObjectId)),
-	posterId: z.string().or(z.instanceof(Types.ObjectId)),
-	content: z
-		.string({
-			required_error: 'Content is required',
-		})
-		.min(1, 'Content must not be empty'),
-	created: z.string(),
-	likeCount: z.number(),
-	likes: z.array(z.string().or(z.instanceof(Types.ObjectId))),
-	// commentCount: z.number(),
-	// comments: z.array(z.instanceof(Types.ObjectId))
-});
-
-export type CommentType = z.infer<typeof CommentZod>;
-
 export const PostZod = z.object({
 	_id: z.string().or(z.instanceof(Types.ObjectId)),
 	title: z
@@ -37,7 +20,6 @@ export const PostZod = z.object({
 	viewCount: z.number(),
 	views: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	commentCount: z.number(),
-	comments: z.array(CommentZod),
 });
 
 export type PostType = z.infer<typeof PostZod>;
@@ -52,18 +34,6 @@ const postSchema = new Schema<PostType>({
 	viewCount: { type: Number, default: 0 },
 	views: { type: [Schema.Types.ObjectId], default: [] },
 	commentCount: { type: Number, default: 0 },
-	comments: {
-		type: [
-			{
-				posterId: Schema.Types.ObjectId,
-				content: String,
-				created: { type: Date, default: Date.now },
-				likes: { type: [Schema.Types.ObjectId], default: [] },
-				likeCount: { type: Number, default: 0 },
-			},
-		],
-		default: [],
-	},
 });
 
 postSchema.index({ title: 'text' });

@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { isValidObjectId } from 'mongoose';
 import { AnyZodObject, z } from 'zod';
-import { CommentZod, PostZod } from '../Models/Post';
+import { PostZod } from '../Models/Post';
 
 export const LocalRegister = z.object({
 	body: z.object({
@@ -68,8 +68,24 @@ export const UserIDInQuery = z.object({
 	}),
 });
 
+export const CommentIDInQuery = z.object({
+	query: z.object({
+		commentId: z
+			.string({
+				required_error: 'Comment ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
 export const CreateComment = z.object({
-	body: CommentZod.pick({ content: true }),
+	body: z.object({
+		content: z
+			.string({
+				required_error: 'Content is required',
+			})
+			.min(1, 'Content must not be empty'),
+	}),
 	query: z.object({
 		postId: z
 			.string({

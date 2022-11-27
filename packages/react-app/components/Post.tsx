@@ -1,15 +1,16 @@
 import type { PostType } from 'node-server/Models/Post';
 import type { UserMinimal } from 'node-server/Models/User';
 
-import { faComment, faHeart } from '@fortawesome/free-solid-svg-icons';
+import { faComment } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useState } from 'react';
+import React from 'react';
 import { formatNumber, formatToRelativeTime } from '../utils/format';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
 import router from 'next/router';
 import axios from 'axios';
 import ShareButton from './ShareButton';
+import LikeButton from './LikeButton';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -19,28 +20,15 @@ export default function Post(props: {
 	fullText: boolean;
 }) {
 	const userId = useSelector(selectId);
-	const [liked, setLiked] = useState(props.post.likes.includes(userId));
 
-	function handleLiking(e: React.MouseEvent) {
-		e.stopPropagation();
+	function handleLiking() {
 		axios
 			.get(
 				`${process.env.NEXT_PUBLIC_API_URL}/post/like?postId=${props.post._id}`,
 				{
 					withCredentials: true,
 				}
-			)
-			.then((res) => {
-				if (res.status == 200) {
-					if (!liked) {
-						props.post.likeCount++;
-						setLiked(true);
-					} else {
-						props.post.likeCount--;
-						setLiked(false);
-					}
-				}
-			});
+			);
 	}
 
 	function renderText() {
@@ -90,24 +78,7 @@ export default function Post(props: {
 			</div>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
-					<div className='flex gap-2 items-center'>
-						{liked ? (
-							<FontAwesomeIcon
-								icon={faHeart}
-								onClick={(e) => handleLiking(e)}
-								className='cursor-pointer text-red-400'
-							/>
-						) : (
-							<FontAwesomeIcon
-								icon={faHeart}
-								onClick={(e) => handleLiking(e)}
-								className='cursor-pointer text-gray-400'
-							/>
-						)}
-						<div className='select-none text-gray-800'>
-							{formatNumber(props.post.likeCount)}
-						</div>
-					</div>
+					<LikeButton likeCount={props.post.likeCount} liked={props.post.likes.includes(userId)} handler={handleLiking} />
 					<div className='flex gap-2 items-center'>
 						<FontAwesomeIcon
 							icon={faComment}

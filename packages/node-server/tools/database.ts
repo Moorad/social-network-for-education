@@ -4,6 +4,7 @@ import { faker } from '@faker-js/faker';
 import Post from '../Models/Post';
 import Login from '../Models/Login';
 import bcrypt from 'bcrypt';
+import Comment from '../Models/Comment';
 
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
@@ -74,26 +75,33 @@ export async function resetDB() {
 		title: 'Good moring everybody',
 		description: 'Today is going to be a good day! 👊👊😎😎🧃🧃',
 		posterId: bob._id,
-		comments: [
-			{
-				content: 'Nice post',
-				posterId: micheal._id,
-			},
-		],
 		commentCount: 1,
 	});
 
 	bob.posts.push(bobPost._id);
 
+	const mikeComment = new Comment({
+		content: 'Nice post',
+		postId: bobPost._id,
+		userId: micheal._id,
+	});
+
+	await mikeComment.save();
+
 	const mikePost = new Post({
 		title: 'My first post',
 		description: 'This is my first post on this thing.',
 		posterId: micheal._id,
-		comments: [
-			{ content: 'You are so awesome man!!! 🏆🏆🏆', posterId: bob._id },
-		],
 		commentCount: 1,
 	});
+
+	const bobComment = new Comment({
+		content: 'You are so awesome man!!! 🏆🏆🏆',
+		postId: mikePost._id,
+		userId: bob._id,
+	});
+
+	await bobComment.save();
 
 	micheal.posts.push(mikePost._id);
 
@@ -175,23 +183,24 @@ export async function populateWithFakeData(userCount: number) {
 		const commentCount = Math.floor(Math.random() * viewCount);
 
 		// Generate random comments
-		const comments = [];
 		const peopleComments = faker.helpers.arrayElements(
 			allPeople,
 			commentCount
 		);
-		for (let i = 0; i < commentCount; i++) {
-			comments.push({
-				posterId: peopleComments[i],
+		for (let j = 0; j < commentCount; j++) {
+			const comment = new Comment({
+				postId: allPosts[i],
+				userId: peopleComments[j],
 				content: faker.lorem.paragraph(),
 			});
+
+			await comment.save();
 		}
 
 		await Post.findByIdAndUpdate(allPosts[i], {
 			likeCount: likeCount,
 			viewCount: viewCount,
 			commentCount: commentCount,
-			comments: comments,
 		}).exec();
 
 		console.log(`The post ${allPosts[i]} was viewed ${viewCount} times`);

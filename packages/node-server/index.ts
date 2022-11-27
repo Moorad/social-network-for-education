@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth';
 import userRouter from './routes/user';
 import postsRouter from './routes/post';
+import commentRouter from './routes/comment';
 import resourceRouter from './routes/resource';
 import utilsRouter from './routes/utils';
 import { startUpCheck } from './utils/start_up';
@@ -45,6 +46,7 @@ app.use(cookieParser());
 app.use('/auth', authRouter);
 app.use('/user', userRouter);
 app.use('/post', postsRouter);
+app.use('/comment', commentRouter);
 app.use('/resource', resourceRouter);
 app.use('/utils', utilsRouter);
 

@@ -1,4 +1,6 @@
 import express, { Request, Response } from 'express';
+import mongoose from 'mongoose';
+import Comment from '../Models/Comment';
 import Post from '../Models/Post';
 import User, { UserMinimal } from '../Models/User';
 import {
@@ -102,26 +104,29 @@ router.get(
 		const postId = req.query.postId;
 
 		try {
-			const post = await Post.findById(postId).exec();
-
-			if (post == null) {
-				return res.sendStatus(404);
-			}
-
-			const comments = [];
-
-			for (let i = 0; i < post.comments.length; i++) {
-				const user = await User.findById(
-					post.comments[i].posterId
-				).exec();
-				comments.push({
-					data: post.comments[i],
-					user: {
-						_id: user?._id,
-						displayName: user?.displayName,
-						avatar: user?.avatar,
+			const comments = await Comment.aggregate([
+				{
+					$match: {
+						postId: new mongoose.Types.ObjectId(postId as string),
 					},
-				});
+				},
+				{
+					$lookup: {
+						from: 'users',
+						localField: 'userId',
+						foreignField: '_id',
+						pipeline: [
+							{ $project: { _id: 1, displayName: 1, avatar: 1 } },
+						],
+						as: 'user',
+					},
+				},
+				{ $unwind: '$user' },
+				{ $sort: { created: -1 } },
+			]).exec();
+
+			if (comments == null) {
+				return res.sendStatus(404);
 			}
 
 			res.json({
@@ -137,24 +142,22 @@ router.post(
 	'/comment',
 	[validate(CreateComment), authenticateToken],
 	async (req: Request, res: Response) => {
-		console.log(req);
 		try {
-			const post = await Post.findOneAndUpdate(
-				{ _id: req.query.postId },
-				{
-					$inc: { commentCount: 1 },
-					$push: {
-						comments: {
-							posterId: res.locals.user.id,
-							content: req.body.content,
-						},
-					},
-				}
-			).exec();
+			const post = await Post.findByIdAndUpdate(req.query.postId, {
+				$inc: { commentCount: 1 },
+			}).exec();
 
 			if (post == null) {
 				return res.sendStatus(404);
 			}
+
+			const comment = new Comment({
+				userId: res.locals.user.id,
+				postId: req.query.postId,
+				content: req.body.content,
+			});
+
+			await comment.save();
 
 			return res.sendStatus(200);
 		} catch (err) {

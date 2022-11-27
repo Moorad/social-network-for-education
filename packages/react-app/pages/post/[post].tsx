@@ -1,5 +1,6 @@
 import type { PostType } from 'node-server/Models/Post';
 import type { UserMinimal } from 'node-server/Models/User';
+import type { CommentType } from 'node-server/Models/Comment';
 
 import axios from 'axios';
 import router, { useRouter } from 'next/router';
@@ -15,19 +16,10 @@ type SinglePostWithUser = {
 	user: UserMinimal;
 } | null;
 
-export type CommentType = {
-	user: UserMinimal;
-	data: {
-		content: string;
-		_id: string;
-		posterId: string;
-		likeCount: number;
-		likes: string[];
-		created: Date;
-	};
-};
 
-type Comments = CommentType[] | null;
+export type CommentWithUser = (CommentType & { user: UserMinimal })
+
+type Comments = CommentWithUser[] | null;
 
 export default function post() {
 	const { query, isReady } = useRouter();
@@ -77,8 +69,8 @@ export default function post() {
 
 		return comments.sort(
 			(a, b) =>
-				new Date(b.data.created).getTime() -
-				new Date(a.data.created).getTime()
+				new Date(b.created).getTime() -
+				new Date(a.created).getTime()
 		)
 			.map((e, i) => {
 				return (
@@ -92,8 +84,7 @@ export default function post() {
 					>
 						<Comment
 							key={i}
-							data={e.data}
-							user={e.user}
+							data={e}
 							isAuthor={e.user._id == data?.user._id}
 						/>
 					</div>
