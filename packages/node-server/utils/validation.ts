@@ -95,6 +95,23 @@ export const CreateComment = z.object({
 	}),
 });
 
+export const CreateReplyComment = z.object({
+	body: z.object({
+		content: z
+			.string({
+				required_error: 'Content is required',
+			})
+			.min(1, 'Content must not be empty'),
+	}),
+	query: z.object({
+		commentId: z
+			.string({
+				required_error: 'Comment ID is required',
+			})
+			.refine((id) => isValidObjectId(id), 'Object ID is not valid'),
+	}),
+});
+
 export const CreatePost = z.object({
 	body: PostZod.pick({ title: true, description: true }),
 });
