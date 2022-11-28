@@ -59,6 +59,8 @@ router.post(
 				commentId: req.query.commentId,
 			});
 
+			reply.parents = [...comment.parents, reply._id];
+
 			await reply.save();
 
 			await Post.findByIdAndUpdate(comment.postId, {

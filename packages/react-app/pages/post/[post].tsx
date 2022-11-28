@@ -12,6 +12,7 @@ import Post from '../../components/Post';
 import useAuth from '../../utils/hooks/useAuth';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { SortCommentsDFS } from '../../utils/sort';
 
 type SinglePostWithUser = {
 	post: PostType;
@@ -28,7 +29,7 @@ export default function post() {
 	const { fetching } = useAuth();
 	const [data, setData] = useState<SinglePostWithUser>(null);
 	const [comments, setComments] = useState<Comments>(null);
-	const [replyingTo, setReplyingTo] = useState<UserMinimal & { commentId: string } | null>(null);
+	const [replyingTo, setReplyingTo] = useState<{ displayName: string, commentId: string } | null>(null);
 	const commentRef = useRef<HTMLTextAreaElement>(null);
 
 	useEffect(() => {
@@ -70,75 +71,61 @@ export default function post() {
 			return <Loading />;
 		}
 
-		// Sort by created time
-		const timeSortedComments = comments.sort((a, b) =>
-			new Date(a.created).getTime() -
-			new Date(b.created).getTime());
+		// Sort by parent array (highest -> lowest)
 
-		console.log(timeSortedComments);
-
-		// Group by id
-		const objectGroupedComments = timeSortedComments.reduce((prev, curr) => {
-			if (curr.type == 'post') {
-				prev[curr._id as string] = [];
-			} else if (curr.type == 'reply') {
-				prev[curr.commentId as string].push(curr._id);
-			}
-
-			return prev;
-		}, Object.create(null));
-
-		// Flatten groups to array of ids
-		const flatIds = [];
-		for (let i = 0; i < Object.keys(objectGroupedComments).length; i++) {
-			flatIds.push(Object.keys(objectGroupedComments)[i]);
-			flatIds.push(...objectGroupedComments[Object.keys(objectGroupedComments)[i]]);
-		}
-
-		// Map flat ids to initial object 
-		const finalSortedComments = flatIds.map((id) => {
-			return comments.find((comment) => comment._id == id)!;
+		comments.sort((a, b) => {
+			return a.parents.length - b.parents.length;
 		});
 
-		return finalSortedComments.map((e, i) => {
-			if (e.type == 'reply') {
-				return (
-					<div
+		// // Sort by created time
+		// const timeSortedComments = comments.sort((a, b) =>
+		// 	new Date(a.created).getTime() -
+		// 	new Date(b.created).getTime());
+
+		// console.log(timeSortedComments);
+
+		// // Group by id
+		// const objectGroupedComments = timeSortedComments.reduce((prev, curr) => {
+		// 	if (curr.type == 'post') {
+		// 		prev[curr._id as string] = [];
+		// 	} else if (curr.type == 'reply') {
+		// 		prev[curr.commentId as string].push(curr._id);
+		// 	}
+
+		// 	return prev;
+		// }, Object.create(null));
+
+		// // Flatten groups to array of ids
+		// const flatIds = [];
+		// for (let i = 0; i < Object.keys(objectGroupedComments).length; i++) {
+		// 	flatIds.push(Object.keys(objectGroupedComments)[i]);
+		// 	flatIds.push(...objectGroupedComments[Object.keys(objectGroupedComments)[i]]);
+		// }
+
+		// // Map flat ids to initial object 
+		// const finalSortedComments = flatIds.map((id) => {
+		// 	return comments.find((comment) => comment._id == id)!;
+		// });
+
+		return SortCommentsDFS(comments).map((e, i) => {
+
+			return (
+				<div
+					key={i}
+					className={
+						i != comments.length - 1
+							? 'border-b border-gray-300'
+							: ''
+					}
+				>
+					<Comment
 						key={i}
-						className={
-							i != comments.length - 1
-								? 'border-b border-gray-300'
-								: ''
-						}
-					>
-						<Comment
-							key={i}
-							data={e}
-							replyUser={finalSortedComments.find((u) => u._id == e.commentId)?.user}
-							isAuthor={e.user._id == data?.user._id}
-							replyHandler={handleReplying}
-						/>
-					</div>
-				);
-			} else {
-				return (
-					<div
-						key={i}
-						className={
-							i != comments.length - 1
-								? 'border-b border-gray-300'
-								: ''
-						}
-					>
-						<Comment
-							key={i}
-							data={e}
-							isAuthor={e.user._id == data?.user._id}
-							replyHandler={handleReplying}
-						/>
-					</div>
-				);
-			}
+						data={e}
+						isAuthor={e.user._id == data?.user._id}
+						replyHandler={handleReplying}
+					/>
+				</div>
+			);
 		});
 	}
 
@@ -168,9 +155,12 @@ export default function post() {
 			});
 	}
 
-	function handleReplying(user: UserMinimal & { commentId: string }) {
+	function handleReplying(user: UserMinimal, commentId: string) {
 		console.log(user);
-		setReplyingTo(user);
+		setReplyingTo({
+			displayName: user.displayName,
+			commentId: commentId
+		});
 	}
 
 	if (fetching) {

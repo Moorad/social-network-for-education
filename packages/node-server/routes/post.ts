@@ -157,6 +157,8 @@ router.post(
 				content: req.body.content,
 			});
 
+			comment.parents = [comment._id];
+
 			await comment.save();
 
 			return res.sendStatus(200);

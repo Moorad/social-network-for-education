@@ -86,6 +86,8 @@ export async function resetDB() {
 		userId: micheal._id,
 	});
 
+	mikeComment.parents = [mikeComment._id];
+
 	await mikeComment.save();
 
 	const mikePost = new Post({
@@ -100,6 +102,8 @@ export async function resetDB() {
 		postId: mikePost._id,
 		userId: bob._id,
 	});
+
+	bobComment.parents = [bobComment._id];
 
 	await bobComment.save();
 
@@ -193,6 +197,8 @@ export async function populateWithFakeData(userCount: number) {
 				userId: peopleComments[j],
 				content: faker.lorem.paragraph(),
 			});
+
+			comment.parents = [comment._id];
 
 			await comment.save();
 		}

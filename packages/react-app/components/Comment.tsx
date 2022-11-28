@@ -12,12 +12,12 @@ import Link from 'next/link';
 
 type propTypes = { data: CommentWithUser } & {
 	isAuthor: boolean;
-	replyUser?: UserMinimal
-	replyHandler: (user: UserMinimal & { commentId: string }) => void
+	replyHandler: (user: UserMinimal, commentId: string) => void
 };
 
 export default function Comment(props: propTypes) {
 	const userId = useSelector(selectId);
+	const isReply = props.data.parents.length > 1;
 
 	function handleLiking() {
 		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comment/like?commentId=${props.data._id}`, {
@@ -26,16 +26,13 @@ export default function Comment(props: propTypes) {
 	}
 
 	function handleReplying() {
-		props.replyHandler({
-			...props.data.user,
-			commentId: props.data._id as string
-		});
+		props.replyHandler(props.data.user, props.data._id as string);
 	}
 
 	return (
-		<div className={'border-gray-300 py-5 text-left cursor-pointer ' + (props.replyUser ? 'ml-16' : '')}>
-			{props.replyUser && <div className='text-gray-400'>
-				<FontAwesomeIcon icon={faReply} /> Replying to {props.replyUser.displayName}
+		<div className='border-gray-300 py-5 text-left cursor-pointer' style={{ marginLeft: `${(props.data.parents.length - 1) * 35}px` }}>
+			{isReply && <div className='text-gray-400'>
+				<FontAwesomeIcon icon={faReply} /> Replying
 			</div>}
 			<div className='flex items-center gap-3 mt-4'>
 				<img src={props.data.user.avatar} className='w-9 rounded-full' />
@@ -60,13 +57,13 @@ export default function Comment(props: propTypes) {
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
 					<LikeButton likeCount={props.data.likeCount} liked={props.data.likes.includes(userId)} handler={handleLiking} />
-					{!props.replyUser && <Link href='#comment-box'>
+					<Link href='#comment-box'>
 						<button onClick={handleReplying}>
 							<div className='flex gap-2 items-center text-gray-500'>
 								<FontAwesomeIcon icon={faReply} /> Reply
 							</div>
 						</button>
-					</Link>}
+					</Link>
 				</div>
 			</div>
 		</div>
