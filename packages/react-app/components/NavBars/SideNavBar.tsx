@@ -19,7 +19,7 @@ const navigation = [
 	{ name: 'Profile', href: '/profile', icon: faUser },
 	{ name: 'Chat', href: '/NA', icon: faMessage },
 	{ name: 'Notifications', href: '/NA', icon: faBell },
-	{ name: 'Settings', href: '/NA', icon: faCog },
+	{ name: 'Settings', href: '/settings', icon: faCog },
 ];
 
 export default function SideNavBar(props: { active: number }) {

@@ -1,4 +1,4 @@
-import { faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faRightFromBracket, faUser } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@headlessui/react';
 import React from 'react';
@@ -48,6 +48,11 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 			name: 'Profile',
 			icon: faUser,
 			onClick: () => router.push('/profile'),
+		},
+		{
+			name: 'Settings',
+			icon: faCog,
+			onClick: () => router.push('/settings'),
 		},
 		{ name: 'Sign out', icon: faRightFromBracket, onClick: logout },
 	];

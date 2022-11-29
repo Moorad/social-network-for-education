@@ -10,7 +10,9 @@ export const userSlice = createSlice({
 		description: '',
 		label: 'No label',
 		followerCount: 0,
+		followers: [],
 		followingCount: 0,
+		followings: [],
 		posts: [],
 		avatar: '',
 		_id: '',
@@ -36,3 +38,7 @@ export const selectUser = (state: RootState) => state.user;
 export const selectAvatar = (state: RootState) => state.user.avatar;
 export const selectDisplayName = (state: RootState) => state.user.displayName;
 export const selectId = (state: RootState) => state.user._id;
+export const selectBackground = (state: RootState) => state.user.background;
+export const selectDescription = (state: RootState) => state.user.description;
+export const selectLabel = (state: RootState) => state.user.label;
+
