@@ -130,6 +130,27 @@ export const uploadFile = z.object({
 	}),
 });
 
+export const UpdateProfile = z.object({
+	body: z.object({
+		displayName: z
+			.string({
+				required_error: 'Display name is required',
+			})
+			.min(1, 'Display name must not be empty')
+			.optional(),
+		description: z
+			.string({
+				required_error: 'Description is required',
+			})
+			.optional(),
+		label: z
+			.string({
+				required_error: 'Label is required',
+			})
+			.optional(),
+	}),
+});
+
 // Validation middleware
 /* eslint-disable indent */
 export const validate =

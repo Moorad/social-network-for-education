@@ -194,4 +194,24 @@ router.get(
 	}
 );
 
+router.post(
+	'/update/profile',
+	[validate(UpdateProfile), authenticateToken],
+	async (req: Request, res: Response) => {
+		try {
+			const user = await User.findByIdAndUpdate(res.locals.user.id, {
+				...req.body,
+			});
+
+			if (user == null) {
+				return res.sendStatus(404);
+			}
+
+			return res.sendStatus(200);
+		} catch (err) {
+			return res.sendStatus(404);
+		}
+	}
+);
+
 export default router;

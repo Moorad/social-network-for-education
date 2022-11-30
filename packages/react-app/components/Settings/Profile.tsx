@@ -1,5 +1,10 @@
+import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 import React, { ChangeEvent, useState } from 'react';
 import { useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import { selectAvatar, selectBackground, selectDescription, selectDisplayName, selectLabel } from '../../redux/userSlice';
 
@@ -11,9 +16,8 @@ export default function Settings() {
 		description: useSelector(selectDescription),
 		label: useSelector(selectLabel),
 	};
-
+	const router = useRouter();
 	const [data, setData] = useState(defaultData);
-
 	const [changed, setChanged] = useState(false);
 
 	useEffect(() => {
@@ -27,11 +31,34 @@ export default function Settings() {
 		return setChanged(false);
 	}, [data]);
 
+	useEffect(() => {
+		if (changed) {
+			toast('You have unsaved changes', {
+				icon: <FontAwesomeIcon icon={faExclamationCircle} className='text-yellow-600' />,
+				position: 'bottom-center',
+				duration: Infinity
+			});
+		} else {
+			toast.dismiss();
+		}
+	}, [changed]);
+
 	function changeData(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, property: keyof typeof defaultData) {
 		setData({
 			...data,
 			[property]: e.target.value
 		});
+	}
+
+	function sendData() {
+		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/update/profile`, data, {
+			withCredentials: true
+		})
+			.then((res) => {
+				if (res.status == 200) {
+					router.reload();
+				}
+			});
 	}
 
 	return (
@@ -67,7 +94,7 @@ export default function Settings() {
 				</div>
 
 				<div>
-					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded'>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
+					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded' onClick={sendData}>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
 				</div>
 			</div>
 		</div>
