@@ -15,7 +15,10 @@ export type LoginType = z.infer<typeof LoginZod>;
 
 const LoginSchema = new Schema<LoginType>({
 	userId: { type: Schema.Types.ObjectId, required: true },
-	email: { type: String, default: null, unique: true },
+	email: {
+		type: String,
+		default: null,
+	},
 	password: { type: String, default: null },
 	googleId: { type: String, default: null },
 	facebookId: { type: String, default: null },

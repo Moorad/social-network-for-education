@@ -3,6 +3,7 @@ import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import '../utils/passport';
 import { LocalLogin, LocalRegister, validate } from '../utils/validation';
+import Login from '../Models/Login';
 
 const router = express.Router();
 
@@ -52,6 +53,14 @@ router.post('/register', validate(LocalRegister), (req, res, next) => {
 		data.user.displayName = req.body.displayName;
 
 		try {
+			const check = await Login.findOne({
+				email: data.login.email,
+			});
+
+			if (check != null) {
+				return res.sendStatus(409);
+			}
+
 			await data.login.save();
 			await data.user.save();
 		} catch (err) {
