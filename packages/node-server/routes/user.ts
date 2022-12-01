@@ -1,8 +1,17 @@
 import express, { Request, Response } from 'express';
+import Login from '../Models/Login';
 import Post from '../Models/Post';
 import User from '../Models/User';
-import { FeedType, UserIDInQuery, validate } from '../utils/validation';
+import {
+	FeedType,
+	UpdateAccount,
+	UpdateProfile,
+	UserIDInQuery,
+	validate,
+} from '../utils/validation';
 import { authenticateToken } from './auth';
+import bcrypt from 'bcrypt';
+import { SALT_ROUNDS } from '../utils/passport';
 
 const router = express.Router();
 
@@ -194,6 +203,21 @@ router.get(
 	}
 );
 
+router.get('/email', authenticateToken, async (req, res) => {
+	const login = await Login.findOne({
+		userId: res.locals.user.id,
+	}).exec();
+
+	if (login == null) {
+		return res.sendStatus(404);
+	}
+
+	return res.json({
+		email: login.email,
+		strategy: login.strategy,
+	});
+});
+
 router.post(
 	'/update/profile',
 	[validate(UpdateProfile), authenticateToken],
@@ -206,6 +230,44 @@ router.post(
 			if (user == null) {
 				return res.sendStatus(404);
 			}
+
+			return res.sendStatus(200);
+		} catch (err) {
+			return res.sendStatus(404);
+		}
+	}
+);
+
+router.post(
+	'/update/account',
+	[validate(UpdateAccount), authenticateToken],
+	async (req: Request, res: Response) => {
+		try {
+			const user = await Login.findOne({
+				userId: res.locals.user.id,
+			}).exec();
+
+			if (user == null) {
+				return res.sendStatus(404);
+			}
+
+			if (user.strategy != 'Local') {
+				return res.sendStatus(403);
+			}
+
+			const hashedPassword = await bcrypt.hash(
+				req.body.password,
+				SALT_ROUNDS
+			);
+
+			await Login.findOneAndUpdate(
+				{
+					userId: res.locals.user.id,
+				},
+				{
+					password: hashedPassword,
+				}
+			);
 
 			return res.sendStatus(200);
 		} catch (err) {

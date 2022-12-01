@@ -9,7 +9,7 @@ import User from '../Models/User';
 const LocalStrategy = passportLocal.Strategy;
 const GoogleStrategy = passportGoogle.Strategy;
 const FacebookStategy = passportFacebook.Strategy;
-const SALT_ROUNDS = 10;
+export const SALT_ROUNDS = 10;
 
 passport.use(
 	'login',

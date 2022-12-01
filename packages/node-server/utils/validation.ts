@@ -151,6 +151,14 @@ export const UpdateProfile = z.object({
 	}),
 });
 
+export const UpdateAccount = z.object({
+	body: z.object({
+		password: z
+			.string()
+			.min(8, 'Password must be at least 8 characters long'),
+	}),
+});
+
 // Validation middleware
 /* eslint-disable indent */
 export const validate =

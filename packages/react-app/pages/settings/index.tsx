@@ -3,6 +3,7 @@ import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import useAuth from '../../utils/hooks/useAuth';
 import Profile from '../../components/Settings/Profile';
+import Account from '../../components/Settings/Account';
 
 export default function Settings() {
 	const { fetching } = useAuth();
@@ -14,7 +15,7 @@ export default function Settings() {
 		},
 		{
 			name: 'Account',
-			component: <Profile />
+			component: <Account />
 		},
 		{
 			name: 'Additional settings',
