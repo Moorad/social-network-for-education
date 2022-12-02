@@ -7,6 +7,8 @@ import axios from 'axios';
 import { PostType } from 'node-server/Models/Post';
 import Post from '../../components/Post';
 import { UserMinimal } from 'node-server/Models/User';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 
 type APIResponseType = PostType & { user: UserMinimal }
 
@@ -51,8 +53,7 @@ export default function home() {
 
 	function trackScrolling(e: Event) {
 		const target = e.target as HTMLDivElement;
-
-		if (target && target.scrollHeight - target.scrollTop === target.clientHeight) {
+		if (target && target.scrollHeight - target.scrollTop <= target.clientHeight) {
 			if (!viewedAll) {
 				setSkip(skip + limit);
 			}
@@ -72,11 +73,16 @@ export default function home() {
 					</div>
 				</div>
 
-				<div className='flex flex-col m-auto my-20 text-gray-500 w-[50rem] gap-5'>
+				<div className='flex flex-col m-auto mt-20 text-gray-500 w-[50rem] gap-5'>
 					{posts.map((e, i) => {
 						return <Post post={e} user={e.user} key={i} />;
 					})}
-					{viewedAll && <div className='text-center'>You are up to date</div>}
+					{viewedAll && <div className='text-center'>
+						<div className='m-5'>
+							<div><FontAwesomeIcon icon={faCheckCircle} className='text-xl mb-2' /></div>
+							You are up to date
+						</div>
+					</div>}
 				</div>
 			</div>
 		</MainNavBar>

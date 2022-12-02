@@ -1,9 +1,9 @@
+/* eslint-disable no-var */
 import type { UserMinimal, UserType } from 'node-server/Models/User';
 import type { PostType } from 'node-server/Models/Post';
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import MainNavBar from './NavBars/MainNavBar';
-import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faCamera,
@@ -13,91 +13,78 @@ import {
 	faLock,
 } from '@fortawesome/free-solid-svg-icons';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectUser, setAvatar } from '../redux/userSlice';
+import { selectUser, setUser } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
 import Post from './Post';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { followUser, getUser, getUserMe, getUserPosts, getUserPostsMe, uploadUserImage } from '../api/userApi';
+import Loading from './Loading';
+import toast from 'react-hot-toast';
 
 type propTypes = {
 	id?: string;
 	me?: boolean;
 };
 
-type IPostWithUser = {
+type PostWithUser = {
 	posts: PostType[];
 	user: UserMinimal;
 } | null;
 
+export type uploadForTypes = 'Avatar' | 'Profile_Background';
+
 export default function User(props: propTypes) {
-	const [user, setUser] = useState<UserType>({
-		_id: '',
-		displayName: '',
-		description: '',
-		label: 'No label',
-		followerCount: 0,
-		followingCount: 0,
-		posts: [],
-		avatar: '',
-		background: '',
-		isPrivate: false,
-		followers: [],
-		followings: [],
-	});
-	const firstRender = useRef<boolean>(true);
-	const [postData, setPostData] = useState<IPostWithUser>(null);
-	const dispatch = useDispatch();
 	const reduxUser = useSelector(selectUser);
 	const fileRef = useRef<HTMLInputElement>(null);
-	const forRef = useRef<string>('Avatar');
+	const forRef = useRef<uploadForTypes>('Avatar');
 	const [following, setFollowing] = useState(false);
+	const queryClient = useQueryClient();
+	const dispatch = useDispatch();
 
-	useEffect(() => {
-		if (props.me) {
-			setUser(reduxUser);
-		} else {
-			axios
-				.get(`${process.env.NEXT_PUBLIC_API_URL}/user?id=${props.id}`, {
-					withCredentials: true,
-				})
-				.then((res) => {
-					if (res.status == 200) {
-						setUser(res.data);
-
-						if (res.data.followers.includes(reduxUser._id)) {
-							setFollowing(true);
-						}
-					}
-				})
-				.catch((err) => {
-					if (err.response && err.response.status == 404) {
-						console.log('user not found');
-					}
-				});
-		}
-	}, []);
-
-	useEffect(() => {
-		if (firstRender.current) {
-			firstRender.current = false;
-			return;
-		}
-
-		if (user.posts.length > 0 && (!user.isPrivate || props.me)) {
-			fetchPosts();
-		}
-	}, [user]);
-
-	function fetchPosts() {
-		axios
-			.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/user/posts${props.id ? `?id=${props.id}` : ''
-				}`,
-				{
-					withCredentials: true,
+	if (props.me) {
+		var { isLoading, isError, data: user } = useQuery<UserType>('user_me', getUserMe, {
+			onSuccess: (data) => {
+				dispatch(setUser(data));
+			}
+		});
+		var postQuery = useQuery<PostWithUser>('posts_me', getUserPostsMe);
+	} else {
+		var { isLoading, isError, data: user } = useQuery<UserType>(['user', props.id], () => getUser(props.id), {
+			onSuccess: (res) => {
+				if (res.followers.includes(reduxUser._id)) {
+					setFollowing(true);
 				}
-			)
-			.then((res) => {
-				setPostData(res.data);
-			});
+			}
+		});
+		var postQuery = useQuery<PostWithUser>(['posts', props.id], () => getUserPosts(props.id));
+	}
+
+	const followMutation = useMutation(followUser, {
+		onSuccess: () => {
+			setFollowing(!following);
+			queryClient.invalidateQueries();
+		},
+		onError: () => {
+			toast.error('Failed to follow the user');
+		}
+	});
+
+	const uploadMutation = useMutation(uploadUserImage, {
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+		},
+		onError: () => {
+			toast.error('Failed to upload image');
+		}
+	});
+
+	if (isLoading || postQuery.isLoading || user == undefined) {
+		return <Loading />;
+	}
+
+	if (isError) {
+		toast.error('Something went wrong!');
+		return <div></div>;
 	}
 
 	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
@@ -108,46 +95,26 @@ export default function User(props: propTypes) {
 
 			formData.append('file', imageFile);
 
-			axios
-				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/resource/upload?for=${forRef.current}`,
-					formData,
-					{
-						withCredentials: true,
-						data: formData,
-					}
-				)
-				.then((res) => {
-					const url: string = res.data.url;
-					if (forRef.current == 'Avatar') {
-						dispatch(setAvatar(url));
-						setUser({
-							...user,
-							avatar: url,
-						});
-					} else {
-						setUser({
-							...user,
-							background: url,
-						});
-					}
-				})
-				.catch((err) => {
-					console.log(err);
-				});
+			uploadMutation.mutate({
+				formData: formData,
+				_for: forRef.current
+			});
 		}
 	}
 
 	function handleUploadClick(_for: ('Avatar' | 'Profile_Background')) {
-		if (forRef.current) {
-			forRef.current = _for;
-		}
+		forRef.current = _for;
+
 		if (fileRef.current) {
 			fileRef.current.click();
 		}
 	}
 
 	function renderPosts() {
+		if (!postQuery.data || !user) {
+			return;
+		}
+
 		if (user.isPrivate && !props.me) {
 			return (
 				<div>
@@ -193,33 +160,18 @@ export default function User(props: propTypes) {
 			);
 		}
 
-		return postData?.posts
+		const _user = postQuery.data.user;
+		return postQuery.data.posts
 			.sort(
 				(a, b) =>
 					new Date(b.created).getTime() -
 					new Date(a.created).getTime()
 			)
-			.map((e, i) => <Post post={e} user={postData.user} key={i} />);
+			.map((e, i) => <Post post={e} user={_user} key={i} />);
 	}
 
 	function handleFollow() {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/follow?userId=${user._id}`, {
-			withCredentials: true
-		}).then(() => {
-			if (following) {
-				setFollowing(false);
-				setUser({
-					...user,
-					followerCount: user.followerCount - 1
-				});
-			} else {
-				setFollowing(true);
-				setUser({
-					...user,
-					followerCount: user.followerCount + 1
-				});
-			}
-		});
+		followMutation.mutate(props.id);
 	}
 
 	return (
