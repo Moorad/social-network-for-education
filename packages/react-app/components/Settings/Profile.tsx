@@ -2,11 +2,12 @@ import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import React, { ChangeEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useSelector } from 'react-redux';
-import { selectAvatar, selectBackground, selectDescription, selectDisplayName, selectLabel } from '../../redux/userSlice';
+import { selectAvatar, selectBackground, selectDescription, selectDisplayName, selectIsPrivate, selectLabel } from '../../redux/userSlice';
+import Toggle from '../Toggle';
 
 export default function Settings() {
 	const defaultData = {
@@ -15,13 +16,13 @@ export default function Settings() {
 		displayName: useSelector(selectDisplayName),
 		description: useSelector(selectDescription),
 		label: useSelector(selectLabel),
+		isPrivate: useSelector(selectIsPrivate),
 	};
 	const router = useRouter();
 	const [data, setData] = useState(defaultData);
 	const [changed, setChanged] = useState(false);
 
 	useEffect(() => {
-		console.log(changed);
 		for (let i = 0; i < Object.values(defaultData).length; i++) {
 			if (Object.values(defaultData)[i] != Object.values(data)[i]) {
 				return setChanged(true);
@@ -43,10 +44,10 @@ export default function Settings() {
 		}
 	}, [changed]);
 
-	function changeData(e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>, property: keyof typeof defaultData) {
+	function changeData(e: unknown, property: keyof typeof defaultData) {
 		setData({
 			...data,
-			[property]: e.target.value
+			[property]: e
 		});
 	}
 
@@ -78,19 +79,24 @@ export default function Settings() {
 
 				<div className='flex flex-col w-fit gap-1'>
 					<label htmlFor='DisplayName' className='text-sm font-medium text-gray-800'>Display Name</label>
-					<input type='text' defaultValue={defaultData.displayName} className='border border-gray-300 rounded-md px-4 py-1' onChange={(e) => changeData(e, 'displayName')} />
+					<input type='text' defaultValue={defaultData.displayName} className='border border-gray-300 rounded-md px-4 py-1' onChange={(e) => changeData(e.target.value, 'displayName')} />
 				</div>
 
 				<div className='flex flex-col w-fit gap-1'>
 					<label htmlFor='Description' className='text-sm font-medium text-gray-800'>Description</label>
-					<textarea defaultValue={defaultData.description} className='border border-gray-300 rounded-md px-4 py-1 resize-none' onChange={(e) => changeData(e, 'description')}
+					<textarea defaultValue={defaultData.description} className='border border-gray-300 rounded-md px-4 py-1 resize-none' onChange={(e) => changeData(e.target.value, 'description')}
 						cols={50}
 						rows={6} />
 				</div>
 
 				<div className='flex flex-col w-fit gap-1'>
 					<label htmlFor='Label' className='text-sm font-medium text-gray-800'>Label</label>
-					<input type='text' defaultValue={defaultData.label} className='border border-gray-300 rounded-md px-4 py-1' onChange={(e) => changeData(e, 'label')} />
+					<input type='text' defaultValue={defaultData.label} className='border border-gray-300 rounded-md px-4 py-1' onChange={(e) => changeData(e.target.value, 'label')} />
+				</div>
+
+				<div className='flex flex-col w-fit gap-1'>
+					<label htmlFor='Label' className='text-sm font-medium text-gray-800'>Private account</label>
+					<Toggle defaultEnabled={defaultData.isPrivate} onChange={(e) => changeData(e, 'isPrivate')} />
 				</div>
 
 				<div>

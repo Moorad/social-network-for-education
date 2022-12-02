@@ -36,6 +36,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 				followingCount: 1,
 				avatar: 1,
 				background: 1,
+				isPrivate: 1,
 				followers: {
 					$elemMatch: { $eq: res.locals.user.id },
 				},

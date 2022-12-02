@@ -4,11 +4,16 @@ import MainNavBar from '../../components/NavBars/MainNavBar';
 import useAuth from '../../utils/hooks/useAuth';
 import Profile from '../../components/Settings/Profile';
 import Account from '../../components/Settings/Account';
+import General from '../../components/Settings/General';
 
 export default function Settings() {
 	const { fetching } = useAuth();
 	const [currentPage, setCurrentPage] = useState(0);
 	const pages = [
+		{
+			name: 'General',
+			component: <General />
+		},
 		{
 			name: 'Profile',
 			component: <Profile />
@@ -17,10 +22,6 @@ export default function Settings() {
 			name: 'Account',
 			component: <Account />
 		},
-		{
-			name: 'Additional settings',
-			component: <Profile />
-		}
 	];
 
 	if (fetching) {

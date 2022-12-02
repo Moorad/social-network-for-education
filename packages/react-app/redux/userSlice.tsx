@@ -41,4 +41,6 @@ export const selectId = (state: RootState) => state.user._id;
 export const selectBackground = (state: RootState) => state.user.background;
 export const selectDescription = (state: RootState) => state.user.description;
 export const selectLabel = (state: RootState) => state.user.label;
+export const selectIsPrivate = (state: RootState) => state.user.isPrivate;
+
 

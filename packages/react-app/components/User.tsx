@@ -148,7 +148,7 @@ export default function User(props: propTypes) {
 	}
 
 	function renderPosts() {
-		if (user.isPrivate) {
+		if (user.isPrivate && !props.me) {
 			return (
 				<div>
 					<FontAwesomeIcon icon={faLock} className='text-lg' />
