@@ -30,27 +30,29 @@ export default function Comment(props: propTypes) {
 	}
 
 	return (
-		<div className='border-gray-300 py-5 text-left cursor-pointer' style={{ marginLeft: `${(props.data.parents.length - 1) * 35}px` }}>
+		<div className='border-gray-300 py-5 text-left' style={{ marginLeft: `${(props.data.parents.length - 1) * 35}px` }}>
 			{isReply && <div className='text-gray-400'>
 				<FontAwesomeIcon icon={faReply} /> Replying
 			</div>}
-			<div className='flex items-center gap-3 mt-4'>
-				<img src={props.data.user.avatar} className='w-9 rounded-full' />
-				<div className='flex gap-2 items-center'>
-					<div className='text-gray-700 font-medium'>
-						{props.data.user.displayName}
-					</div>
-					{props.isAuthor && (
-						<span className='bg-emerald-100 text-emerald-600 text-sm px-2 rounded-full'>
-							Original author
-						</span>
-					)}
-					<div className='text-gray-500'>•</div>
-					<div className='text-gray-500'>
-						{formatToRelativeTime(props.data.created)}
+			<Link href={`/user/${props.data.user._id}`}>
+				<div className='flex items-center gap-3 mt-4 cursor-pointer w-fit group'>
+					<img src={props.data.user.avatar} className='w-9 rounded-full' />
+					<div className='flex gap-2 items-center'>
+						<div className='text-gray-700 font-medium group-hover:underline'>
+							{props.data.user.displayName}
+						</div>
+						{props.isAuthor && (
+							<span className='bg-emerald-100 text-emerald-600 text-sm px-2 rounded-full'>
+								Original author
+							</span>
+						)}
+						<div className='text-gray-500'>•</div>
+						<div className='text-gray-500'>
+							{formatToRelativeTime(props.data.created)}
+						</div>
 					</div>
 				</div>
-			</div>
+			</Link>
 			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
 				{props.data.content}
 			</div>
@@ -60,7 +62,7 @@ export default function Comment(props: propTypes) {
 					<Link href='#comment-box'>
 						<button onClick={handleReplying}>
 							<div className='flex gap-2 items-center text-gray-500'>
-								<FontAwesomeIcon icon={faReply} /> Reply
+								<FontAwesomeIcon icon={faReply} className='text-gray-400' /> Reply
 							</div>
 						</button>
 					</Link>

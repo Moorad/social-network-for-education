@@ -11,6 +11,7 @@ import router from 'next/router';
 import axios from 'axios';
 import ShareButton from './ShareButton';
 import LikeButton from './LikeButton';
+import Link from 'next/link';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -55,7 +56,7 @@ export default function Post(props: {
 
 	return (
 		<div
-			className='border-gray-300 border rounded-lg p-5 text-left cursor-pointer'
+			className={'border-gray-300 border rounded-lg p-5 text-left ' + (!props.fullText ? 'cursor-pointer' : '')}
 			onClick={handleClick}
 		>
 			<div className='text-gray-900 font-semibold text-lg'>
@@ -64,18 +65,20 @@ export default function Post(props: {
 			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
 				{renderText()}
 			</div>
-			<div className='flex items-center gap-3 mt-4'>
-				<img src={props.user.avatar} className='w-9 rounded-full' />
-				<div className='flex gap-2'>
-					<div className='text-gray-700 font-medium'>
-						{props.user.displayName}
-					</div>
-					<div className='text-gray-500'>•</div>
-					<div className='text-gray-500'>
-						{formatToRelativeTime(props.post.created)}
+			<Link href={`/user/${props.user._id}`}>
+				<div className='flex items-center gap-3 mt-4 w-fit cursor-pointer group' onClick={(e) => e.stopPropagation()}>
+					<img src={props.user.avatar} className='w-9 rounded-full' />
+					<div className='flex gap-2'>
+						<div className='text-gray-700 font-medium group-hover:underline'>
+							{props.user.displayName}
+						</div>
+						<div className='text-gray-500'>•</div>
+						<div className='text-gray-500'>
+							{formatToRelativeTime(props.post.created)}
+						</div>
 					</div>
 				</div>
-			</div>
+			</Link>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
 					<LikeButton likeCount={props.post.likeCount} liked={props.post.likes.includes(userId)} handler={handleLiking} />
@@ -84,7 +87,7 @@ export default function Post(props: {
 							icon={faComment}
 							className='text-gray-400'
 						/>
-						<div className='text-gray-800'>
+						<div className='text-gray-500'>
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>

@@ -30,7 +30,7 @@ export default function ShareButton(props: { postId: string, postTitle: string }
 	return (
 		<div className='flex gap-2 items-center relative'>
 			<Popover>
-				<Popover.Button onClick={(e: React.MouseEvent) => handleClick(e)}>
+				<Popover.Button onClick={(e: React.MouseEvent) => handleClick(e)} className='text-gray-500'>
 					<FontAwesomeIcon
 						icon={faShare}
 						className='text-gray-400'

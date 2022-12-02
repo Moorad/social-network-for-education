@@ -42,7 +42,7 @@ export default function LikeButton(props: {
 						className='cursor-pointer text-gray-400'
 					/>
 				)}
-				<div className='select-none text-gray-800'>
+				<div className='select-none text-gray-500'>
 					{formatNumber(likeCount)}
 				</div>
 			</div>
