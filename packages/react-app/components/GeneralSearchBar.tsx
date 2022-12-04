@@ -1,37 +1,28 @@
 import { Combobox } from '@headlessui/react';
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import router from 'next/router';
+import { searchQuery } from '../api/utilsApi';
+import useDebounce from '../utils/hooks/useDebounce';
+import { useQuery } from 'react-query';
+import type { UserType } from 'node-server/Models/User';
 
 type responseResult = {
-	displayName: string;
-	_id: string;
-	avatar: string;
+	results: UserType[]
 };
 
 export default function GeneralSearchBar() {
-	const [query, setQuery] = useState('');
-	const [selected, setSelected] = useState<responseResult>();
-	const [users, setUsers] = useState<responseResult[]>([]);
-
-	useEffect(() => {
-		if (query != '') {
-			axios
-				.get(
-					`${process.env.NEXT_PUBLIC_API_URL}/utils/search?term=${query}`,
-					{
-						withCredentials: true,
-					}
-				)
-				.then((res) => {
-					setUsers(res.data.results);
-				});
-		}
-	}, [query]);
+	const [query, setQuery] = useState<string | undefined>(undefined);
+	const [selected, setSelected] = useState<UserType>();
+	const debouncedQuery = useDebounce(query || '', 500);
+	const { data } = useQuery<responseResult>(
+		['search', debouncedQuery],
+		() => searchQuery(debouncedQuery), {
+		enabled: Boolean(query)
+	});
 
 	useEffect(() => {
 		if (selected != undefined) {
-			router.push(`/user/${selected?._id}`);
+			router.push(`/user/${selected._id}`);
 		}
 	}, [selected]);
 
@@ -51,12 +42,12 @@ export default function GeneralSearchBar() {
 								className='rounded-md border-gray-300 border absolute py-1 w-full'
 								static
 							>
-								{users.length == 0 && (
+								{(!data || data?.results.length == 0) && (
 									<div className='px-5 py-2 text-gray-400 text-md'>
 										Nothing found.
 									</div>
 								)}
-								{users.map((item) => (
+								{data?.results.map((item) => (
 									<Combobox.Option
 										key={item.displayName}
 										value={item}

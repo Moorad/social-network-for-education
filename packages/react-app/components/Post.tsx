@@ -8,10 +8,12 @@ import { formatNumber, formatToRelativeTime } from '../utils/format';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
 import router from 'next/router';
-import axios from 'axios';
 import ShareButton from './ShareButton';
 import LikeButton from './LikeButton';
 import Link from 'next/link';
+import { useMutation, useQueryClient } from 'react-query';
+import { likePost } from '../api/postApi';
+import toast from 'react-hot-toast';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -21,15 +23,18 @@ export default function Post(props: {
 	fullText: boolean;
 }) {
 	const userId = useSelector(selectId);
+	const queryClient = useQueryClient();
+	const likeMutation = useMutation(likePost, {
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+		},
+		onError: () => {
+			toast.error('Failed to like the post');
+		}
+	});
 
 	function handleLiking() {
-		axios
-			.get(
-				`${process.env.NEXT_PUBLIC_API_URL}/post/like?postId=${props.post._id}`,
-				{
-					withCredentials: true,
-				}
-			);
+		likeMutation.mutate(props.post._id as string);
 	}
 
 	function renderText() {
