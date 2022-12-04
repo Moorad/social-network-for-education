@@ -1,10 +1,10 @@
 import React from 'react';
 
-export default function Loading() {
+export default function InlineLoading() {
 	return (
-		<div className='inset-center'>
+		<div className='p-3'>
 			<svg
-				className='animate-spin h-12 w-12 text-blue-500'
+				className='animate-spin h-8 w-8 text-blue-500 mx-auto'
 				xmlns='http://www.w3.org/2000/svg'
 				fill='none'
 				viewBox='0 0 24 24'

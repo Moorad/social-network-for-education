@@ -25,7 +25,7 @@ export default function SignIn() {
 					toast.error('Incorrect email address or password');
 					break;
 				default:
-					toast.error('The server encountered an internal error, please try again later');
+					toast.error('The server has encountered an internal error, please try again later');
 					break;
 			}
 		}
