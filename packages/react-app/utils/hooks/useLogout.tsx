@@ -1,13 +1,20 @@
 // import React from 'react';
-import axios from 'axios';
 import router from 'next/router';
+import toast from 'react-hot-toast';
+import { useMutation } from 'react-query';
+import { logoutUser } from '../../api/authApi';
 
 export default function useLogout() {
+	const logoutMutation = useMutation('logout', logoutUser, {
+		onSuccess: () => {
+			router.push('/signin');
+		},
+		onError: () => {
+			toast.error('Failed to logout');
+		}
+	});
+
 	return () => {
-		axios
-			.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
-				withCredentials: true,
-			})
-			.then(() => router.push('/signin'));
+		logoutMutation.mutate();
 	};
 }

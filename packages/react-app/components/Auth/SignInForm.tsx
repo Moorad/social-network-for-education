@@ -1,39 +1,43 @@
-import React, { FormEvent, useRef, useState } from 'react';
-import ErrorPrompt from './ErrorPrompt';
-import axios from 'axios';
+import React, { FormEvent, useRef } from 'react';
 import router from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
+import { useMutation } from 'react-query';
+import { loginUser } from '../../api/authApi';
+import toast from 'react-hot-toast';
+import { AxiosError } from 'axios';
 
 export default function SignIn() {
-	const [error, setError] = useState('');
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
+	const loginMutation = useMutation('login', loginUser, {
+		onSuccess: () => {
+			router.push('/home');
+		},
+		onError: (error) => {
+			const err = error as AxiosError;
+			switch (err.response?.status) {
+				case (403):
+					toast.error('Incorrect email address or password');
+					break;
+				case (400):
+					toast.error('Incorrect email address or password');
+					break;
+				default:
+					toast.error('The server encountered an internal error, please try again later');
+					break;
+			}
+		}
+	});
 
 	function handleSubmission(e: FormEvent) {
 		e.preventDefault();
-		setError('');
 		if (emailRef.current && passwordRef.current) {
-			axios
-				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-					{
-						email: emailRef.current.value.toLowerCase(),
-						password: passwordRef.current.value,
-					},
-					{
-						withCredentials: true,
-					}
-				)
-				.then(() => {
-					router.push('/home');
-				})
-				.catch((res) => {
-					setError(
-						`${res.response.status}: ${res.response.data.message}`
-					);
-				});
+			loginMutation.mutate({
+				email: emailRef.current.value.toLowerCase(),
+				password: passwordRef.current.value,
+			});
 		}
 	}
 
@@ -65,7 +69,6 @@ export default function SignIn() {
 					autoComplete='current-password'
 					ref={passwordRef}
 				/>
-				<ErrorPrompt message={error} />
 				<div className='flex justify-end text-sm gap-3 text-white mt-4'>
 					<button
 						type='submit'

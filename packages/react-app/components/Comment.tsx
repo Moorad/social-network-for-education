@@ -4,11 +4,13 @@ import { formatToRelativeTime } from '../utils/format';
 import LikeButton from './LikeButton';
 import { useSelector } from 'react-redux';
 import { selectId } from '../redux/userSlice';
-import axios from 'axios';
 import { UserMinimal } from 'node-server/Models/User';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
+import { useMutation, useQueryClient } from 'react-query';
+import { likeComment } from '../api/commentApi';
+import toast from 'react-hot-toast';
 
 type propTypes = { data: CommentWithUser } & {
 	isAuthor: boolean;
@@ -18,11 +20,18 @@ type propTypes = { data: CommentWithUser } & {
 export default function Comment(props: propTypes) {
 	const userId = useSelector(selectId);
 	const isReply = props.data.parents.length > 1;
+	const queryClient = useQueryClient();
+	const likeMutation = useMutation(likeComment, {
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+		},
+		onError: () => {
+			toast.error('Failed to like the comment');
+		}
+	});
 
 	function handleLiking() {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/comment/like?commentId=${props.data._id}`, {
-			withCredentials: true
-		});
+		likeMutation.mutate(props.data._id as string);
 	}
 
 	function handleReplying() {
