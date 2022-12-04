@@ -39,3 +39,10 @@ export const uploadUserImage = async (data: {
 	);
 	return response.data;
 };
+
+export const userFeed = async ({ pageParam = 0 }: { pageParam?: number }) => {
+	const response = await baseApi.get(
+		`/user/feed?type=following&skip=${pageParam}&limit=10`
+	);
+	return response.data;
+};

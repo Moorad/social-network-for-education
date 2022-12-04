@@ -1,23 +1,46 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import GeneralSearchBar from '../../components/GeneralSearchBar';
 import useAuth from '../../utils/hooks/useAuth';
 import Loading from '../../components/Loading';
-import axios from 'axios';
 import { PostType } from 'node-server/Models/Post';
 import Post from '../../components/Post';
 import { UserMinimal } from 'node-server/Models/User';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import { useInfiniteQuery } from 'react-query';
+import { userFeed } from '../../api/userApi';
+import InlineLoading from '../../components/InlineLoading';
+import toast from 'react-hot-toast';
 
 type APIResponseType = PostType & { user: UserMinimal }
 
 export default function home() {
 	const { fetching } = useAuth();
-	const [posts, setPosts] = useState<APIResponseType[]>([]);
-	const [skip, setSkip] = useState(0);
-	const [viewedAll, setViewedAll] = useState(false);
 	const limit = 10;
+	const {
+		isLoading,
+		isFetchingNextPage,
+		fetchNextPage,
+		hasNextPage,
+		data
+	} = useInfiniteQuery<APIResponseType[]>(
+		['feed'],
+		userFeed,
+		{
+			getNextPageParam: (lastPage, pages) => {
+				if (lastPage.length < limit) {
+					return undefined;
+				}
+
+				return pages.length * limit;
+			},
+			onError: () => {
+				toast.error('Failed to fetch more posts');
+			}
+
+		}
+	);
 
 	useEffect(() => {
 		// Removes the #_=_ hash from facebook login
@@ -37,30 +60,24 @@ export default function home() {
 		};
 	}, [trackScrolling]);
 
-
-	useEffect(() => {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/feed?type=following&skip=${skip}&limit=${limit}`, {
-			withCredentials: true
-		}).then((res) => {
-			if (res.status == 200) {
-				setPosts(posts.concat(res.data));
-				setViewedAll(res.data.length < 10);
-			}
-		}).catch(() => {
-			// Do something
-		});
-	}, [skip]);
-
 	function trackScrolling(e: Event) {
 		const target = e.target as HTMLDivElement;
 		if (target && target.scrollHeight - target.scrollTop <= target.clientHeight) {
-			if (!viewedAll) {
-				setSkip(skip + limit);
+			if (!isFetchingNextPage && hasNextPage) {
+				fetchNextPage();
 			}
 		}
 	}
 
-	if (fetching) {
+	function renderPosts() {
+		return data?.pages.map((page, pi) => {
+			return page.map((p, i) =>
+				<Post post={p} user={p.user} key={(pi * 10) + i} />
+			);
+		});
+	}
+
+	if (fetching || isLoading) {
 		return <Loading />;
 	}
 
@@ -72,17 +89,16 @@ export default function home() {
 						<GeneralSearchBar />
 					</div>
 				</div>
-
 				<div className='flex flex-col m-auto mt-20 text-gray-500 w-[50rem] gap-5'>
-					{posts.map((e, i) => {
-						return <Post post={e} user={e.user} key={i} />;
-					})}
-					{viewedAll && <div className='text-center'>
+					{renderPosts()}
+					{isFetchingNextPage && <InlineLoading />}
+					{!hasNextPage && <div className='text-center'>
 						<div className='m-5'>
 							<div><FontAwesomeIcon icon={faCheckCircle} className='text-xl mb-2' /></div>
 							You are up to date
 						</div>
 					</div>}
+
 				</div>
 			</div>
 		</MainNavBar>
