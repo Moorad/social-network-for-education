@@ -1,8 +1,10 @@
 import { Dialog } from '@headlessui/react';
-import axios from 'axios';
 import { useRouter } from 'next/router';
 import React, { FormEvent, useRef } from 'react';
+import toast from 'react-hot-toast';
+import { useMutation, useQueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { createPost } from '../api/postApi';
 import { hidePostModal, selectShowPost } from '../redux/modalsSlice';
 import { selectAvatar } from '../redux/userSlice';
 
@@ -13,27 +15,26 @@ export default function PostModal() {
 	const avatar = useSelector(selectAvatar);
 	const dispatch = useDispatch();
 	const router = useRouter();
+	const queryClient = useQueryClient();
+	const postMutation = useMutation('create_post', createPost, {
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+			dispatch(hidePostModal());
+			router.push('/profile');
+		},
+		onError: () => {
+			toast.error('Failed to create a new post');
+		}
+	});
 
 	function handleSubmission(e: FormEvent) {
 		e.preventDefault();
 
 		if (titleRef.current && descriptionRef.current) {
-			axios
-				.post(
-					`${process.env.NEXT_PUBLIC_API_URL}/post`,
-					{
-						title: titleRef.current.value,
-						description: descriptionRef.current.value,
-					},
-					{
-						withCredentials: true,
-					}
-				)
-				.then((res) => {
-					if (res.status == 200) {
-						router.reload();
-					}
-				});
+			postMutation.mutate({
+				title: titleRef.current.value,
+				description: descriptionRef.current.value,
+			});
 		}
 	}
 

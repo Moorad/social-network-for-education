@@ -46,3 +46,29 @@ export const userFeed = async ({ pageParam = 0 }: { pageParam?: number }) => {
 	);
 	return response.data;
 };
+
+export const getUserEmail = async () => {
+	const response = await baseApi.get('/user/email');
+	return response.data;
+};
+
+export const updateUserProfile = async (data: {
+	avatar?: string;
+	background?: string;
+	displayName?: string;
+	description?: string;
+	label?: string;
+	isPrivate?: boolean;
+}) => {
+	const response = await baseApi.post('/user/update/profile', data);
+	return response.data;
+};
+
+export const updateUserAccount = async (data: {
+	email?: string;
+	strategy?: string;
+	password?: string;
+}) => {
+	const response = await baseApi.post('/user/update/account', data);
+	return response.data;
+};

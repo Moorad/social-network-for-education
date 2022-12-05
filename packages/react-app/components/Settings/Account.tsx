@@ -1,13 +1,12 @@
 import { faGoogle, faSquareFacebook } from '@fortawesome/free-brands-svg-icons';
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
-import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { getUserEmail, updateUserAccount } from '../../api/userApi';
 
 export default function Account() {
-	const router = useRouter();
 	const [changed, setChanged] = useState(false);
 	const [error, setError] = useState('');
 	const [data, setData] = useState({
@@ -15,31 +14,43 @@ export default function Account() {
 		strategy: '',
 		password: ''
 	});
+	const [toastId, setToastId] = useState<string>('');
 	const confirmPassword = useRef<HTMLInputElement>(null);
 	const newPassword = useRef<HTMLInputElement>(null);
+	const queryClient = useQueryClient();
+	const updateMutation = useMutation('update_account', updateUserAccount, {
+		onSuccess() {
+			queryClient.invalidateQueries();
+			setChanged(false);
+			toast.success('Your profile information has been updated successfully');
+			toast.dismiss(toastId);
+		},
+		onError: () => {
+			toast.error('Failed to update your account information');
+		}
+	});
 
-	useEffect(() => {
-		axios.get(`${process.env.NEXT_PUBLIC_API_URL}/user/email`, {
-			withCredentials: true
-		}).then((res) => {
-			if (res.status == 200) {
-				setData({
-					...data,
-					...res.data
-				});
-			}
-		});
-	}, []);
+	useQuery('get_email', getUserEmail, {
+		onSuccess: (apiData) => {
+			setData({
+				...data,
+				...apiData
+			});
+		},
+		onError() {
+			toast.error('Failed to fetch login strategy');
+		}
+	});
 
 	useEffect(() => {
 		if (changed) {
-			toast('You have unsaved changes', {
+			setToastId(toast('You have unsaved changes', {
 				icon: <FontAwesomeIcon icon={faExclamationCircle} className='text-yellow-600' />,
 				position: 'bottom-center',
 				duration: Infinity
-			});
+			}));
 		} else {
-			toast.dismiss();
+			toast.dismiss(toastId);
 		}
 	}, [changed]);
 
@@ -70,18 +81,6 @@ export default function Account() {
 		if (newPassword.current.value != confirmPassword.current.value) {
 			return setError('Password and confirm password must match');
 		}
-	}
-
-	function sendData() {
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/update/account`, {
-			password: data.password
-		}, {
-			withCredentials: true
-		}).then((res) => {
-			if (res.status == 200) {
-				router.reload();
-			}
-		});
 	}
 
 	function renderLogin() {
@@ -126,7 +125,7 @@ export default function Account() {
 				</div>
 
 				<div>
-					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded' onClick={sendData}>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
+					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded' onClick={() => updateMutation.mutate(data)}>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
 				</div>
 			</div>
 		</div>

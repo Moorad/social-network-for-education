@@ -32,3 +32,11 @@ export const commentOnPost = async ({
 	});
 	return response.data;
 };
+
+export const createPost = async (data: {
+	title: string;
+	description: string;
+}) => {
+	const response = await baseApi.post('/post', data);
+	return response.data;
+};

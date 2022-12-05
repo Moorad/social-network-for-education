@@ -1,26 +1,33 @@
 import { faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import axios from 'axios';
-import { useRouter } from 'next/router';
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
-import { selectAvatar, selectBackground, selectDescription, selectDisplayName, selectIsPrivate, selectLabel } from '../../redux/userSlice';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { getUserMe, updateUserProfile } from '../../api/userApi';
 import Toggle from '../Toggle';
 
 export default function Settings() {
-	const defaultData = {
-		avatar: useSelector(selectAvatar),
-		background: useSelector(selectBackground),
-		displayName: useSelector(selectDisplayName),
-		description: useSelector(selectDescription),
-		label: useSelector(selectLabel),
-		isPrivate: useSelector(selectIsPrivate),
-	};
-	const router = useRouter();
+	const { data: defaultData } = useQuery('user_me', getUserMe, {
+		onError() {
+			toast.error('Failed to fetch profile information');
+		},
+	});
 	const [data, setData] = useState(defaultData);
 	const [changed, setChanged] = useState(false);
+	const queryClient = useQueryClient();
+	const [toastId, setToastId] = useState<string>('');
+	const updateMutation = useMutation('update_profile', updateUserProfile, {
+		onSuccess: () => {
+			queryClient.invalidateQueries();
+			setChanged(false);
+			toast.success('Your profile information has been updated successfully');
+			toast.dismiss(toastId);
+		},
+		onError: () => {
+			toast.error('Failed to update your profile information');
+		}
+	});
 
 	useEffect(() => {
 		for (let i = 0; i < Object.values(defaultData).length; i++) {
@@ -34,13 +41,13 @@ export default function Settings() {
 
 	useEffect(() => {
 		if (changed) {
-			toast('You have unsaved changes', {
+			setToastId(toast('You have unsaved changes', {
 				icon: <FontAwesomeIcon icon={faExclamationCircle} className='text-yellow-600' />,
 				position: 'bottom-center',
 				duration: Infinity
-			});
+			}));
 		} else {
-			toast.dismiss();
+			toast.dismiss(toastId);
 		}
 	}, [changed]);
 
@@ -49,17 +56,6 @@ export default function Settings() {
 			...data,
 			[property]: e
 		});
-	}
-
-	function sendData() {
-		axios.post(`${process.env.NEXT_PUBLIC_API_URL}/user/update/profile`, data, {
-			withCredentials: true
-		})
-			.then((res) => {
-				if (res.status == 200) {
-					router.reload();
-				}
-			});
 	}
 
 	return (
@@ -100,7 +96,7 @@ export default function Settings() {
 				</div>
 
 				<div>
-					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded' onClick={sendData}>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
+					{changed ? <button className='float-right bg-blue-500 text-white py-2 px-5 rounded' onClick={() => updateMutation.mutate(data)}>Update</button> : <button className='float-right bg-blue-400 text-white py-2 px-5 rounded' disabled>Update</button>}
 				</div>
 			</div>
 		</div>
