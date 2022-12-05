@@ -270,13 +270,15 @@ export default function User(props: propTypes) {
 							)}
 						</div>
 					</div>
-					<div className='mx-40 my-20 px-64 font-medium text-lg'>
-						{user.description}
+					<div className='my-20 mx-10'>
+						<div className=' mx-auto max-w-[50rem]  font-medium text-lg'>
+							{user.description}
+						</div>
 					</div>
 					<div className='px-40'>
 						<div className='w-full border-b border-gray-300'></div>
 					</div>
-					<div className='flex flex-col justify-center text-center m-auto my-20 text-gray-500 w-[50rem] gap-5'>
+					<div className='flex flex-col justify-center items-center text-center mx-10 my-20 text-gray-500 gap-5'>
 						{renderPosts()}
 					</div>
 				</div>

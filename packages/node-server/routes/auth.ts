@@ -22,20 +22,7 @@ router.post('/login', validate(LocalLogin), (req, res, next) => {
 				return res.sendStatus(500);
 			}
 
-			const payload = {
-				id: user.userId.toString(),
-			};
-
-			const accessToken = jwt.sign(
-				payload,
-				process.env.SECRET_TOKEN || ''
-			);
-
-			res.cookie('token', accessToken, {
-				httpOnly: true,
-				secure: false,
-				maxAge: 2592000000, // 30 days
-			});
+			const accessToken = createJWTToken(res, user.userId.toString());
 
 			res.json({
 				token: accessToken,
@@ -67,17 +54,7 @@ router.post('/register', validate(LocalRegister), (req, res, next) => {
 			return res.sendStatus(409);
 		}
 
-		const payload = {
-			id: data.login.userId.toString(),
-		};
-
-		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
-
-		res.cookie('token', accessToken, {
-			httpOnly: true,
-			secure: false,
-			maxAge: 2592000000, // 30 days
-		});
+		const accessToken = createJWTToken(res, data.login.userId.toString());
 
 		return res.json({
 			token: accessToken,
@@ -95,17 +72,7 @@ router.get(
 			return res.sendStatus(404);
 		}
 
-		const payload = {
-			id: req.user.toString(),
-		};
-
-		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
-
-		res.cookie('token', accessToken, {
-			httpOnly: true,
-			secure: false,
-			maxAge: 2592000000, // 30 days
-		});
+		createJWTToken(res, req.user.toString());
 
 		return res.redirect('http://localhost:3000/home');
 	}
@@ -121,17 +88,7 @@ router.get(
 			return res.sendStatus(404);
 		}
 
-		const payload = {
-			id: req.user.toString(),
-		};
-
-		const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
-
-		res.cookie('token', accessToken, {
-			httpOnly: true,
-			secure: false,
-			maxAge: 2592000000, // 30 days
-		});
+		createJWTToken(res, req.user.toString());
 
 		return res.redirect('http://localhost:3000/home');
 	}
@@ -167,6 +124,22 @@ export function authenticateToken(
 		res.locals.user = user;
 		next();
 	});
+}
+
+export function createJWTToken(res: Response, userId: string) {
+	const payload = {
+		id: userId,
+	};
+
+	const accessToken = jwt.sign(payload, process.env.SECRET_TOKEN || '');
+
+	res.cookie('token', accessToken, {
+		httpOnly: true,
+		secure: false,
+		maxAge: 2592000000, // 30 days
+	});
+
+	return accessToken;
 }
 
 export default router;

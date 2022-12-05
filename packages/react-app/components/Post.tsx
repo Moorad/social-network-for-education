@@ -61,7 +61,7 @@ export default function Post(props: {
 
 	return (
 		<div
-			className={'border-gray-300 border rounded-lg p-5 text-left ' + (!props.fullText ? 'cursor-pointer' : '')}
+			className={'max-w-[60rem] w-full border-gray-300 border rounded-lg p-5 text-left ' + (!props.fullText ? 'cursor-pointer' : '')}
 			onClick={handleClick}
 		>
 			<div className='text-gray-900 font-semibold text-lg'>
