@@ -121,8 +121,12 @@ export async function resetDB() {
 }
 
 export async function populateWithFakeData(userCount: number) {
-	const allPosts = [];
-	const allPeople = [];
+	const users = [];
+	const posts = [];
+
+	const insertLogins = [];
+	const insertUsers = [];
+	const insertPosts = [];
 
 	if (isNaN(userCount)) {
 		console.log('Invalid populate user count.');
@@ -135,84 +139,94 @@ export async function populateWithFakeData(userCount: number) {
 		const firstName = faker.name.firstName();
 		const lastName = faker.name.lastName();
 
-		const password = await bcrypt.hash(faker.internet.password(), 10);
-
-		const userLogin = new Login({
-			email: faker.internet.email(firstName, lastName),
-			password: password,
-			strategy: 'Local',
-		});
-
-		const user = new User({
+		insertUsers.push({
+			_id: new mongoose.Types.ObjectId(),
 			displayName: faker.name.fullName({
 				firstName: firstName,
 				lastName: lastName,
 			}),
 			description: faker.lorem.paragraph(),
 			label: faker.name.jobTitle(),
-			avatar: faker.image.image(undefined, undefined, true),
-			followerCount: Number(faker.datatype.bigInt({ max: 2000 })),
-			followingCount: faker.datatype.number({ max: 2000 }),
+			avatar: faker.image.image(512, 512, true),
+			followerCount: Number(faker.datatype.bigInt({ max: userCount })),
+			followingCount: faker.datatype.number({ max: userCount }),
+			posts: [] as (string | mongoose.Types.ObjectId)[],
 		});
 
-		userLogin.userId = user._id;
-		await userLogin.save();
-		allPeople.push(user._id);
+		const password = await bcrypt.hash(faker.internet.password(), 10);
 
-		const numOfPosts = Math.floor(Math.random() * 5);
+		const userReference = insertUsers[insertUsers.length - 1];
 
-		for (let j = 0; j < numOfPosts; j++) {
-			const post = new Post({
+		insertLogins.push({
+			_id: new mongoose.Types.ObjectId(),
+			userId: userReference._id,
+			email: faker.internet.email(firstName, lastName),
+			password: password,
+			strategy: 'Local',
+		});
+
+		const postCount = Math.floor(Math.random() * 5);
+
+		for (let j = 0; j < postCount; j++) {
+			insertPosts.push({
+				_id: new mongoose.Types.ObjectId(),
 				title: faker.lorem.sentence(),
 				description: faker.lorem.paragraph(),
-				posterId: user._id,
+				posterId: userReference._id,
 				created: faker.date.past(),
 			});
 
-			user.posts.push(post._id);
-			allPosts.push(post._id);
-			await post.save();
+			const postReference = insertPosts[insertPosts.length - 1];
+
+			userReference.posts.push(postReference._id);
+			posts.push(postReference._id);
 		}
 
-		await user.save();
-
-		console.log(`${i + 1} - ${user.displayName} added to DB`);
+		users.push(userReference._id);
+		console.log(`User ${userReference.displayName} was created`);
 	}
 
+	Login.insertMany(insertLogins);
+	console.log(`Inserting ${insertLogins.length} logins to DB`);
+	User.insertMany(insertUsers);
+	console.log(`Inserting ${insertUsers.length} users to DB`);
+	Post.insertMany(insertPosts);
+	console.log(`Inserting ${insertPosts.length} posts to DB`);
+
 	// Interactions
-	for (let i = 0; i < allPosts.length; i++) {
+	for (let i = 0; i < posts.length; i++) {
 		// Number of view, likes and comments
-		const viewCount = Math.floor(Math.random() * allPeople.length);
+		const viewCount = Math.floor(Math.random() * users.length);
 		const likeCount = Math.floor(Math.random() * viewCount);
 		const commentCount = Math.floor(Math.random() * viewCount);
 
 		// Generate random comments
-		const peopleComments = faker.helpers.arrayElements(
-			allPeople,
-			commentCount
-		);
+		const peopleComments = faker.helpers.arrayElements(users, commentCount);
 		for (let j = 0; j < commentCount; j++) {
 			const comment = new Comment({
-				postId: allPosts[i],
+				postId: posts[i],
 				userId: peopleComments[j],
 				content: faker.lorem.paragraph(),
+				likeCount: faker.datatype.number({ max: viewCount }),
 			});
 
+			comment.likes = faker.helpers.arrayElements(
+				users,
+				comment.likeCount
+			);
 			comment.parents = [comment._id];
 
 			await comment.save();
 		}
 
-		await Post.findByIdAndUpdate(allPosts[i], {
+		await Post.findByIdAndUpdate(posts[i], {
 			likeCount: likeCount,
 			viewCount: viewCount,
 			commentCount: commentCount,
 		}).exec();
 
-		console.log(`The post ${allPosts[i]} was viewed ${viewCount} times`);
-		console.log(`The post ${allPosts[i]} was liked ${likeCount} times`);
 		console.log(
-			`The post ${allPosts[i]} was commented ${commentCount} times`
+			`Post ${posts[i]} was added with ${viewCount} views, ${likeCount} likes, ${commentCount} comments`
 		);
 	}
 }
