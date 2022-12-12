@@ -1,6 +1,6 @@
 import { faBold } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMutation, useQueryClient } from 'react-query';
 import { createPost } from '../../api/postApi';
@@ -8,13 +8,17 @@ import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import useAuth from '../../utils/hooks/useAuth';
 import ToolbarItem from './components/ToolbarItem';
+import { marked } from 'marked';
+import { faMarkdown } from '@fortawesome/free-brands-svg-icons';
 
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
 	const router = useRouter();
 	const titleRef = useRef<HTMLInputElement>(null);
-	const descriptionRef = useRef<HTMLTextAreaElement>(null);
+	const descriptionRef = useRef<HTMLDivElement>(null);
+	const markdownPreviewRef = useRef<HTMLDivElement>(null);
 	const queryClient = useQueryClient();
+	const [view, setView] = useState<'text' | 'md'>('text');
 
 	const postMutation = useMutation('create_post', createPost, {
 		onSuccess: () => {
@@ -30,10 +34,39 @@ export default function PostEditor() {
 		if (titleRef.current && descriptionRef.current) {
 			postMutation.mutate({
 				title: titleRef.current.value,
-				description: descriptionRef.current.value
+				description: descriptionRef.current.innerText
 			});
 		}
 	}
+
+	function parseMarkdown() {
+		if (descriptionRef.current && markdownPreviewRef.current) {
+			markdownPreviewRef.current.innerHTML = marked.parse(descriptionRef.current.innerHTML);
+		}
+	}
+
+	function switchTextView() {
+		if (view == 'text') {
+			setView('md');
+		} else {
+			setView('text');
+		}
+	}
+
+	useEffect(() => {
+		console.log(view)
+		if (descriptionRef.current && markdownPreviewRef.current) {
+			if (view == 'text') {
+				markdownPreviewRef.current.classList.add('hidden');
+				descriptionRef.current.classList.remove('hidden');
+			}
+
+			if (view == 'md') {
+				markdownPreviewRef.current.classList.remove('hidden');
+				descriptionRef.current.classList.add('hidden');
+			}
+		}
+	}, [view])
 
 	if (fetching) {
 		return <Loading />;
@@ -49,17 +82,20 @@ export default function PostEditor() {
 				<div className='text-4xl font-bold text-gray-900 my-1'>
 					<input type='text' placeholder='New post title here...' className='py-4 w-full outline-0' ref={titleRef} />
 				</div>
-				<div className='my-4'>
+				<div className=' flex justify-between my-4'>
 					<ToolbarItem icon={faBold} />
+					<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 				</div>
-				<div className='flex-grow text-lg'>
-					<textarea className='w-full h-full outline-0 resize-none' placeholder='Text description...' ref={descriptionRef}></textarea>
+				<div className='flex-grow text-lg relative'>
+					<div className=' h-full w-full outline-0' data-placeholder='Text description...' ref={descriptionRef} contentEditable onInput={parseMarkdown}></div>
+					<div className='w-full h-full hidden' ref={markdownPreviewRef}></div>
 				</div>
+				<div></div>
 				<div className='flex gap-5 my-5 flex-row-reverse'>
 					<button className='bg-blue-500 py-2 px-5 rounded text-white' onClick={handleSubmission}>Post</button>
 					<button className='bg-red-500 py-2 px-5 rounded text-white'>Discard</button>
 				</div>
 			</div>
-		</MainNavBar>
+		</MainNavBar >
 	);
 }
