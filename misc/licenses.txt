@@ -1,0 +1,15 @@
+default.png 
+	From Material Design Icons
+	Apache License: https://github.com/google/material-design-icons/blob/master/LICENSE
+		- Free for commercial use
+		- No attribution required
+		- Modification allowed
+	Download Source: https://github.com/mui/material-ui/blob/549466e337a760bc87f0d9302591ef2ca1e69d1f/packages/mui-icons-material/material-icons/account_circle_24px.svg
+
+Font Awesome free icons
+	From Font Awesome
+	Font Awesome Free License: https://fontawesome.com/license/free
+		- Free for commercial use
+		- Attribution is attached to the Font Awesome package already
+		- Modification is not allowed
+	Download Source: https://fontawesome.com/docs/web/use-with/react/

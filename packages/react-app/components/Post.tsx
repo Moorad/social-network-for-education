@@ -1,3 +1,4 @@
+import 'highlight.js/styles/github-dark.css';
 import type { PostType } from 'node-server/Models/Post';
 import type { UserMinimal } from 'node-server/Models/User';
 
@@ -14,6 +15,8 @@ import Link from 'next/link';
 import { useMutation, useQueryClient } from 'react-query';
 import { likePost } from '../api/postApi';
 import toast from 'react-hot-toast';
+import { marked } from 'marked';
+import hljs from 'highlight.js';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -32,20 +35,32 @@ export default function Post(props: {
 			toast.error('Failed to like the post');
 		}
 	});
+	marked.setOptions({
+		breaks: true,
+		headerIds: false,
+		highlight: (code, lang) => {
+			const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+
+			return hljs.highlight(code, { language }).value;
+		},
+		langPrefix: 'hljs language-'
+	});
 
 	function handleLiking() {
 		likeMutation.mutate(props.post._id as string);
 	}
 
 	function renderText() {
+		const description = marked.parse(props.post.description);
+
 		if (
 			props.fullText ||
 			props.post.description.length <= MAX_CHARACTER_LENGTH
 		) {
-			return props.post.description;
+			return description;
 		} else {
 			return (
-				props.post.description.substring(0, MAX_CHARACTER_LENGTH) +
+				description.substring(0, MAX_CHARACTER_LENGTH) +
 				'...'
 			);
 		}
@@ -67,8 +82,7 @@ export default function Post(props: {
 			<div className='text-gray-900 font-semibold text-lg'>
 				{props.post.title}
 			</div>
-			<div className='text-gray-800 mt-3 whitespace-pre-wrap'>
-				{renderText()}
+			<div className='text-gray-800 mt-3 whitespace-pre-wrap leading-none' dangerouslySetInnerHTML={{ __html: renderText() }}>
 			</div>
 			<Link href={`/user/${props.user._id}`}>
 				<div className='flex items-center gap-3 mt-4 w-fit cursor-pointer group' onClick={(e) => e.stopPropagation()}>

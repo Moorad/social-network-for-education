@@ -1,3 +1,4 @@
+import 'highlight.js/styles/github-dark.css';
 import { faBold } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -10,15 +11,27 @@ import useAuth from '../../utils/hooks/useAuth';
 import ToolbarItem from './components/ToolbarItem';
 import { marked } from 'marked';
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons';
+import hljs from 'highlight.js';
 
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
 	const router = useRouter();
 	const titleRef = useRef<HTMLInputElement>(null);
-	const descriptionRef = useRef<HTMLDivElement>(null);
+	const descriptionRef = useRef<HTMLTextAreaElement>(null);
 	const markdownPreviewRef = useRef<HTMLDivElement>(null);
 	const queryClient = useQueryClient();
 	const [view, setView] = useState<'text' | 'md'>('text');
+
+	marked.setOptions({
+		breaks: true,
+		headerIds: false,
+		highlight: (code, lang) => {
+			const language = hljs.getLanguage(lang) ? lang : 'plaintext';
+
+			return hljs.highlight(code, { language }).value;
+		},
+		langPrefix: 'hljs language-'
+	});
 
 	const postMutation = useMutation('create_post', createPost, {
 		onSuccess: () => {
@@ -34,14 +47,14 @@ export default function PostEditor() {
 		if (titleRef.current && descriptionRef.current) {
 			postMutation.mutate({
 				title: titleRef.current.value,
-				description: descriptionRef.current.innerText
+				description: descriptionRef.current.value
 			});
 		}
 	}
 
 	function parseMarkdown() {
 		if (descriptionRef.current && markdownPreviewRef.current) {
-			markdownPreviewRef.current.innerHTML = marked.parse(descriptionRef.current.innerHTML);
+			markdownPreviewRef.current.innerHTML = marked.parse(descriptionRef.current.value);
 		}
 	}
 
@@ -54,7 +67,6 @@ export default function PostEditor() {
 	}
 
 	useEffect(() => {
-		console.log(view)
 		if (descriptionRef.current && markdownPreviewRef.current) {
 			if (view == 'text') {
 				markdownPreviewRef.current.classList.add('hidden');
@@ -66,7 +78,7 @@ export default function PostEditor() {
 				descriptionRef.current.classList.add('hidden');
 			}
 		}
-	}, [view])
+	}, [view]);
 
 	if (fetching) {
 		return <Loading />;
@@ -87,11 +99,11 @@ export default function PostEditor() {
 					<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 				</div>
 				<div className='flex-grow text-lg relative'>
-					<div className=' h-full w-full outline-0' data-placeholder='Text description...' ref={descriptionRef} contentEditable onInput={parseMarkdown}></div>
-					<div className='w-full h-full hidden' ref={markdownPreviewRef}></div>
+					<textarea className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md' placeholder='Text description...' ref={descriptionRef} onInput={parseMarkdown}></textarea>
+					<div className='w-full h-full whitespace-pre-wrap leading-none hidden' ref={markdownPreviewRef}></div>
 				</div>
 				<div></div>
-				<div className='flex gap-5 my-5 flex-row-reverse'>
+				<div className='flex gap-5 py-5 flex-row-reverse'>
 					<button className='bg-blue-500 py-2 px-5 rounded text-white' onClick={handleSubmission}>Post</button>
 					<button className='bg-red-500 py-2 px-5 rounded text-white'>Discard</button>
 				</div>
