@@ -6,16 +6,18 @@ import React from 'react';
 type props = {
 	icon: IconProp,
 	onClick?: () => void,
+	onMouseDown?: () => void,
 	className?: string
 }
 
 export default function ToolbarItem({
 	icon,
 	className,
-	onClick
+	onClick,
+	onMouseDown,
 }: props) {
 	return (
-		<div className={'flex items-center justify-center px-2 h-7 rounded-sm cursor-pointer ' + className} onClick={onClick}>
+		<div className={'flex items-center justify-center px-2 h-7 rounded-sm cursor-pointer ' + className} onClick={onClick} onMouseDown={onMouseDown}>
 			<FontAwesomeIcon icon={icon} />
 		</div>
 	);

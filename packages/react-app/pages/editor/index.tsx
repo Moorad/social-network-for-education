@@ -1,5 +1,5 @@
 import 'highlight.js/styles/github-dark.css';
-import { faBold } from '@fortawesome/free-solid-svg-icons';
+import { faBold, faCode, faItalic, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -66,6 +66,31 @@ export default function PostEditor() {
 		}
 	}
 
+	function applyBasicEffect(option: keyof typeof formatOptions) {
+		const formatOptions = {
+			bold: '**',
+			italic: '*',
+			strikethrough: '~',
+			code: '\n```\n'
+		};
+
+		const selectionText = window.getSelection()?.toString();
+
+		if (descriptionRef.current && selectionText) {
+			const textAreaValue = descriptionRef.current.value;
+			const selectionStart = descriptionRef.current?.selectionStart;
+			const selectionEnd = descriptionRef.current?.selectionEnd;
+
+			descriptionRef.current.value = textAreaValue.slice(0, selectionStart)
+				+ formatOptions[option] + selectionText + formatOptions[option]
+				+ textAreaValue.slice(selectionEnd);
+
+			// Manual markdown render trigger
+			parseMarkdown();
+		}
+
+	}
+
 	useEffect(() => {
 		if (descriptionRef.current && markdownPreviewRef.current) {
 			if (view == 'text') {
@@ -95,11 +120,16 @@ export default function PostEditor() {
 					<input type='text' placeholder='New post title here...' className='py-4 w-full outline-0' ref={titleRef} />
 				</div>
 				<div className=' flex justify-between my-4'>
-					<ToolbarItem icon={faBold} />
+					<div className='flex gap-2'>
+						<ToolbarItem icon={faBold} onMouseDown={() => applyBasicEffect('bold')} />
+						<ToolbarItem icon={faItalic} onMouseDown={() => applyBasicEffect('italic')} />
+						<ToolbarItem icon={faStrikethrough} onMouseDown={() => applyBasicEffect('strikethrough')} />
+						<ToolbarItem icon={faCode} onMouseDown={() => applyBasicEffect('code')} />
+					</div>
 					<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 				</div>
 				<div className='flex-grow text-lg relative'>
-					<textarea className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md' placeholder='Text description...' ref={descriptionRef} onInput={parseMarkdown}></textarea>
+					<textarea className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md' placeholder='Text description...' ref={descriptionRef} onChange={parseMarkdown}></textarea>
 					<div className='w-full h-full whitespace-pre-wrap leading-none hidden' ref={markdownPreviewRef}></div>
 				</div>
 				<div></div>
