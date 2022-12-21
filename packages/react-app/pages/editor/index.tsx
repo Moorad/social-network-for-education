@@ -12,6 +12,7 @@ import ToolbarItem from './components/ToolbarItem';
 import { marked } from 'marked';
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons';
 import hljs from 'highlight.js';
+import useMarkdownEffects from '../../utils/hooks/useMarkdownEffects';
 
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
@@ -21,6 +22,7 @@ export default function PostEditor() {
 	const markdownPreviewRef = useRef<HTMLDivElement>(null);
 	const queryClient = useQueryClient();
 	const [view, setView] = useState<'text' | 'md'>('text');
+	const { applyWrappingEffect, applyCodeBlock } = useMarkdownEffects(descriptionRef, parseMarkdown);
 
 	marked.setOptions({
 		breaks: true,
@@ -66,31 +68,6 @@ export default function PostEditor() {
 		}
 	}
 
-	function applyBasicEffect(option: keyof typeof formatOptions) {
-		const formatOptions = {
-			bold: '**',
-			italic: '*',
-			strikethrough: '~',
-			code: '\n```\n'
-		};
-
-		const selectionText = window.getSelection()?.toString();
-
-		if (descriptionRef.current && selectionText) {
-			const textAreaValue = descriptionRef.current.value;
-			const selectionStart = descriptionRef.current?.selectionStart;
-			const selectionEnd = descriptionRef.current?.selectionEnd;
-
-			descriptionRef.current.value = textAreaValue.slice(0, selectionStart)
-				+ formatOptions[option] + selectionText + formatOptions[option]
-				+ textAreaValue.slice(selectionEnd);
-
-			// Manual markdown render trigger
-			parseMarkdown();
-		}
-
-	}
-
 	useEffect(() => {
 		if (descriptionRef.current && markdownPreviewRef.current) {
 			if (view == 'text') {
@@ -121,10 +98,10 @@ export default function PostEditor() {
 				</div>
 				<div className=' flex justify-between my-4'>
 					<div className='flex gap-2'>
-						<ToolbarItem icon={faBold} onMouseDown={() => applyBasicEffect('bold')} />
-						<ToolbarItem icon={faItalic} onMouseDown={() => applyBasicEffect('italic')} />
-						<ToolbarItem icon={faStrikethrough} onMouseDown={() => applyBasicEffect('strikethrough')} />
-						<ToolbarItem icon={faCode} onMouseDown={() => applyBasicEffect('code')} />
+						<ToolbarItem icon={faBold} onMouseDown={() => applyWrappingEffect('bold')} />
+						<ToolbarItem icon={faItalic} onMouseDown={() => applyWrappingEffect('italic')} />
+						<ToolbarItem icon={faStrikethrough} onMouseDown={() => applyWrappingEffect('strikethrough')} />
+						<ToolbarItem icon={faCode} onMouseDown={() => applyCodeBlock()} />
 					</div>
 					<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 				</div>
