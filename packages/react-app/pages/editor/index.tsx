@@ -1,5 +1,5 @@
 import 'highlight.js/styles/github-dark.css';
-import { faBold, faCode, faItalic, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
+import { faBold, faCode, faHeading, faItalic, faLink, faListOl, faListUl, faMinus, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -22,7 +22,7 @@ export default function PostEditor() {
 	const markdownPreviewRef = useRef<HTMLDivElement>(null);
 	const queryClient = useQueryClient();
 	const [view, setView] = useState<'text' | 'md'>('text');
-	const { applyWrappingEffect, applyCodeBlock } = useMarkdownEffects(descriptionRef, parseMarkdown);
+	const { apply } = useMarkdownEffects(descriptionRef, parseMarkdown);
 
 	marked.setOptions({
 		breaks: true,
@@ -98,10 +98,20 @@ export default function PostEditor() {
 				</div>
 				<div className=' flex justify-between my-4'>
 					<div className='flex gap-2'>
-						<ToolbarItem icon={faBold} onMouseDown={() => applyWrappingEffect('bold')} />
-						<ToolbarItem icon={faItalic} onMouseDown={() => applyWrappingEffect('italic')} />
-						<ToolbarItem icon={faStrikethrough} onMouseDown={() => applyWrappingEffect('strikethrough')} />
-						<ToolbarItem icon={faCode} onMouseDown={() => applyCodeBlock()} />
+						<ToolbarItem icon={faBold} onMouseDown={() => apply.wrappingEffect('bold')} />
+						<ToolbarItem icon={faItalic} onMouseDown={() => apply.wrappingEffect('italic')} />
+						<ToolbarItem icon={faStrikethrough} onMouseDown={() => apply.wrappingEffect('strikethrough')} />
+						<ToolbarItem icon={faCode} onMouseDown={() => apply.codeBlock()} />
+						<ToolbarItem icon={faLink} onMouseDown={() => apply.link()} />
+
+					</div>
+					<div className='flex gap-2'>
+						<ToolbarItem icon={faHeading} onMouseDown={() => apply.heading()} />
+						<ToolbarItem icon={faMinus} onMouseDown={() => apply.HR()} />
+						<ToolbarItem icon={faListUl} onMouseDown={() => apply.unorderList()} />
+						<ToolbarItem icon={faListOl} onMouseDown={() => apply.orderedList()} />
+
+
 					</div>
 					<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 				</div>
