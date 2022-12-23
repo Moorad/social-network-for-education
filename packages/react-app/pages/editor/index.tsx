@@ -14,6 +14,9 @@ import { faMarkdown } from '@fortawesome/free-brands-svg-icons';
 import hljs from 'highlight.js';
 import useMarkdownEffects from '../../utils/hooks/useMarkdownEffects';
 import { uploadUserImage } from '../../api/userApi';
+import { getReadingLevel, getWordCount } from '../../utils/text';
+import { formatDigitGrouping } from '../../utils/format';
+import useDebounce from '../../utils/hooks/useDebounce';
 
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
@@ -26,6 +29,10 @@ export default function PostEditor() {
 	const queryClient = useQueryClient();
 	const [view, setView] = useState<'text' | 'md'>('text');
 	const { apply, get } = useMarkdownEffects(descriptionRef, parseMarkdown);
+	const [wordCount, setWordCount] = useState(0);
+	const wordCountDebounce = useDebounce(wordCount, 800);
+	const [readingLevel, setReadingLevel] = useState('');
+	const readingLevelDebounce = useDebounce(readingLevel, 800);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
@@ -70,6 +77,8 @@ export default function PostEditor() {
 	function parseMarkdown() {
 		if (descriptionRef.current && markdownPreviewRef.current) {
 			markdownPreviewRef.current.innerHTML = marked.parse(descriptionRef.current.value);
+			setWordCount(getWordCount(markdownPreviewRef.current.innerText || ''));
+			setReadingLevel(getReadingLevel(markdownPreviewRef.current.innerText || ''));
 		}
 	}
 
@@ -163,10 +172,15 @@ export default function PostEditor() {
 					<textarea className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md' placeholder='Text description...' ref={descriptionRef} onChange={parseMarkdown}></textarea>
 					<div className='w-full h-full whitespace-pre-wrap leading-none hidden' ref={markdownPreviewRef}></div>
 				</div>
-				<div></div>
-				<div className='flex gap-5 py-5 flex-row-reverse'>
-					<button className='bg-blue-500 py-2 px-5 rounded text-white' onClick={handleSubmission}>Post</button>
-					<button className='bg-red-500 py-2 px-5 rounded text-white'>Discard</button>
+				<div className='flex gap-5 py-5 justify-between'>
+					<div className='text-gray-400'>
+						{formatDigitGrouping(wordCountDebounce)} words • {readingLevelDebounce}
+					</div>
+					<div className='flex gap-5'>
+						<button className='bg-red-500 py-2 px-5 rounded text-white'>Discard</button>
+						<button className='bg-blue-500 py-2 px-5 rounded text-white' onClick={handleSubmission}>Post</button>
+
+					</div>
 				</div>
 			</div>
 		</MainNavBar >

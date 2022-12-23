@@ -5,6 +5,10 @@ export function formatNumber(unformattedNumber: number) {
 	}).format(unformattedNumber);
 }
 
+export function formatDigitGrouping(unformattedNumber: number) {
+	return Intl.NumberFormat('en-US').format(unformattedNumber);
+}
+
 export function formatToRelativeTime(date: Date) {
 	const timeDiff = Math.floor(
 		(new Date().getTime() - new Date(date).getTime()) / 1000
