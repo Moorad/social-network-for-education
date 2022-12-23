@@ -126,7 +126,7 @@ export const FeedType = z.object({
 
 export const uploadFile = z.object({
 	query: z.object({
-		for: z.enum(['Avatar', 'Profile_Background']),
+		for: z.enum(['Avatar', 'Profile_Background', 'Other_Image']),
 	}),
 });
 

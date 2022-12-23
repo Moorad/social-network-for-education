@@ -31,7 +31,7 @@ type PostWithUser = {
 	user: UserMinimal;
 } | null;
 
-export type uploadForTypes = 'Avatar' | 'Profile_Background';
+export type uploadForTypes = 'Avatar' | 'Profile_Background' | 'Other_Image';
 
 export default function User(props: propTypes) {
 	const reduxUser = useSelector(selectUser);
@@ -88,7 +88,7 @@ export default function User(props: propTypes) {
 	}
 
 	function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
-		if (e.target.files) {
+		if (e.target.files && e.target.files.length > 0) {
 			const imageFile = e.target.files[0];
 
 			const formData = new FormData();
@@ -102,7 +102,7 @@ export default function User(props: propTypes) {
 		}
 	}
 
-	function handleUploadClick(_for: ('Avatar' | 'Profile_Background')) {
+	function handleUploadClick(_for: uploadForTypes) {
 		forRef.current = _for;
 
 		if (fileRef.current) {

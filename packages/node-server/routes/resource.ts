@@ -59,6 +59,8 @@ router.post(
 			} else if (req.query.for == 'Profile_Background') {
 				await processImage(buf, 1920, 438, req.file.filename);
 				updateQuery = { background: URL };
+			} else if (req.query.for == 'Other_Image') {
+				// Image pre-processing should happen here
 			}
 
 			User.findByIdAndUpdate(

@@ -57,7 +57,13 @@ export default function useMarkdownEffects(textAreaRef: RefObject<HTMLTextAreaEl
 			}),
 			link: () => applyCustomEffect(textAreaRef, markdownRender, (selection, start, end, text) => {
 				return text.slice(0, start) + '[' + selection + '](url)' + text.slice(end);
+			}),
+			image: (url?: string) => applyCustomEffect(textAreaRef, markdownRender, (selection, start, end, text) => {
+				return text.slice(0, start) + `![alternative text](${url ?? 'url'})` + text.slice(end);
 			})
+		},
+		get: {
+			selectionStart: () => getSelectionStart(textAreaRef),
 		}
 	};
 }
@@ -75,5 +81,11 @@ function applyCustomEffect(textAreaRef: RefObject<HTMLTextAreaElement>, markdown
 
 		// Manual markdown render trigger
 		markdownRender();
+	}
+}
+
+function getSelectionStart(textAreaRef: RefObject<HTMLTextAreaElement>) {
+	if (textAreaRef.current) {
+		return textAreaRef.current.selectionStart;
 	}
 }
