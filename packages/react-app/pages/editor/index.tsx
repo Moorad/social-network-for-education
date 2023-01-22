@@ -1,5 +1,5 @@
 import 'highlight.js/styles/github-dark.css';
-import { faBold, faCode, faFileImage, faHeading, faImage, faItalic, faLink, faListOl, faListUl, faMinus, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
+import { faBold, faCode, faFileImage, faHeading, faImage, faItalic, faLink, faListOl, faListUl, faMinus, faPaperclip, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -17,6 +17,7 @@ import { uploadUserImage } from '../../api/userApi';
 import { getReadingLevel, getWordCount } from '../../utils/text';
 import { formatDigitGrouping } from '../../utils/format';
 import useDebounce from '../../utils/hooks/useDebounce';
+import AttachmentModal from './components/AttachmentModal';
 
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
@@ -33,6 +34,7 @@ export default function PostEditor() {
 	const wordCountDebounce = useDebounce(wordCount, 800);
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
+	const [openAttachment, setOpenAttachment] = useState(false);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
@@ -133,6 +135,7 @@ export default function PostEditor() {
 					accept='.png,.jpg,.jpeg'
 					className='hidden'
 				/>
+				<AttachmentModal open={openAttachment} />
 				<div className='flex items-center gap-4'>
 					<img src={user?.avatar} className='w-9 rounded-full' />
 					<div className='text-gray-700 font-medium text-lg'>{user?.displayName}</div>
@@ -164,7 +167,8 @@ export default function PostEditor() {
 							<ToolbarItem icon={faListOl} onMouseDown={() => apply.orderedList()} />
 						</div>
 					</div>
-					<div className='flex'>
+					<div className='flex gap-2'>
+						<ToolbarItem icon={faPaperclip} className='bg-indigo-200 text-indigo-800' onClick={() => setOpenAttachment(true)} />
 						<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 					</div>
 				</div>

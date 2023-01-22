@@ -47,3 +47,17 @@ export function formatToRelativeTime(date: Date) {
 
 	return formatter.format(-Math.floor(timeDiff / month), 'month');
 }
+
+export function formatByteSizes(unformattedSize: number) {
+	const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+
+	for (let i = 0; i < sizes.length - 1; i++) {
+		if (unformattedSize <= 1024) {
+			return Math.round(unformattedSize) + ' ' + sizes[i];
+		}
+
+		unformattedSize /= 1024;
+	}
+
+	return Math.round(unformattedSize) + ' ' + sizes[sizes.length - 1];
+}
