@@ -34,7 +34,8 @@ export default function PostEditor() {
 	const wordCountDebounce = useDebounce(wordCount, 800);
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
-	const [openAttachment, setOpenAttachment] = useState(false);
+	const [openAttachment, setOpenAttachment] = useState(true);
+	const [attachementCount, setAttachementCount] = useState(0);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
@@ -135,7 +136,7 @@ export default function PostEditor() {
 					accept='.png,.jpg,.jpeg'
 					className='hidden'
 				/>
-				<AttachmentModal open={openAttachment} />
+				<AttachmentModal open={openAttachment} close={() => setOpenAttachment(false)} setAttachmentCount={setAttachementCount} />
 				<div className='flex items-center gap-4'>
 					<img src={user?.avatar} className='w-9 rounded-full' />
 					<div className='text-gray-700 font-medium text-lg'>{user?.displayName}</div>
@@ -168,7 +169,10 @@ export default function PostEditor() {
 						</div>
 					</div>
 					<div className='flex gap-2'>
-						<ToolbarItem icon={faPaperclip} className='bg-indigo-200 text-indigo-800' onClick={() => setOpenAttachment(true)} />
+						<div className='flex font-bold'>
+							<span className='text-indigo-500 px-1'>{attachementCount > 0 ? attachementCount + '+' : ''}</span>
+							<ToolbarItem icon={faPaperclip} className='bg-indigo-200 text-indigo-800' onClick={() => setOpenAttachment(!openAttachment)} />
+						</div>
 						<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
 					</div>
 				</div>
