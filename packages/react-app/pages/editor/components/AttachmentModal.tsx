@@ -1,7 +1,10 @@
 import { faClose, faFile, faFileExcel, faFileImage, faFilePdf, faFilePowerpoint, faFileWord, faFileZipper, IconDefinition } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog } from '@headlessui/react';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
+import { toast } from 'react-hot-toast';
+import { useMutation } from 'react-query';
+import { uploadAnyFile } from '../../../api/userApi';
 import { formatByteSizes } from '../../../utils/format';
 
 type attachementType = {
@@ -10,32 +13,53 @@ type attachementType = {
 	size: number
 }
 
-export default function AttachmentModal({ open, close, setAttachmentCount }: { open: boolean, close: () => void, setAttachmentCount: (count: number) => void }) {
-	// const [isOpen, setIsOpen] = useState(open);
+export default function AttachmentModal({ open, close, pushAttachmentURL, removeAttachmentURL }: {
+	open: boolean,
+	close: () => void,
+	pushAttachmentURL: (url: string) => void,
+	removeAttachmentURL: (index: number) => void
+}) {
 	const [attachments, setAttachments] = useState<attachementType[]>([]);
 	const fileRef = useRef<HTMLInputElement>(null);
+	const uploadMutation = useMutation(uploadAnyFile, {
+		onSuccess: (res) => {
+			pushAttachmentURL(res.url);
+			console.log(res.url);
+			toast.success('Uploaded sucessfully');
+		},
+		onError: () => {
+			toast.error('Failed to upload image');
+		}
+	});
 
 	function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files && e.target.files.length > 0) {
-			const attachementsData = [];
-			for (let i = 0; i < e.target.files.length; i++) {
-				attachementsData.push({
-					filename: e.target.files[i].name,
-					type: e.target.files[i].type,
-					size: e.target.files[i].size
-				});
+			setAttachments([
+				...attachments,
+				{
+					filename: e.target.files[0].name,
+					type: e.target.files[0].type,
+					size: e.target.files[0].size
+				}
+			]);
 
-				setAttachments([
-					...attachments,
-					...attachementsData
-				]);
-			}
+			const imageFile = e.target.files[0];
+
+			const formData = new FormData();
+
+			formData.append('file', imageFile);
+
+			uploadMutation.mutate({
+				formData: formData
+			});
 		}
 	}
 
-	useEffect(() => {
-		setAttachmentCount(attachments.length);
-	}, [attachments]);
+	function removeAttachment(index: number) {
+		setAttachments(attachments.filter((_, i) => i != index));
+
+		removeAttachmentURL(index);
+	}
 
 	function getIconFromMimeType(mimeType: string) {
 		let icon: IconDefinition;
@@ -101,7 +125,6 @@ export default function AttachmentModal({ open, close, setAttachmentCount }: { o
 				onChange={handleUpload}
 				ref={fileRef}
 				className='hidden'
-				multiple
 			/>
 			<Dialog.Panel className='absolute inset-center border-gray-300 border p-8 rounded-md w-[38rem] bg-white'>
 				<Dialog.Title>
@@ -115,7 +138,7 @@ export default function AttachmentModal({ open, close, setAttachmentCount }: { o
 								<div>{e.filename}</div>
 								<div>{formatByteSizes(e.size)}</div>
 							</div>
-							<div className='ml-auto cursor-pointer' onClick={() => setAttachments(attachments.filter((_, key) => key != i))}><FontAwesomeIcon icon={faClose} /></div>
+							<div className='ml-auto cursor-pointer' onClick={() => removeAttachment(i)}><FontAwesomeIcon icon={faClose} /></div>
 
 						</div>))}
 				</div>

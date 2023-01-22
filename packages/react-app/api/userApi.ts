@@ -40,6 +40,18 @@ export const uploadUserImage = async (data: {
 	return response.data;
 };
 
+export const uploadAnyFile = async (data: { formData: FormData }) => {
+	const response = await baseApi.post(
+		'resource/upload_attachment',
+		data.formData,
+		{
+			data: data.formData,
+		}
+	);
+
+	return response.data;
+};
+
 export const userFeed = async ({ pageParam = 0 }: { pageParam?: number }) => {
 	const response = await baseApi.get(
 		`/user/feed?type=following&skip=${pageParam}&limit=10`

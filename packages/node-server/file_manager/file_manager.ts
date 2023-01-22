@@ -15,9 +15,8 @@ export async function mediaExists(filename: string) {
 		);
 		const files = await fs.readdir(parentFolder);
 		const filter = files.filter(
-			(f) =>
-				path.basename(f, path.extname(f)) == filename &&
-				ALLOWED_FILE_TYPES.includes(path.extname(f).slice(1))
+			(f) => path.basename(f, path.extname(f)) == filename
+			// && ALLOWED_FILE_TYPES.includes(path.extname(f).slice(1))
 		);
 		return path.join(parentFolder, filter[0]);
 	} catch (err) {

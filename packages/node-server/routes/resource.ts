@@ -18,6 +18,10 @@ const upload = multer({
 	fileFilter: multerFileFilter,
 }).single('file');
 
+const anyFileUpload = multer({
+	storage: multerWriteMedia(),
+}).single('file');
+
 router.get('/:id', (req, res) => {
 	mediaExists(req.params.id)
 		.then((path) => {
@@ -76,6 +80,33 @@ router.post(
 					});
 				}
 			);
+		});
+	}
+);
+
+router.post(
+	'/upload_attachment',
+	[authenticateToken],
+	(req: Request, res: Response) => {
+		anyFileUpload(req, res, async (err) => {
+			if (!req.file) {
+				return res.sendStatus(400);
+			}
+
+			if (err) {
+				return res.sendStatus(400);
+			}
+
+			const URL =
+				'http://localhost:4000/resource/' +
+				path.basename(
+					req.file.filename,
+					path.extname(req.file.filename)
+				);
+
+			return res.json({
+				url: URL,
+			});
 		});
 	}
 );
