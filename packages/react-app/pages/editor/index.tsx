@@ -1,5 +1,18 @@
 import 'highlight.js/styles/github-dark.css';
-import { faBold, faCode, faFileImage, faHeading, faImage, faItalic, faLink, faListOl, faListUl, faMinus, faPaperclip, faStrikethrough } from '@fortawesome/free-solid-svg-icons';
+import {
+	faBold,
+	faCode,
+	faFileImage,
+	faHeading,
+	faImage,
+	faItalic,
+	faLink,
+	faListOl,
+	faListUl,
+	faMinus,
+	faPaperclip,
+	faStrikethrough,
+} from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
@@ -19,6 +32,13 @@ import { formatDigitGrouping } from '../../utils/format';
 import useDebounce from '../../utils/hooks/useDebounce';
 import AttachmentModal from './components/AttachmentModal';
 
+export type AttachmentType = {
+	name: string;
+	url: string;
+	mime: string;
+	size: number;
+};
+
 export default function PostEditor() {
 	const { fetching, user } = useAuth();
 	const router = useRouter();
@@ -35,7 +55,7 @@ export default function PostEditor() {
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
 	const [openAttachment, setOpenAttachment] = useState(true);
-	const [attachmentURLs, setAttachmentURLs] = useState<string[]>([]);
+	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
@@ -43,9 +63,8 @@ export default function PostEditor() {
 		},
 		onError: () => {
 			toast.error('Failed to upload image');
-		}
+		},
 	});
-
 
 	marked.setOptions({
 		breaks: true,
@@ -55,7 +74,7 @@ export default function PostEditor() {
 
 			return hljs.highlight(code, { language }).value;
 		},
-		langPrefix: 'hljs language-'
+		langPrefix: 'hljs language-',
 	});
 
 	const postMutation = useMutation('create_post', createPost, {
@@ -65,23 +84,30 @@ export default function PostEditor() {
 		},
 		onError: () => {
 			toast.error('Failed to create a new post');
-		}
+		},
 	});
 
 	function handleSubmission() {
 		if (titleRef.current && descriptionRef.current) {
 			postMutation.mutate({
 				title: titleRef.current.value,
-				description: descriptionRef.current.value
+				description: descriptionRef.current.value,
+				attachments: attachments,
 			});
 		}
 	}
 
 	function parseMarkdown() {
 		if (descriptionRef.current && markdownPreviewRef.current) {
-			markdownPreviewRef.current.innerHTML = marked.parse(descriptionRef.current.value);
-			setWordCount(getWordCount(markdownPreviewRef.current.innerText || ''));
-			setReadingLevel(getReadingLevel(markdownPreviewRef.current.innerText || ''));
+			markdownPreviewRef.current.innerHTML = marked.parse(
+				descriptionRef.current.value
+			);
+			setWordCount(
+				getWordCount(markdownPreviewRef.current.innerText || '')
+			);
+			setReadingLevel(
+				getReadingLevel(markdownPreviewRef.current.innerText || '')
+			);
 		}
 	}
 
@@ -103,7 +129,7 @@ export default function PostEditor() {
 
 			uploadMutation.mutate({
 				formData: formData,
-				_for: 'Other_Image'
+				_for: 'Other_Image',
 			});
 		}
 	}
@@ -136,68 +162,145 @@ export default function PostEditor() {
 					accept='.png,.jpg,.jpeg'
 					className='hidden'
 				/>
-				<AttachmentModal open={openAttachment} close={() => setOpenAttachment(false)} pushAttachmentURL={(url) => {
-					setAttachmentURLs([
-						...attachmentURLs,
-						url
-					]);
-				}} removeAttachmentURL={(index: number) => {
-					setAttachmentURLs(attachmentURLs.filter((_, i) => i != index));
-				}} />
+				<AttachmentModal
+					open={openAttachment}
+					close={() => setOpenAttachment(!openAttachment)}
+					pushAttachmentURL={(att) => {
+						setAttachments([...attachments, att]);
+					}}
+					removeAttachmentURL={(index: number) => {
+						setAttachments(
+							attachments.filter((_, i) => i != index)
+						);
+					}}
+				/>
 				<div className='flex items-center gap-4'>
 					<img src={user?.avatar} className='w-9 rounded-full' />
-					<div className='text-gray-700 font-medium text-lg'>{user?.displayName}</div>
+					<div className='text-gray-700 font-medium text-lg'>
+						{user?.displayName}
+					</div>
 				</div>
 				<div className='text-4xl font-bold text-gray-900 my-1'>
-					<input type='text' placeholder='New post title here...' className='py-4 w-full outline-0' ref={titleRef} />
+					<input
+						type='text'
+						placeholder='New post title here...'
+						className='py-4 w-full outline-0'
+						ref={titleRef}
+					/>
 				</div>
 				<div className='flex justify-between my-4'>
 					<div className='flex gap-10'>
 						<div className='flex gap-2'>
-							<ToolbarItem icon={faBold} onMouseDown={() => apply.wrappingEffect('bold')} />
-							<ToolbarItem icon={faItalic} onMouseDown={() => apply.wrappingEffect('italic')} />
-							<ToolbarItem icon={faStrikethrough} onMouseDown={() => apply.wrappingEffect('strikethrough')} />
+							<ToolbarItem
+								icon={faBold}
+								onMouseDown={() => apply.wrappingEffect('bold')}
+							/>
+							<ToolbarItem
+								icon={faItalic}
+								onMouseDown={() =>
+									apply.wrappingEffect('italic')
+								}
+							/>
+							<ToolbarItem
+								icon={faStrikethrough}
+								onMouseDown={() =>
+									apply.wrappingEffect('strikethrough')
+								}
+							/>
 						</div>
 						<div className='flex gap-2'>
-							<ToolbarItem icon={faCode} onMouseDown={() => apply.codeBlock()} />
-							<ToolbarItem icon={faLink} onMouseDown={() => apply.link()} />
-							<ToolbarItem icon={faImage} onMouseDown={() => apply.image()} />
-							<ToolbarItem icon={faFileImage} onMouseDown={() => {
-								selectionStartRef.current = get.selectionStart() || 0;
-								fileRef.current?.click();
-							}} />
-
+							<ToolbarItem
+								icon={faCode}
+								onMouseDown={() => apply.codeBlock()}
+							/>
+							<ToolbarItem
+								icon={faLink}
+								onMouseDown={() => apply.link()}
+							/>
+							<ToolbarItem
+								icon={faImage}
+								onMouseDown={() => apply.image()}
+							/>
+							<ToolbarItem
+								icon={faFileImage}
+								onMouseDown={() => {
+									selectionStartRef.current =
+										get.selectionStart() || 0;
+									fileRef.current?.click();
+								}}
+							/>
 						</div>
 						<div className='flex gap-2'>
-							<ToolbarItem icon={faHeading} onMouseDown={() => apply.heading()} />
-							<ToolbarItem icon={faMinus} onMouseDown={() => apply.HR()} />
-							<ToolbarItem icon={faListUl} onMouseDown={() => apply.unorderList()} />
-							<ToolbarItem icon={faListOl} onMouseDown={() => apply.orderedList()} />
+							<ToolbarItem
+								icon={faHeading}
+								onMouseDown={() => apply.heading()}
+							/>
+							<ToolbarItem
+								icon={faMinus}
+								onMouseDown={() => apply.HR()}
+							/>
+							<ToolbarItem
+								icon={faListUl}
+								onMouseDown={() => apply.unorderList()}
+							/>
+							<ToolbarItem
+								icon={faListOl}
+								onMouseDown={() => apply.orderedList()}
+							/>
 						</div>
 					</div>
 					<div className='flex gap-2'>
 						<div className='flex font-bold'>
-							<span className='text-indigo-500 px-1'>{attachmentURLs.length > 0 ? attachmentURLs.length + '+' : ''}</span>
-							<ToolbarItem icon={faPaperclip} className='bg-indigo-200 text-indigo-800' onClick={() => setOpenAttachment(!openAttachment)} />
+							<span className='text-indigo-500 px-1'>
+								{attachments.length > 0
+									? attachments.length + '+'
+									: ''}
+							</span>
+							<ToolbarItem
+								icon={faPaperclip}
+								className='bg-indigo-200 text-indigo-800'
+								onClick={() => {
+									setOpenAttachment(!openAttachment);
+								}}
+							/>
 						</div>
-						<ToolbarItem icon={faMarkdown} className='bg-gray-900 text-gray-50' onClick={switchTextView} />
+						<ToolbarItem
+							icon={faMarkdown}
+							className='bg-gray-900 text-gray-50'
+							onClick={switchTextView}
+						/>
 					</div>
 				</div>
 				<div className='flex-grow text-lg relative'>
-					<textarea className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md' placeholder='Text description...' ref={descriptionRef} onChange={parseMarkdown}></textarea>
-					<div className='w-full h-full whitespace-pre-wrap leading-none hidden' ref={markdownPreviewRef}></div>
+					<textarea
+						className=' h-full w-full outline-0 border border-gray-200 p-4 rounded-md'
+						placeholder='Text description...'
+						ref={descriptionRef}
+						onChange={parseMarkdown}
+					></textarea>
+					<div
+						className='w-full h-full whitespace-pre-wrap leading-none hidden'
+						ref={markdownPreviewRef}
+					></div>
 				</div>
 				<div className='flex gap-5 py-5 justify-between'>
 					<div className='text-gray-400'>
-						{formatDigitGrouping(wordCountDebounce)} words • {readingLevelDebounce}
+						{formatDigitGrouping(wordCountDebounce)} words •{' '}
+						{readingLevelDebounce}
 					</div>
 					<div className='flex gap-5'>
-						<button className='bg-red-500 py-2 px-5 rounded text-white'>Discard</button>
-						<button className='bg-blue-500 py-2 px-5 rounded text-white' onClick={handleSubmission}>Post</button>
-
+						<button className='bg-red-500 py-2 px-5 rounded text-white'>
+							Discard
+						</button>
+						<button
+							className='bg-blue-500 py-2 px-5 rounded text-white'
+							onClick={handleSubmission}
+						>
+							Post
+						</button>
 					</div>
 				</div>
 			</div>
-		</MainNavBar >
+		</MainNavBar>
 	);
 }

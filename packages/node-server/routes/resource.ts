@@ -105,6 +105,9 @@ router.post(
 				);
 
 			return res.json({
+				name: req.file.originalname,
+				mime: req.file.mimetype,
+				size: req.file.size,
 				url: URL,
 			});
 		});

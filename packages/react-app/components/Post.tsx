@@ -33,7 +33,7 @@ export default function Post(props: {
 		},
 		onError: () => {
 			toast.error('Failed to like the post');
-		}
+		},
 	});
 	marked.setOptions({
 		breaks: true,
@@ -43,7 +43,7 @@ export default function Post(props: {
 
 			return hljs.highlight(code, { language }).value;
 		},
-		langPrefix: 'hljs language-'
+		langPrefix: 'hljs language-',
 	});
 
 	function handleLiking() {
@@ -59,10 +59,7 @@ export default function Post(props: {
 		) {
 			return description;
 		} else {
-			return (
-				description.substring(0, MAX_CHARACTER_LENGTH) +
-				'...'
-			);
+			return description.substring(0, MAX_CHARACTER_LENGTH) + '...';
 		}
 	}
 
@@ -76,16 +73,24 @@ export default function Post(props: {
 
 	return (
 		<div
-			className={'max-w-[60rem] w-full border-gray-300 border rounded-lg p-5 text-left ' + (!props.fullText ? 'cursor-pointer' : '')}
+			className={
+				'max-w-[60rem] w-full border-gray-300 border rounded-lg p-5 text-left ' +
+				(!props.fullText ? 'cursor-pointer' : '')
+			}
 			onClick={handleClick}
 		>
 			<div className='text-gray-900 font-semibold text-lg'>
 				{props.post.title}
 			</div>
-			<div className='text-gray-800 mt-3 whitespace-pre-wrap leading-none' dangerouslySetInnerHTML={{ __html: renderText() }}>
-			</div>
+			<div
+				className='text-gray-800 mt-3 whitespace-pre-wrap leading-none'
+				dangerouslySetInnerHTML={{ __html: renderText() }}
+			></div>
 			<Link href={`/user/${props.user._id}`}>
-				<div className='flex items-center gap-3 mt-4 w-fit cursor-pointer group' onClick={(e) => e.stopPropagation()}>
+				<div
+					className='flex items-center gap-3 mt-4 w-fit cursor-pointer group'
+					onClick={(e) => e.stopPropagation()}
+				>
 					<img src={props.user.avatar} className='w-9 rounded-full' />
 					<div className='flex gap-2'>
 						<div className='text-gray-700 font-medium group-hover:underline'>
@@ -100,7 +105,11 @@ export default function Post(props: {
 			</Link>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
-					<LikeButton likeCount={props.post.likeCount} liked={props.post.likes.includes(userId)} handler={handleLiking} />
+					<LikeButton
+						likeCount={props.post.likeCount}
+						liked={props.post.likes.includes(userId)}
+						handler={handleLiking}
+					/>
 					<div className='flex gap-2 items-center'>
 						<FontAwesomeIcon
 							icon={faComment}
@@ -110,11 +119,23 @@ export default function Post(props: {
 							{formatNumber(props.post.commentCount)}
 						</div>
 					</div>
-					<ShareButton postId={props.post._id as string} postTitle={props.post.title} />
+					<ShareButton
+						postId={props.post._id as string}
+						postTitle={props.post.title}
+					/>
 				</div>
 
-				<div className='text-gray-400'>{props.post.viewCount} views</div>
+				<div className='text-gray-400'>
+					{props.post.viewCount} views
+				</div>
 			</div>
+			{props.post.attachments && props.post.attachments.length > 0
+				? props.post.attachments.map((e, i) => (
+						<div className='mt-5 mb-0' key={i}>
+							{e.name}
+						</div>
+				  ))
+				: ''}
 		</div>
 	);
 }

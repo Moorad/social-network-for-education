@@ -1,6 +1,12 @@
 import { Schema, model, Types } from 'mongoose';
 import { z } from 'zod';
 
+export const Attachment = z.object({
+	name: z.string(),
+	url: z.string(),
+	mime: z.string(),
+});
+
 export const PostZod = z.object({
 	_id: z.string().or(z.instanceof(Types.ObjectId)),
 	title: z
@@ -20,9 +26,16 @@ export const PostZod = z.object({
 	viewCount: z.number(),
 	views: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	commentCount: z.number(),
+	attachments: z.array(Attachment),
 });
 
 export type PostType = z.infer<typeof PostZod>;
+type attachmentType = z.infer<typeof Attachment>;
+const attachmentSchema = new Schema<attachmentType>({
+	name: { type: String },
+	url: { type: String },
+	mime: { type: String },
+});
 
 const postSchema = new Schema<PostType>({
 	title: { type: String, required: true },
@@ -34,6 +47,7 @@ const postSchema = new Schema<PostType>({
 	viewCount: { type: Number, default: 0 },
 	views: { type: [Schema.Types.ObjectId], default: [] },
 	commentCount: { type: Number, default: 0 },
+	attachments: { type: [attachmentSchema], default: [] },
 });
 
 postSchema.index({ title: 'text' });

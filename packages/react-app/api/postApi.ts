@@ -1,3 +1,4 @@
+import { AttachmentType } from '../pages/editor';
 import { baseApi } from './base';
 
 export const likePost = async (postId: string) => {
@@ -36,6 +37,7 @@ export const commentOnPost = async ({
 export const createPost = async (data: {
 	title: string;
 	description: string;
+	attachments: AttachmentType[];
 }) => {
 	const response = await baseApi.post('/post', data);
 	return response.data;
