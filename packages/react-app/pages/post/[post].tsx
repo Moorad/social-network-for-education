@@ -159,7 +159,7 @@ export default function post() {
 		<MainNavBar>
 			<div className='flex'>
 				<div className='flex-1 flex flex-col items-center'>
-					<div className='w-3/4 m-5'>
+					<div className='w-3/4 m-5 max-w-[60rem]'>
 						<div className='my-5'>
 							{postQuery.data && (
 								<Post
@@ -195,7 +195,7 @@ export default function post() {
 								</form>
 							</div>
 						</div>
-						<div className='my-5 border-gray-300 border rounded-lg p-5 '>
+						<div className='my-5 border-gray-300 border rounded-lg p-5'>
 							<div className='text-lg font-semibold text-gray-800'>
 								Comments{' '}
 								<span className='bg-blue-200 text-blue-600 px-3 rounded-full text-sm '>
@@ -208,7 +208,14 @@ export default function post() {
 				</div>
 				<div className='w-64 bg-gray-100 p-5'>
 					<div className='text-center font-semibold'>Attachments</div>
-					<div>
+					{postQuery.data &&
+						postQuery.data.post.attachments &&
+						postQuery.data.post.attachments.length == 0 && (
+							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
+								No files attached with this post.
+							</div>
+						)}
+					<div className='flex flex-col gap-3'>
 						{postQuery.data &&
 							postQuery.data.post.attachments &&
 							postQuery.data.post.attachments.length > 0 &&
@@ -222,7 +229,7 @@ export default function post() {
 										key={i}
 										className='no-underline text-black cursor-pointer'
 									>
-										<div className='flex text-center items-center mt-5 mb-0 w-full gap-4 hover:bg-gray-200 p-5 rounded-md'>
+										<div className='flex text-center items-center w-full gap-4 hover:bg-gray-200 p-5 rounded-md'>
 											<FontAwesomeIcon
 												icon={icon.icon}
 												className={

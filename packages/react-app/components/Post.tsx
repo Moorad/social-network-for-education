@@ -129,13 +129,6 @@ export default function Post(props: {
 					{props.post.viewCount} views
 				</div>
 			</div>
-			{props.post.attachments && props.post.attachments.length > 0
-				? props.post.attachments.map((e, i) => (
-						<div className='mt-5 mb-0' key={i}>
-							{e.name}
-						</div>
-				  ))
-				: ''}
 		</div>
 	);
 }

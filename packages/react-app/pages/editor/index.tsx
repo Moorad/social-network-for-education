@@ -44,22 +44,21 @@ export default function PostEditor() {
 	const router = useRouter();
 	const titleRef = useRef<HTMLInputElement>(null);
 	const descriptionRef = useRef<HTMLTextAreaElement>(null);
+	const effects = useMarkdownEffects(descriptionRef, parseMarkdown);
 	const markdownPreviewRef = useRef<HTMLDivElement>(null);
-	const selectionStartRef = useRef(0);
 	const fileRef = useRef<HTMLInputElement>(null);
 	const queryClient = useQueryClient();
 	const [view, setView] = useState<'text' | 'md'>('text');
-	const { apply, get } = useMarkdownEffects(descriptionRef, parseMarkdown);
 	const [wordCount, setWordCount] = useState(0);
 	const wordCountDebounce = useDebounce(wordCount, 800);
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
-	const [openAttachment, setOpenAttachment] = useState(true);
+	const [openAttachment, setOpenAttachment] = useState(false);
 	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
-			apply.image(res.url);
+			effects.image(res.url);
 		},
 		onError: () => {
 			toast.error('Failed to upload image');
@@ -121,11 +120,9 @@ export default function PostEditor() {
 
 	function imageUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files && e.target.files.length > 0) {
-			const imageFile = e.target.files[0];
-
 			const formData = new FormData();
 
-			formData.append('file', imageFile);
+			formData.append('file', e.target.files[0]);
 
 			uploadMutation.mutate({
 				formData: formData,
@@ -193,59 +190,57 @@ export default function PostEditor() {
 						<div className='flex gap-2'>
 							<ToolbarItem
 								icon={faBold}
-								onMouseDown={() => apply.wrappingEffect('bold')}
+								onMouseDown={() =>
+									effects.wrappingEffect('bold')
+								}
 							/>
 							<ToolbarItem
 								icon={faItalic}
 								onMouseDown={() =>
-									apply.wrappingEffect('italic')
+									effects.wrappingEffect('italic')
 								}
 							/>
 							<ToolbarItem
 								icon={faStrikethrough}
 								onMouseDown={() =>
-									apply.wrappingEffect('strikethrough')
+									effects.wrappingEffect('strikethrough')
 								}
 							/>
 						</div>
 						<div className='flex gap-2'>
 							<ToolbarItem
 								icon={faCode}
-								onMouseDown={() => apply.codeBlock()}
+								onMouseDown={() => effects.codeBlock()}
 							/>
 							<ToolbarItem
 								icon={faLink}
-								onMouseDown={() => apply.link()}
+								onMouseDown={() => effects.link()}
 							/>
 							<ToolbarItem
 								icon={faImage}
-								onMouseDown={() => apply.image()}
+								onMouseDown={() => effects.image()}
 							/>
 							<ToolbarItem
 								icon={faFileImage}
-								onMouseDown={() => {
-									selectionStartRef.current =
-										get.selectionStart() || 0;
-									fileRef.current?.click();
-								}}
+								onMouseDown={() => fileRef.current?.click()}
 							/>
 						</div>
 						<div className='flex gap-2'>
 							<ToolbarItem
 								icon={faHeading}
-								onMouseDown={() => apply.heading()}
+								onMouseDown={() => effects.heading()}
 							/>
 							<ToolbarItem
 								icon={faMinus}
-								onMouseDown={() => apply.HR()}
+								onMouseDown={() => effects.HR()}
 							/>
 							<ToolbarItem
 								icon={faListUl}
-								onMouseDown={() => apply.unorderList()}
+								onMouseDown={() => effects.unorderList()}
 							/>
 							<ToolbarItem
 								icon={faListOl}
-								onMouseDown={() => apply.orderedList()}
+								onMouseDown={() => effects.orderedList()}
 							/>
 						</div>
 					</div>
@@ -289,7 +284,18 @@ export default function PostEditor() {
 						{readingLevelDebounce}
 					</div>
 					<div className='flex gap-5'>
-						<button className='bg-red-500 py-2 px-5 rounded text-white'>
+						<button
+							className='bg-red-500 py-2 px-5 rounded text-white'
+							onClick={() => {
+								const confirmation = confirm(
+									'The post information will be lost. Are you sure you want to do this?'
+								);
+
+								if (confirmation) {
+									router.push('/home');
+								}
+							}}
+						>
 							Discard
 						</button>
 						<button

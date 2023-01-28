@@ -1,14 +1,4 @@
-import {
-	faClose,
-	faFile,
-	faFileExcel,
-	faFileImage,
-	faFilePdf,
-	faFilePowerpoint,
-	faFileWord,
-	faFileZipper,
-	IconDefinition,
-} from '@fortawesome/free-solid-svg-icons';
+import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Dialog } from '@headlessui/react';
 import React, { useEffect, useRef, useState } from 'react';
@@ -16,6 +6,7 @@ import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
 import { uploadAnyFile } from '../../../api/userApi';
+import { getIconFromMimeType } from '../../../utils/file';
 import { formatByteSizes } from '../../../utils/format';
 
 export default function AttachmentModal({
@@ -57,11 +48,9 @@ export default function AttachmentModal({
 
 	function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files && e.target.files.length > 0) {
-			const imageFile = e.target.files[0];
-
 			const formData = new FormData();
 
-			formData.append('file', imageFile);
+			formData.append('file', e.target.files[0]);
 
 			uploadMutation.mutate({
 				formData: formData,
@@ -73,65 +62,6 @@ export default function AttachmentModal({
 		setAttachments(attachments.filter((_, i) => i != index));
 
 		removeAttachmentURL(index);
-	}
-
-	function getIconFromMimeType(mimeType: string) {
-		let icon: IconDefinition;
-		let iconColor: string;
-		switch (mimeType) {
-			case 'application/msword':
-				icon = faFileWord;
-				iconColor = 'text-blue-500';
-				break;
-			case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
-				icon = faFileWord;
-				iconColor = 'text-blue-500';
-				break;
-			case 'application/vnd.ms-powerpoint':
-				icon = faFilePowerpoint;
-				iconColor = 'text-orange-600';
-				break;
-			case 'application/vnd.openxmlformats-officedocument.presentationml.presentation':
-				icon = faFilePowerpoint;
-				iconColor = 'text-orange-600';
-				break;
-			case 'application/vnd.ms-excel':
-				icon = faFileExcel;
-				iconColor = 'text-emerald-600';
-				break;
-			case 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
-				icon = faFileExcel;
-				iconColor = 'text-emerald-600';
-				break;
-			case 'application/zip':
-				icon = faFileZipper;
-				iconColor = 'text-amber-400';
-				break;
-			case 'application/x-zip-compressed':
-				icon = faFileZipper;
-				iconColor = 'text-amber-400';
-				break;
-			case 'application/pdf':
-				icon = faFilePdf;
-				iconColor = 'text-red-500';
-				break;
-			case 'image/jpeg':
-				icon = faFileImage;
-				iconColor = 'text-emerald-600';
-				break;
-			case 'image/png':
-				icon = faFileImage;
-				iconColor = 'text-emerald-600';
-				break;
-			default:
-				icon = faFile;
-				iconColor = 'text-gray-700';
-				break;
-		}
-
-		return (
-			<FontAwesomeIcon icon={icon} className={'text-3xl ' + iconColor} />
-		);
 	}
 
 	return (
@@ -146,14 +76,25 @@ export default function AttachmentModal({
 			<div className='fixed inset-0 bg-black/20' aria-hidden='true' />
 			<Dialog.Panel className='absolute inset-center border-gray-300 border p-8 rounded-md w-[38rem] bg-white'>
 				<Dialog.Title>Upload attachments</Dialog.Title>
-				<div className='flex flex-col gap-2'>
+				<div className='flex flex-col gap-2 max-h-60 overflow-auto'>
+					{attachments.length == 0 && (
+						<div className='bg-gray-100 text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
+							You have not uploaded any files
+						</div>
+					)}
 					{attachments.map((e, i) => (
 						<div
 							className='flex bg-gray-100 p-4 items-center gap-4 rounded-md text-sm'
 							key={i}
 						>
-							{getIconFromMimeType(e.mime)}
-							<div className=''>
+							<FontAwesomeIcon
+								icon={getIconFromMimeType(e.mime).icon}
+								className={
+									'text-3xl ' +
+									getIconFromMimeType(e.mime).color
+								}
+							/>
+							<div>
 								<div>{e.name}</div>
 								<div>{formatByteSizes(e.size)}</div>
 							</div>
