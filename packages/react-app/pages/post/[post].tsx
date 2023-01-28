@@ -13,41 +13,57 @@ import { faReply } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SortCommentsDFS } from '../../utils/sort';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { commentOnPost, getPost, getPostComments, viewedPost } from '../../api/postApi';
+import {
+	commentOnPost,
+	getPost,
+	getPostComments,
+	viewedPost,
+} from '../../api/postApi';
 import { replyToComment } from '../../api/commentApi';
 import toast from 'react-hot-toast';
+import { getIconFromMimeType } from '../../utils/file';
 
 type SinglePostWithUser = {
 	post: PostType;
 	user: UserMinimal;
 } | null;
 
-
-export type CommentWithUser = (CommentType & { user: UserMinimal })
+export type CommentWithUser = CommentType & { user: UserMinimal };
 
 type Comments = {
-	comments: CommentWithUser[]
+	comments: CommentWithUser[];
 } | null;
 
 export default function post() {
 	const { query, isReady } = useRouter();
 	const { fetching } = useAuth();
-	const [replyingTo, setReplyingTo] = useState<{ displayName: string, commentId: string } | null>(null);
+	const [replyingTo, setReplyingTo] = useState<{
+		displayName: string;
+		commentId: string;
+	} | null>(null);
 	const commentRef = useRef<HTMLTextAreaElement>(null);
 
 	const queryClient = useQueryClient();
-	const postQuery = useQuery<SinglePostWithUser>(['post', query.post], () => getPost(query.post as string), {
-		enabled: isReady,
-		onError: () => {
-			toast.error('Failed to fetch the post');
+	const postQuery = useQuery<SinglePostWithUser>(
+		['post', query.post],
+		() => getPost(query.post as string),
+		{
+			enabled: isReady,
+			onError: () => {
+				toast.error('Failed to fetch the post');
+			},
 		}
-	});
-	const commentsQuery = useQuery<Comments>(['comments', query.post], () => getPostComments(query.post as string), {
-		enabled: isReady,
-		onError: () => {
-			toast.error('Failed to fetch post comments');
+	);
+	const commentsQuery = useQuery<Comments>(
+		['comments', query.post],
+		() => getPostComments(query.post as string),
+		{
+			enabled: isReady,
+			onError: () => {
+				toast.error('Failed to fetch post comments');
+			},
 		}
-	});
+	);
 	const commentMutation = useMutation('comment', commentOnPost, {
 		onSuccess: () => {
 			queryClient.invalidateQueries();
@@ -58,7 +74,7 @@ export default function post() {
 		},
 		onError: () => {
 			toast.error('Failed to submit the comment');
-		}
+		},
 	});
 	const replyMutation = useMutation('reply', replyToComment, {
 		onSuccess: () => {
@@ -70,11 +86,11 @@ export default function post() {
 		},
 		onError: () => {
 			toast.error('Failed to submit the reply comment');
-		}
+		},
 	});
 	// Send a request to count the view
 	useQuery(['view', query.post], () => viewedPost(query.post as string), {
-		enabled: isReady
+		enabled: isReady,
 	});
 
 	function renderComments() {
@@ -86,7 +102,6 @@ export default function post() {
 			});
 
 			return SortCommentsDFS(comments).map((e, i) => {
-
 				return (
 					<div
 						key={i}
@@ -114,12 +129,12 @@ export default function post() {
 		if (replyingTo) {
 			replyMutation.mutate({
 				commentId: replyingTo.commentId,
-				content: commentRef.current?.value
+				content: commentRef.current?.value,
 			});
 		} else {
 			commentMutation.mutate({
 				postId: postQuery.data?.post._id as string,
-				content: commentRef.current?.value
+				content: commentRef.current?.value,
 			});
 		}
 	}
@@ -127,11 +142,16 @@ export default function post() {
 	function handleReplying(user: UserMinimal, commentId: string) {
 		setReplyingTo({
 			displayName: user.displayName,
-			commentId: commentId
+			commentId: commentId,
 		});
 	}
 
-	if (fetching || !isReady || postQuery.isLoading || commentsQuery.isLoading) {
+	if (
+		fetching ||
+		!isReady ||
+		postQuery.isLoading ||
+		commentsQuery.isLoading
+	) {
 		return <Loading />;
 	}
 
@@ -141,14 +161,25 @@ export default function post() {
 				<div className='flex-1 flex flex-col items-center'>
 					<div className='w-3/4 m-5'>
 						<div className='my-5'>
-							{postQuery.data &&
-								<Post user={postQuery.data.user} post={postQuery.data.post} fullText={true} />
-							}
+							{postQuery.data && (
+								<Post
+									user={postQuery.data.user}
+									post={postQuery.data.post}
+									fullText={true}
+								/>
+							)}
 						</div>
 						<div>
-							<div className='my-5 border-gray-300 border rounded-lg relative' id='comment-box'>
-								{replyingTo && <div className='bg-gray-200 text-gray-600 px-5 py-1'>
-									<FontAwesomeIcon icon={faReply} /> Replying to {replyingTo.displayName} </div>}
+							<div
+								className='my-5 border-gray-300 border rounded-lg relative'
+								id='comment-box'
+							>
+								{replyingTo && (
+									<div className='bg-gray-200 text-gray-600 px-5 py-1'>
+										<FontAwesomeIcon icon={faReply} />{' '}
+										Replying to {replyingTo.displayName}{' '}
+									</div>
+								)}
 								<form onSubmit={handleSubmission}>
 									<textarea
 										className='w-full h-32 p-5 rounded-lg'
@@ -175,11 +206,39 @@ export default function post() {
 						</div>
 					</div>
 				</div>
-				<div className='w-64 bg-gray-200'>
-					This will have something else
+				<div className='w-64 bg-gray-100 p-5'>
+					<div className='text-center font-semibold'>Attachments</div>
+					<div>
+						{postQuery.data &&
+							postQuery.data.post.attachments &&
+							postQuery.data.post.attachments.length > 0 &&
+							postQuery.data.post.attachments.map((e, i) => {
+								const icon = getIconFromMimeType(e.mime);
+								return (
+									<a
+										target='_blank'
+										rel='noreferrer'
+										href={e.url}
+										key={i}
+										className='no-underline text-black cursor-pointer'
+									>
+										<div className='flex text-center items-center mt-5 mb-0 w-full gap-4 hover:bg-gray-200 p-5 rounded-md'>
+											<FontAwesomeIcon
+												icon={icon.icon}
+												className={
+													'text-3xl ' + icon.color
+												}
+											/>
+											<div className='break-words text-sm'>
+												{e.name}
+											</div>
+										</div>
+									</a>
+								);
+							})}
+					</div>
 				</div>
 			</div>
 		</MainNavBar>
 	);
-
 }
