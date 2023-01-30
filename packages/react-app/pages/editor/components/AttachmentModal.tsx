@@ -1,22 +1,22 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dialog } from '@headlessui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
 import { uploadAnyFile } from '../../../api/userApi';
+import Modal from '../../../components/Modal';
 import { getIconFromMimeType } from '../../../utils/file';
 import { formatByteSizes } from '../../../utils/format';
 
 export default function AttachmentModal({
-	open,
-	close,
+	isOpen,
+	setIsOpen,
 	pushAttachmentURL,
 	removeAttachmentURL,
 }: {
-	open: boolean;
-	close: () => void;
+	isOpen: boolean;
+	setIsOpen: (state: boolean) => void;
 	pushAttachmentURL: (att: AttachmentType) => void;
 	removeAttachmentURL: (index: number) => void;
 }) {
@@ -65,17 +65,18 @@ export default function AttachmentModal({
 	}
 
 	return (
-		<Dialog open={open} onClose={() => close()}>
-			<input
-				type='file'
-				onChange={handleUpload}
-				ref={fileRef}
-				className='hidden'
-			/>
-
-			<div className='fixed inset-0 bg-black/20' aria-hidden='true' />
-			<Dialog.Panel className='absolute inset-center border-gray-300 border p-8 rounded-md w-[38rem] bg-white'>
-				<Dialog.Title>Upload attachments</Dialog.Title>
+		<Modal
+			title='Upload attachments'
+			isOpen={isOpen}
+			setIsOpen={() => setIsOpen(false)}
+		>
+			<div>
+				<input
+					type='file'
+					onChange={handleUpload}
+					ref={fileRef}
+					className='hidden'
+				/>
 				<div className='flex flex-col gap-2 max-h-60 overflow-auto'>
 					{attachments.length == 0 && (
 						<div className='bg-gray-100 text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
@@ -110,7 +111,7 @@ export default function AttachmentModal({
 				<div className='flex gap-5 mt-6 text-sm'>
 					<button
 						className='bg-gray-400 py-2 px-5 rounded text-white'
-						onClick={() => close()}
+						onClick={() => setIsOpen(false)}
 					>
 						Close
 					</button>
@@ -118,11 +119,10 @@ export default function AttachmentModal({
 						className='bg-blue-500 py-2 px-5 rounded text-white'
 						onClick={() => fileRef.current?.click()}
 					>
-						{' '}
 						Upload
 					</button>
 				</div>
-			</Dialog.Panel>
-		</Dialog>
+			</div>
+		</Modal>
 	);
 }

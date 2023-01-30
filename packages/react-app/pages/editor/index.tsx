@@ -2,6 +2,7 @@ import 'highlight.js/styles/github-dark.css';
 import {
 	faBold,
 	faCode,
+	faFeatherPointed,
 	faFileImage,
 	faHeading,
 	faImage,
@@ -12,6 +13,7 @@ import {
 	faMinus,
 	faPaperclip,
 	faStrikethrough,
+	faTags,
 } from '@fortawesome/free-solid-svg-icons';
 import { useRouter } from 'next/router';
 import React, { useEffect, useRef, useState } from 'react';
@@ -160,8 +162,8 @@ export default function PostEditor() {
 					className='hidden'
 				/>
 				<AttachmentModal
-					open={openAttachment}
-					close={() => setOpenAttachment(!openAttachment)}
+					isOpen={openAttachment}
+					setIsOpen={(state) => setOpenAttachment(state)}
 					pushAttachmentURL={(att) => {
 						setAttachments([...attachments, att]);
 					}}
@@ -245,12 +247,29 @@ export default function PostEditor() {
 						</div>
 					</div>
 					<div className='flex gap-2'>
+						<ToolbarItem
+							icon={faTags}
+							className='bg-rose-200 text-rose-800'
+							onClick={() => {
+								setOpenAttachment(!openAttachment);
+							}}
+						/>
+						<ToolbarItem
+							icon={faFeatherPointed}
+							className='bg-orange-200 text-orange-800'
+							onClick={() => {
+								setOpenAttachment(!openAttachment);
+							}}
+						/>
 						<div className='flex font-bold'>
-							<span className='text-indigo-500 px-1'>
-								{attachments.length > 0
-									? attachments.length + '+'
-									: ''}
-							</span>
+							{attachments.length > 0 ? (
+								<span className='text-indigo-500 mx-1'>
+									{attachments.length + '+'}
+								</span>
+							) : (
+								''
+							)}
+
 							<ToolbarItem
 								icon={faPaperclip}
 								className='bg-indigo-200 text-indigo-800'

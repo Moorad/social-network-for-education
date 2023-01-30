@@ -10,9 +10,6 @@ import {
 	IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import PostModal from '../PostModal';
-import { useDispatch } from 'react-redux';
-import { showPostModal } from '../../redux/modalsSlice';
 
 const navigation = [
 	{ name: 'Home', href: '/home', icon: faHouseChimney },
@@ -23,18 +20,14 @@ const navigation = [
 ];
 
 export default function SideNavBar(props: { active: number }) {
-	const dispatch = useDispatch();
-
 	return (
 		<>
-			<PostModal />
 			<div className='flex flex-col w-20 bg-gray-800 items-center py-4'>
-				<div
-					className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500 hover:bg-blue-400'
-					onClick={() => dispatch(showPostModal())}
-				>
-					<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
-				</div>
+				<Link href='/editor'>
+					<div className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500 hover:bg-blue-400'>
+						<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
+					</div>
+				</Link>
 				{navigation.map((e, i) => {
 					return (
 						<SideBarButton
