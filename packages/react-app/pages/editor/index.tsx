@@ -56,12 +56,12 @@ export default function PostEditor() {
 	const wordCountDebounce = useDebounce(wordCount, 800);
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
-	const [openAttachment, setOpenAttachment] = useState(false);
 	const [modalOpenStates, setModalOpenStates] = useState([
 		false,
 		false,
 		false,
 	]);
+	const [tags, setTags] = useState<string[]>([]);
 	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 
 	const uploadMutation = useMutation(uploadUserImage, {
@@ -100,6 +100,7 @@ export default function PostEditor() {
 				title: titleRef.current.value,
 				description: descriptionRef.current.value,
 				attachments: attachments,
+				tags: tags,
 			});
 		}
 	}
@@ -186,6 +187,12 @@ export default function PostEditor() {
 					setIsOpen={(state: boolean) =>
 						setModalOpenStates([false, state, false])
 					}
+					pushTag={(tag) => {
+						setTags([...tags, tag]);
+					}}
+					removeTag={(index: number) => {
+						setTags(tags.filter((_, i) => i != index));
+					}}
 				/>
 
 				<div className='flex items-center gap-4'>
@@ -273,7 +280,7 @@ export default function PostEditor() {
 							icon={faFeatherPointed}
 							className='bg-orange-200 text-orange-800'
 							onClick={() => {
-								setOpenAttachment(!openAttachment);
+								// setOpenAttachment(!openAttachment);
 							}}
 						/>
 						<div className='flex font-bold'>

@@ -38,6 +38,7 @@ export const createPost = async (data: {
 	title: string;
 	description: string;
 	attachments: AttachmentType[];
+	tags: string[];
 }) => {
 	const response = await baseApi.post('/post', data);
 	return response.data;

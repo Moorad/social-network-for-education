@@ -27,6 +27,7 @@ export const PostZod = z.object({
 	views: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	commentCount: z.number(),
 	attachments: z.array(Attachment),
+	tags: z.array(z.string()),
 });
 
 export type PostType = z.infer<typeof PostZod>;
@@ -48,6 +49,7 @@ const postSchema = new Schema<PostType>({
 	views: { type: [Schema.Types.ObjectId], default: [] },
 	commentCount: { type: Number, default: 0 },
 	attachments: { type: [attachmentSchema], default: [] },
+	tags: { type: [String], default: [] },
 });
 
 postSchema.index({ title: 'text' });

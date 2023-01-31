@@ -244,6 +244,30 @@ export default function post() {
 								);
 							})}
 					</div>
+					<div className='text-center font-semibold mb-3'>Tags</div>
+					{postQuery.data &&
+						postQuery.data.post.tags &&
+						postQuery.data.post.tags.length == 0 && (
+							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
+								No tags provided for this post.
+							</div>
+						)}
+
+					<div className='flex flex-wrap gap-2 text-sm mb-3 justify-center'>
+						{postQuery.data &&
+							postQuery.data.post.tags &&
+							postQuery.data.post.tags.length > 0 &&
+							postQuery.data.post.tags.map((e, i) => {
+								return (
+									<span
+										className='px-3 py-1 rounded-sm bg-gray-200 text-gray-700'
+										key={i}
+									>
+										{e}
+									</span>
+								);
+							})}
+					</div>
 				</div>
 			</div>
 		</MainNavBar>

@@ -1,23 +1,31 @@
-import React, { useEffect, useState } from 'react';
+import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React, { useEffect, useRef, useState } from 'react';
 import Modal from '../../../components/Modal';
+import { cleanStringAndCase } from '../../../utils/text';
 
 export default function TagModal({
 	isOpen,
 	setIsOpen,
+	pushTag,
+	removeTag,
 }: {
 	isOpen: boolean;
 	setIsOpen: (state: boolean) => void;
+	pushTag: (tag: string) => void;
+	removeTag: (index: number) => void;
 }) {
 	const [popularTags, setPopularTags] = useState<string[]>([]);
 	const [selectedTags, setSelectedTags] = useState<string[]>([]);
+	const tagInputRef = useRef<HTMLInputElement>(null);
 
 	useEffect(() => {
 		setPopularTags([
 			'Food',
 			'Football',
 			'Memes',
-			'Computer_science',
-			'World_cup',
+			'Computer_Science',
+			'World_Cup',
 			'Pizza',
 			'Nature',
 			'Holiday',
@@ -26,6 +34,18 @@ export default function TagModal({
 			'Family',
 		]);
 	}, []);
+
+	function localRemoveTag(element: string) {
+		setSelectedTags(selectedTags.filter((e) => e != element));
+
+		removeTag(selectedTags.indexOf(element));
+	}
+
+	function localPushTag(element: string) {
+		setSelectedTags([...selectedTags, element]);
+
+		pushTag(element);
+	}
 
 	return (
 		<Modal
@@ -41,10 +61,17 @@ export default function TagModal({
 						{popularTags.map((e, i) => (
 							<button
 								key={i}
-								className='bg-gray-200 text-gray-700 px-3 py-1 rounded-sm cursor-pointer'
+								className={
+									'text-gray-700 px-3 py-1 rounded-sm cursor-pointer ' +
+									(selectedTags.some((elm) => elm == e)
+										? 'bg-blue-500 text-white'
+										: 'bg-gray-200')
+								}
 								onClick={() => {
-									if (!selectedTags.some((elm) => elm == e)) {
-										setSelectedTags([...selectedTags, e]);
+									if (selectedTags.some((elm) => elm == e)) {
+										localRemoveTag(e);
+									} else {
+										localPushTag(e);
 									}
 								}}
 							>
@@ -58,6 +85,30 @@ export default function TagModal({
 						type='text'
 						placeholder='Search/Add new tag'
 						className='border border-gray-300 rounded-md px-4 py-1 my-1 w-full'
+						ref={tagInputRef}
+						onKeyDownCapture={(evt) => {
+							if (
+								!tagInputRef.current ||
+								tagInputRef.current.value == ''
+							) {
+								return;
+							}
+
+							if (evt.key === 'Enter') {
+								const inputText = cleanStringAndCase(
+									tagInputRef.current.value
+								);
+								if (
+									!selectedTags.some(
+										(elm) => elm == inputText
+									)
+								) {
+									localPushTag(inputText);
+								}
+
+								tagInputRef.current.value = '';
+							}
+						}}
 					/>
 				</div>
 				<div>
@@ -74,12 +125,20 @@ export default function TagModal({
 							</div>
 						)}
 						{selectedTags.map((e, i) => (
-							<div
+							<button
+								className='flex bg-blue-500 text-white rounded-sm cursor-pointer py-1'
 								key={i}
-								className='bg-blue-500 text-white px-3 py-1 rounded-sm cursor-pointer'
 							>
-								{e}
-							</div>
+								<span
+									className=' pl-2 text-white opacity-50 hover:opacity-100'
+									onClick={() => {
+										localRemoveTag(e);
+									}}
+								>
+									<FontAwesomeIcon icon={faXmarkCircle} />
+								</span>
+								<span className='px-2'>{e}</span>
+							</button>
 						))}
 					</div>
 				</div>

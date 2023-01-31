@@ -54,3 +54,14 @@ export function getReadingLevel(text: string) {
 		return `(${Math.floor(FRES)}) Extremely difficult to read.`;
 	}
 }
+
+export function cleanStringAndCase(text: string) {
+	text = text.trim();
+	let splitted = text.split(/ |_/g);
+
+	splitted = splitted.map(
+		(word) => word[0].toUpperCase() + word.slice(1).toLowerCase()
+	);
+
+	return splitted.join('_');
+}
