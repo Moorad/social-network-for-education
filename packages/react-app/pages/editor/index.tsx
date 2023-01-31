@@ -272,6 +272,8 @@ export default function PostEditor() {
 						<ToolbarItem
 							icon={faTags}
 							className='bg-rose-200 text-rose-800'
+							badgeValue={tags.length}
+							badgeClassName='text-white bg-rose-500'
 							onClick={() => {
 								setModalOpenStates([false, true, false]);
 							}}
@@ -279,22 +281,18 @@ export default function PostEditor() {
 						<ToolbarItem
 							icon={faFeatherPointed}
 							className='bg-orange-200 text-orange-800'
+							badgeValue={tags.length}
+							badgeClassName='text-white bg-orange-500'
 							onClick={() => {
 								// setOpenAttachment(!openAttachment);
 							}}
 						/>
 						<div className='flex font-bold'>
-							{attachments.length > 0 ? (
-								<span className='text-indigo-500 mx-1'>
-									{attachments.length + '+'}
-								</span>
-							) : (
-								''
-							)}
-
 							<ToolbarItem
 								icon={faPaperclip}
 								className='bg-indigo-200 text-indigo-800'
+								badgeValue={attachments.length}
+								badgeClassName='text-white bg-indigo-500'
 								onClick={() => {
 									setModalOpenStates([true, false, false]);
 								}}

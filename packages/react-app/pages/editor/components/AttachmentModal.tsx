@@ -1,6 +1,6 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
@@ -24,27 +24,18 @@ export default function AttachmentModal({
 	const fileRef = useRef<HTMLInputElement>(null);
 	const uploadMutation = useMutation(uploadAnyFile, {
 		onSuccess: (res) => {
-			setAttachments([
-				...attachments,
-				{
-					name: res.name,
-					mime: res.mime,
-					size: res.size,
-					url: res.url,
-				},
-			]);
+			pushAttachment({
+				name: res.name,
+				mime: res.mime,
+				size: res.size,
+				url: res.url,
+			});
 			toast.success('Uploaded sucessfully');
 		},
 		onError: () => {
 			toast.error('Failed to upload image');
 		},
 	});
-
-	useEffect(() => {
-		if (attachments.length > 0) {
-			pushAttachmentURL(attachments[attachments.length - 1]);
-		}
-	}, [attachments]);
 
 	function handleUpload(e: React.ChangeEvent<HTMLInputElement>) {
 		if (e.target.files && e.target.files.length > 0) {
@@ -56,6 +47,12 @@ export default function AttachmentModal({
 				formData: formData,
 			});
 		}
+	}
+
+	function pushAttachment(att: AttachmentType) {
+		setAttachments([...attachments, att]);
+
+		pushAttachmentURL(att);
 	}
 
 	function removeAttachment(index: number) {
