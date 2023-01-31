@@ -83,7 +83,7 @@ export default function Post(props: {
 				{props.post.title}
 			</div>
 			<div
-				className='text-gray-800 mt-3 whitespace-pre-wrap leading-none'
+				className='text-gray-800 mt-3 whitespace-pre-wrap leading-none markdown'
 				dangerouslySetInnerHTML={{ __html: renderText() }}
 			></div>
 			<Link href={`/user/${props.user._id}`}>

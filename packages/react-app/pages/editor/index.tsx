@@ -271,7 +271,7 @@ export default function PostEditor() {
 					<div className='flex gap-2'>
 						<ToolbarItem
 							icon={faTags}
-							className='bg-rose-200 text-rose-800'
+							className='bg-rose-200 text-rose-800 hover:bg-rose-300'
 							badgeValue={tags.length}
 							badgeClassName='text-white bg-rose-500'
 							onClick={() => {
@@ -280,7 +280,7 @@ export default function PostEditor() {
 						/>
 						<ToolbarItem
 							icon={faFeatherPointed}
-							className='bg-orange-200 text-orange-800'
+							className='bg-orange-200 text-orange-800 hover:bg-orange-300'
 							badgeValue={tags.length}
 							badgeClassName='text-white bg-orange-500'
 							onClick={() => {
@@ -290,7 +290,7 @@ export default function PostEditor() {
 						<div className='flex font-bold'>
 							<ToolbarItem
 								icon={faPaperclip}
-								className='bg-indigo-200 text-indigo-800'
+								className='bg-indigo-200 text-indigo-800 hover:bg-indigo-300'
 								badgeValue={attachments.length}
 								badgeClassName='text-white bg-indigo-500'
 								onClick={() => {
@@ -300,10 +300,21 @@ export default function PostEditor() {
 						</div>
 						<ToolbarItem
 							icon={faMarkdown}
-							className='bg-gray-900 text-gray-50'
+							className='bg-gray-900 text-gray-50 hover:bg-gray-800'
 							onClick={switchTextView}
 						/>
 					</div>
+				</div>
+				<div className='mb-3'>
+					{view == 'text' ? (
+						<span className='bg-gray-200 text-gray-900 py-1 px-3 rounded-sm'>
+							Text view
+						</span>
+					) : (
+						<span className='bg-gray-900 text-white py-1 px-3 rounded-sm'>
+							Markdown view
+						</span>
+					)}
 				</div>
 				<div className='flex-grow text-lg relative'>
 					<textarea
@@ -313,7 +324,7 @@ export default function PostEditor() {
 						onChange={parseMarkdown}
 					></textarea>
 					<div
-						className='w-full h-full whitespace-pre-wrap leading-none hidden'
+						className='w-full h-full whitespace-pre-wrap leading-none hidden markdown'
 						ref={markdownPreviewRef}
 					></div>
 				</div>
@@ -324,7 +335,7 @@ export default function PostEditor() {
 					</div>
 					<div className='flex gap-5'>
 						<button
-							className='bg-red-500 py-2 px-5 rounded text-white'
+							className='bg-red-500 py-2 px-5 rounded text-white hover:bg-red-600'
 							onClick={() => {
 								const confirmation = confirm(
 									'The post information will be lost. Are you sure you want to do this?'
@@ -338,7 +349,7 @@ export default function PostEditor() {
 							Discard
 						</button>
 						<button
-							className='bg-blue-500 py-2 px-5 rounded text-white'
+							className='bg-blue-500 py-2 px-5 rounded text-white hover:bg-blue-600'
 							onClick={handleSubmission}
 						>
 							Post

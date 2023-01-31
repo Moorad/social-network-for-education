@@ -21,7 +21,7 @@ export default function ToolbarItem({
 	onMouseDown,
 }: props) {
 	return (
-		<div
+		<button
 			className={
 				'flex relative items-center justify-center px-2 h-7 rounded-sm  cursor-pointer ' +
 				className
@@ -41,12 +41,12 @@ export default function ToolbarItem({
 			)}
 
 			<FontAwesomeIcon icon={icon} />
-		</div>
+		</button>
 	);
 }
 
 ToolbarItem.defaultProps = {
-	className: 'text-gray-900 bg-gray-200',
+	className: 'hover:bg-gray-300 text-gray-900 bg-gray-200',
 	badgeValue: 0,
 	badgeClassName: 'bg-gray-900 text-gray-100',
 };
