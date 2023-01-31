@@ -33,6 +33,7 @@ import { getReadingLevel, getWordCount } from '../../utils/text';
 import { formatDigitGrouping } from '../../utils/format';
 import useDebounce from '../../utils/hooks/useDebounce';
 import AttachmentModal from './components/AttachmentModal';
+import TagModal from './components/TagModal';
 
 export type AttachmentType = {
 	name: string;
@@ -56,6 +57,11 @@ export default function PostEditor() {
 	const [readingLevel, setReadingLevel] = useState('');
 	const readingLevelDebounce = useDebounce(readingLevel, 800);
 	const [openAttachment, setOpenAttachment] = useState(false);
+	const [modalOpenStates, setModalOpenStates] = useState([
+		false,
+		false,
+		false,
+	]);
 	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 
 	const uploadMutation = useMutation(uploadUserImage, {
@@ -162,8 +168,10 @@ export default function PostEditor() {
 					className='hidden'
 				/>
 				<AttachmentModal
-					isOpen={openAttachment}
-					setIsOpen={(state) => setOpenAttachment(state)}
+					isOpen={modalOpenStates[0]}
+					setIsOpen={(state) =>
+						setModalOpenStates([state, false, false])
+					}
 					pushAttachmentURL={(att) => {
 						setAttachments([...attachments, att]);
 					}}
@@ -173,6 +181,13 @@ export default function PostEditor() {
 						);
 					}}
 				/>
+				<TagModal
+					isOpen={modalOpenStates[1]}
+					setIsOpen={(state: boolean) =>
+						setModalOpenStates([false, state, false])
+					}
+				/>
+
 				<div className='flex items-center gap-4'>
 					<img src={user?.avatar} className='w-9 rounded-full' />
 					<div className='text-gray-700 font-medium text-lg'>
@@ -251,7 +266,7 @@ export default function PostEditor() {
 							icon={faTags}
 							className='bg-rose-200 text-rose-800'
 							onClick={() => {
-								setOpenAttachment(!openAttachment);
+								setModalOpenStates([false, true, false]);
 							}}
 						/>
 						<ToolbarItem
@@ -274,7 +289,7 @@ export default function PostEditor() {
 								icon={faPaperclip}
 								className='bg-indigo-200 text-indigo-800'
 								onClick={() => {
-									setOpenAttachment(!openAttachment);
+									setModalOpenStates([true, false, false]);
 								}}
 							/>
 						</div>
