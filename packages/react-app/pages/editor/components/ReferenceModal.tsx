@@ -5,16 +5,10 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Combobox } from '@headlessui/react';
+import { ReferenceType } from 'node-server/routes/utils';
 import React, { useState } from 'react';
 import Modal from '../../../components/Modal';
 import useDebounce from '../../../utils/hooks/useDebounce';
-
-type ReferenceType = {
-	title: string;
-	DOI: string;
-	creation: string;
-	authors: string[];
-};
 
 const references: ReferenceType[] = [
 	{

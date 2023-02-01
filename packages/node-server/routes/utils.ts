@@ -2,7 +2,15 @@ import express, { Request, Response } from 'express';
 import User from '../Models/User';
 import { SearchTerm, validate } from '../utils/validation';
 import { authenticateToken } from './auth';
+import axios from 'axios';
 const router = express.Router();
+
+export type ReferenceType = {
+	title: string;
+	DOI: string;
+	creation: string;
+	authors: string[];
+};
 
 router.get(
 	'/search',
@@ -42,6 +50,64 @@ router.get(
 				results: [],
 			});
 		}
+	}
+);
+
+router.get(
+	'/search_reference',
+	[validate(SearchTerm), authenticateToken],
+	async (req: Request, res: Response) => {
+		let term = req.query.term;
+
+		if (typeof term !== 'string') {
+			return res.sendStatus(400);
+		}
+
+		term = term.replace('https://doi.org/', ''); // Improves search accuracy
+		console.log(term);
+
+		const filteredReponse: ReferenceType[] = [];
+
+		let items;
+		try {
+			const DOIResponse = await axios.get(
+				`http://api.crossref.org/works/${term}`
+			);
+
+			items = [DOIResponse.data.message];
+		} catch {
+			const QueryResponse = await axios.get(
+				`http://api.crossref.org/works?query=${term}&rows=5`
+			);
+
+			items = QueryResponse.data.message.items;
+		}
+
+		for (let i = 0; i < items.length; i++) {
+			let authors = [];
+			let title = '';
+
+			if (items[i].author) {
+				authors = items[i].author.map(
+					(author: any) => author.given + ' ' + author.family
+				);
+			}
+
+			if (items[i].title) {
+				title = items[i].title[0];
+			} else if (items[i]['container-title']) {
+				title = items[i]['container-title'][0];
+			}
+
+			filteredReponse.push({
+				title: title,
+				DOI: items[i].DOI,
+				creation: items[i].created['date-time'],
+				authors: authors,
+			});
+		}
+
+		return res.json({ items: filteredReponse });
 	}
 );
 
