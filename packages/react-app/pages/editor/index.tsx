@@ -34,6 +34,7 @@ import { formatDigitGrouping } from '../../utils/format';
 import useDebounce from '../../utils/hooks/useDebounce';
 import AttachmentModal from './components/AttachmentModal';
 import TagModal from './components/TagModal';
+import ReferenceModal from './components/ReferenceModal';
 
 export type AttachmentType = {
 	name: string;
@@ -194,6 +195,12 @@ export default function PostEditor() {
 						setTags(tags.filter((_, i) => i != index));
 					}}
 				/>
+				<ReferenceModal
+					isOpen={modalOpenStates[2]}
+					setIsOpen={(state: boolean) =>
+						setModalOpenStates([false, false, state])
+					}
+				/>
 
 				<div className='flex items-center gap-4'>
 					<img src={user?.avatar} className='w-9 rounded-full' />
@@ -284,7 +291,7 @@ export default function PostEditor() {
 							badgeValue={tags.length}
 							badgeClassName='text-white bg-orange-500'
 							onClick={() => {
-								// setOpenAttachment(!openAttachment);
+								setModalOpenStates([false, false, true]);
 							}}
 						/>
 						<div className='flex font-bold'>

@@ -10,54 +10,54 @@
 	body {
 		min-height: 100vh;
 	}
+}
 
-	h1,
-	h2,
-	h3,
-	h4,
-	h5 {
-		@apply font-bold my-4;
-	}
+.markdown h1,
+.markdown h2,
+.markdown h3,
+.markdown h4,
+.markdown h5 {
+	@apply font-bold my-4;
+}
 
-	h1 {
-		@apply text-3xl;
-	}
+.markdown h1 {
+	@apply text-3xl;
+}
 
-	h2 {
-		@apply text-2xl;
-	}
+.markdown h2 {
+	@apply text-2xl;
+}
 
-	h3 {
-		@apply text-xl;
-	}
+.markdown h3 {
+	@apply text-xl;
+}
 
-	h4 {
-		@apply text-lg;
-	}
+.markdown h4 {
+	@apply text-lg;
+}
 
-	h5 {
-		@apply text-base;
-	}
+.markdown h5 {
+	@apply text-base;
+}
 
-	a {
-		@apply text-blue-600 underline;
-	}
+.markdown a {
+	@apply text-blue-600 underline;
+}
 
-	ul {
-		@apply list-disc list-inside;
-	}
+.markdown ul {
+	@apply list-disc list-inside;
+}
 
-	ol {
-		@apply list-decimal list-inside;
-	}
+.markdown ol {
+	@apply list-decimal list-inside;
+}
 
-	code {
-		@apply bg-gray-100 px-1 rounded-md;
-	}
+.markdown code {
+	@apply bg-gray-100 px-1 rounded-md;
+}
 
-	.hljs {
-		@apply rounded-md text-sm;
-	}
+.markdown .hljs {
+	@apply rounded-md text-sm;
 }
 
 .inset-center {

@@ -64,6 +64,7 @@ export default function AttachmentModal({
 	return (
 		<Modal
 			title='Upload attachments'
+			description="Files uploaded will be available to users to download on the post's page"
 			isOpen={isOpen}
 			setIsOpen={() => setIsOpen(false)}
 		>
