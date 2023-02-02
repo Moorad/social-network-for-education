@@ -18,7 +18,9 @@ export default function Modal(props: propsType) {
 			/>
 			<Dialog.Panel className='absolute inset-center border-gray-300 border p-8 rounded-md w-[38rem] bg-white z-30'>
 				<div className='mb-4'>
-					<Dialog.Title className='my-1'>{props.title}</Dialog.Title>
+					<Dialog.Title className='my-1 font-semibold text-xl'>
+						{props.title}
+					</Dialog.Title>
 					{props.description && (
 						<Dialog.Description className='text-gray-400 m-0 text-sm'>
 							{props.description}

@@ -5,9 +5,10 @@ import { searchQuery } from '../api/utilsApi';
 import useDebounce from '../utils/hooks/useDebounce';
 import { useQuery } from 'react-query';
 import type { UserType } from 'node-server/Models/User';
+import EmptyMessage from './EmptyMessage';
 
 type responseResult = {
-	results: UserType[]
+	results: UserType[];
 };
 
 export default function GeneralSearchBar() {
@@ -16,9 +17,11 @@ export default function GeneralSearchBar() {
 	const debouncedQuery = useDebounce(query || '', 500);
 	const { data } = useQuery<responseResult>(
 		['search', debouncedQuery],
-		() => searchQuery(debouncedQuery), {
-		enabled: Boolean(query)
-	});
+		() => searchQuery(debouncedQuery),
+		{
+			enabled: Boolean(query),
+		}
+	);
 
 	useEffect(() => {
 		if (selected != undefined) {
@@ -42,11 +45,11 @@ export default function GeneralSearchBar() {
 								className='rounded-md border-gray-300 border absolute py-1 w-full'
 								static
 							>
-								{(!data || data?.results.length == 0) && (
-									<div className='px-5 py-2 text-gray-400 text-md'>
-										Nothing found.
-									</div>
-								)}
+								<EmptyMessage
+									value={data?.results}
+									message='No results found'
+									background='bg-white'
+								/>
 								{data?.results.map((item) => (
 									<Combobox.Option
 										key={item.displayName}

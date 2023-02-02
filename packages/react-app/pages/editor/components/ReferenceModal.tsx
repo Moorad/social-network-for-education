@@ -8,6 +8,7 @@ import { referenceQuery } from '../../../api/utilsApi';
 import InlineLoading from '../../../components/InlineLoading';
 import Modal from '../../../components/Modal';
 import useDebounce from '../../../utils/hooks/useDebounce';
+import EmptyMessage from '../../../components/EmptyMessage';
 
 export default function ReferenceModal({
 	isOpen,
@@ -59,13 +60,12 @@ export default function ReferenceModal({
 								</div>
 							)}
 
-							{!referenceMutation.isLoading &&
-								queryResults.length == 0 && (
-									<div className='bg-gray-100 text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-										No references found for the term &apos;
-										{debouncedQuery}&apos;
-									</div>
-								)}
+							{!referenceMutation.isLoading && (
+								<EmptyMessage
+									value={references}
+									message={`No results found for '${debouncedQuery}'`}
+								/>
+							)}
 
 							{queryResults.map((ref, i) => (
 								<Combobox.Option
@@ -105,11 +105,10 @@ export default function ReferenceModal({
 
 				<div>
 					<div className='mt-3 mb-1'>Selected references</div>
-					{selectedRefs.length == 0 && (
-						<div className='bg-gray-100 text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-							No references selected
-						</div>
-					)}
+					<EmptyMessage
+						value={references}
+						message='No references selected'
+					/>
 
 					<div className='flex flex-col gap-3 bg-white rounded-md overflow-auto max-h-52 mt-2'>
 						{references.map((ref, i) => (

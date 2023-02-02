@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
 import { uploadAnyFile } from '../../../api/userApi';
+import EmptyMessage from '../../../components/EmptyMessage';
 import Modal from '../../../components/Modal';
 import { getIconFromMimeType } from '../../../utils/file';
 import { formatByteSizes } from '../../../utils/format';
@@ -66,11 +67,11 @@ export default function AttachmentModal({
 					className='hidden'
 				/>
 				<div className='flex flex-col gap-2 max-h-60 overflow-auto'>
-					{attachments.length == 0 && (
-						<div className='bg-gray-100 text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-							You have not uploaded any files
-						</div>
-					)}
+					<EmptyMessage
+						value={attachments}
+						message='You have not uploaded any files'
+					/>
+
 					{attachments.map((e, i) => (
 						<div
 							className='flex bg-gray-100 p-4 items-center gap-4 rounded-md text-sm'

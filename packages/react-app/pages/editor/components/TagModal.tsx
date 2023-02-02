@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import Modal from '../../../components/Modal';
 import { cleanStringAndCase } from '../../../utils/text';
+import EmptyMessage from '../../../components/EmptyMessage';
 
 const suggestedTags = [
 	'Food',
@@ -103,12 +104,8 @@ export default function TagModal({
 						</span>
 					</div>
 					<div className='flex gap-3 overflow-x-auto py-2 mb-3'>
-						{selectedTags.length == 0 && (
-							<div className='text-gray-500 bg-gray-200 w-full py-2 px-4'>
-								No selected tags
-							</div>
-						)}
-						{selectedTags.map((e, i) => (
+						<EmptyMessage value={tags} message='No tags selected' />
+						{tags.map((e, i) => (
 							<button
 								className='flex bg-blue-500 text-white rounded-sm cursor-pointer py-1'
 								key={i}

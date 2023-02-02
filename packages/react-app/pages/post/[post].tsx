@@ -22,6 +22,7 @@ import {
 import { replyToComment } from '../../api/commentApi';
 import toast from 'react-hot-toast';
 import { getIconFromMimeType } from '../../utils/file';
+import EmptyMessage from '../../components/EmptyMessage';
 
 type SinglePostWithUser = {
 	post: PostType;
@@ -208,13 +209,11 @@ export default function post() {
 				</div>
 				<div className='w-64 bg-gray-100 p-5'>
 					<div className='text-center font-semibold'>Attachments</div>
-					{postQuery.data &&
-						postQuery.data.post.attachments &&
-						postQuery.data.post.attachments.length == 0 && (
-							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-								No files attached with this post.
-							</div>
-						)}
+					<EmptyMessage
+						value={postQuery.data?.post.attachments}
+						message='No files attached with this post.'
+					/>
+
 					<div className='flex flex-col gap-3'>
 						{postQuery.data &&
 							postQuery.data.post.attachments &&
@@ -247,13 +246,10 @@ export default function post() {
 					<div className='text-center font-semibold mb-3'>
 						References
 					</div>
-					{postQuery.data &&
-						postQuery.data.post.references &&
-						postQuery.data.post.references.length == 0 && (
-							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-								No references provided for this post.
-							</div>
-						)}
+					<EmptyMessage
+						value={postQuery.data?.post.references}
+						message='No references provided for this post.'
+					/>
 
 					<div className='flex flex-wrap gap-2 text-sm mb-3 justify-center'>
 						{postQuery.data &&
@@ -290,13 +286,10 @@ export default function post() {
 							})}
 					</div>
 					<div className='text-center font-semibold mb-3'>Tags</div>
-					{postQuery.data &&
-						postQuery.data.post.tags &&
-						postQuery.data.post.tags.length == 0 && (
-							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
-								No tags provided for this post.
-							</div>
-						)}
+					<EmptyMessage
+						value={postQuery.data?.post.tags}
+						message='No tags provided for this post.'
+					/>
 
 					<div className='flex flex-wrap gap-2 text-sm mb-3 justify-center'>
 						{postQuery.data &&
