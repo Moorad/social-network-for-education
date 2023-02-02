@@ -12,15 +12,14 @@ import useDebounce from '../../../utils/hooks/useDebounce';
 export default function ReferenceModal({
 	isOpen,
 	setIsOpen,
-	pushRef,
-	removeRef,
+	references,
+	setReferences,
 }: {
 	isOpen: boolean;
 	setIsOpen: (state: boolean) => void;
-	pushRef: (ref: ReferenceType) => void;
-	removeRef: (index: number) => void;
+	references: ReferenceType[];
+	setReferences: (references: ReferenceType[]) => void;
 }) {
-	const [selectedRefs, setSelectedRefs] = useState<ReferenceType[]>([]);
 	const [query, setQuery] = useState('');
 	const debouncedQuery = useDebounce(query, 800);
 	const referenceMutation = useMutation('references', referenceQuery, {
@@ -30,40 +29,23 @@ export default function ReferenceModal({
 	});
 	const [queryResults, setQueryResults] = useState<ReferenceType[]>([]);
 	const searchInputRef = useRef<HTMLInputElement>(null);
-	const comboBoxRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		setQueryResults([]);
 		referenceMutation.mutate(debouncedQuery);
 	}, [debouncedQuery]);
 
-	function localPushRef(ref: ReferenceType) {
-		setSelectedRefs([...selectedRefs, ref]);
-
-		pushRef(ref);
-	}
-
-	function localRemoveRef(index: number) {
-		setSelectedRefs(selectedRefs.filter((_, i) => index != i));
-
-		removeRef(index);
-	}
-
 	return (
 		<Modal
 			title='Add References'
+			description="References help user's verify the credibility of the facts presented in the post"
 			isOpen={isOpen}
 			setIsOpen={() => setIsOpen(false)}
 		>
 			<div>
 				<div>
 					<div className='mt-3 mb-1'>Lookup reference</div>
-					<Combobox
-						className='relative'
-						as='div'
-						ref={comboBoxRef}
-						value={null}
-					>
+					<Combobox className='relative' as='div' value={null}>
 						<Combobox.Input
 							className='border border-gray-300 rounded-md px-4 py-1 my-1 w-full'
 							placeholder='DIO, title, author, etc'
@@ -92,7 +74,7 @@ export default function ReferenceModal({
 									className='bg-gray-100 hover:bg-gray-200 p-3 rounded-md cursor-pointer'
 									onClick={() => {
 										setQueryResults([]);
-										localPushRef(ref);
+										setReferences([...references, ref]);
 									}}
 								>
 									<div className='font-semibold'>
@@ -130,7 +112,7 @@ export default function ReferenceModal({
 					)}
 
 					<div className='flex flex-col gap-3 bg-white rounded-md overflow-auto max-h-52 mt-2'>
-						{selectedRefs.map((ref, i) => (
+						{references.map((ref, i) => (
 							<button
 								key={i}
 								className='flex items-center justify-between p-3 rounded-md bg-blue-500 text-white cursor-default'
@@ -141,7 +123,11 @@ export default function ReferenceModal({
 								<span
 									className='p-3 cursor-pointer'
 									onClick={() => {
-										localRemoveRef(i);
+										setReferences(
+											references.filter(
+												(_, index) => i != index
+											)
+										);
 									}}
 								>
 									<FontAwesomeIcon icon={faTrash} />

@@ -1,6 +1,6 @@
 import { faClose } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
@@ -12,24 +12,26 @@ import { formatByteSizes } from '../../../utils/format';
 export default function AttachmentModal({
 	isOpen,
 	setIsOpen,
-	pushAttachmentURL,
-	removeAttachmentURL,
+	attachments,
+	setAttachments,
 }: {
 	isOpen: boolean;
 	setIsOpen: (state: boolean) => void;
-	pushAttachmentURL: (att: AttachmentType) => void;
-	removeAttachmentURL: (index: number) => void;
+	attachments: AttachmentType[];
+	setAttachments: (att: AttachmentType[]) => void;
 }) {
-	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
 	const fileRef = useRef<HTMLInputElement>(null);
 	const uploadMutation = useMutation(uploadAnyFile, {
 		onSuccess: (res) => {
-			pushAttachment({
-				name: res.name,
-				mime: res.mime,
-				size: res.size,
-				url: res.url,
-			});
+			setAttachments([
+				...attachments,
+				{
+					name: res.name,
+					mime: res.mime,
+					size: res.size,
+					url: res.url,
+				},
+			]);
 			toast.success('Uploaded sucessfully');
 		},
 		onError: () => {
@@ -47,18 +49,6 @@ export default function AttachmentModal({
 				formData: formData,
 			});
 		}
-	}
-
-	function pushAttachment(att: AttachmentType) {
-		setAttachments([...attachments, att]);
-
-		pushAttachmentURL(att);
-	}
-
-	function removeAttachment(index: number) {
-		setAttachments(attachments.filter((_, i) => i != index));
-
-		removeAttachmentURL(index);
 	}
 
 	return (
@@ -99,7 +89,13 @@ export default function AttachmentModal({
 							</div>
 							<div
 								className='ml-auto cursor-pointer'
-								onClick={() => removeAttachment(i)}
+								onClick={() =>
+									setAttachments(
+										attachments.filter(
+											(_, index) => i != index
+										)
+									)
+								}
 							>
 								<FontAwesomeIcon icon={faClose} />
 							</div>

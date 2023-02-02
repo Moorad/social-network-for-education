@@ -177,38 +177,24 @@ export default function PostEditor() {
 					setIsOpen={(state) =>
 						setModalOpenStates([state, false, false])
 					}
-					pushAttachmentURL={(att) => {
-						setAttachments([...attachments, att]);
-					}}
-					removeAttachmentURL={(index: number) => {
-						setAttachments(
-							attachments.filter((_, i) => i != index)
-						);
-					}}
+					attachments={attachments}
+					setAttachments={setAttachments}
 				/>
 				<TagModal
 					isOpen={modalOpenStates[1]}
 					setIsOpen={(state: boolean) =>
 						setModalOpenStates([false, state, false])
 					}
-					pushTag={(tag) => {
-						setTags([...tags, tag]);
-					}}
-					removeTag={(index: number) => {
-						setTags(tags.filter((_, i) => i != index));
-					}}
+					tags={tags}
+					setTags={setTags}
 				/>
 				<ReferenceModal
 					isOpen={modalOpenStates[2]}
 					setIsOpen={(state: boolean) =>
 						setModalOpenStates([false, false, state])
 					}
-					pushRef={(ref) => {
-						setReferences([...references, ref]);
-					}}
-					removeRef={(index: number) => {
-						setReferences(references.filter((_, i) => i != index));
-					}}
+					references={references}
+					setReferences={setReferences}
 				/>
 
 				<div className='flex items-center gap-4'>
@@ -297,7 +283,7 @@ export default function PostEditor() {
 						<ToolbarItem
 							icon={faFeatherPointed}
 							className='bg-orange-200 text-orange-800 hover:bg-orange-300'
-							badgeValue={tags.length}
+							badgeValue={references.length}
 							badgeClassName='text-white bg-orange-500'
 							onClick={() => {
 								setModalOpenStates([false, false, true]);
