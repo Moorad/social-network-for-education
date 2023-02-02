@@ -57,14 +57,13 @@ router.get(
 	'/search_reference',
 	[validate(SearchTerm), authenticateToken],
 	async (req: Request, res: Response) => {
-		let term = req.query.term;
+		let term = req.query.term || '-';
 
 		if (typeof term !== 'string') {
 			return res.sendStatus(400);
 		}
 
 		term = term.replace('https://doi.org/', ''); // Improves search accuracy
-		console.log(term);
 
 		const filteredReponse: ReferenceType[] = [];
 

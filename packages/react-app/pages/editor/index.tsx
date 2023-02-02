@@ -35,6 +35,7 @@ import useDebounce from '../../utils/hooks/useDebounce';
 import AttachmentModal from './components/AttachmentModal';
 import TagModal from './components/TagModal';
 import ReferenceModal from './components/ReferenceModal';
+import { ReferenceType } from 'node-server/routes/utils';
 
 export type AttachmentType = {
 	name: string;
@@ -64,6 +65,7 @@ export default function PostEditor() {
 	]);
 	const [tags, setTags] = useState<string[]>([]);
 	const [attachments, setAttachments] = useState<AttachmentType[]>([]);
+	const [references, setReferences] = useState<ReferenceType[]>([]);
 
 	const uploadMutation = useMutation(uploadUserImage, {
 		onSuccess: (res) => {
@@ -102,6 +104,7 @@ export default function PostEditor() {
 				description: descriptionRef.current.value,
 				attachments: attachments,
 				tags: tags,
+				references: references,
 			});
 		}
 	}
@@ -200,6 +203,12 @@ export default function PostEditor() {
 					setIsOpen={(state: boolean) =>
 						setModalOpenStates([false, false, state])
 					}
+					pushRef={(ref) => {
+						setReferences([...references, ref]);
+					}}
+					removeRef={(index: number) => {
+						setReferences(references.filter((_, i) => i != index));
+					}}
 				/>
 
 				<div className='flex items-center gap-4'>

@@ -56,6 +56,7 @@ router.post(
 			posterId: res.locals.user.id,
 			attachments: req.body.attachments,
 			tags: req.body.tags,
+			references: req.body.references,
 		});
 
 		await post.save();

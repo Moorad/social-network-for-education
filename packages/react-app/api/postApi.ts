@@ -1,3 +1,4 @@
+import { ReferenceType } from 'node-server/routes/utils';
 import { AttachmentType } from '../pages/editor';
 import { baseApi } from './base';
 
@@ -39,6 +40,7 @@ export const createPost = async (data: {
 	description: string;
 	attachments: AttachmentType[];
 	tags: string[];
+	references: ReferenceType[];
 }) => {
 	const response = await baseApi.post('/post', data);
 	return response.data;

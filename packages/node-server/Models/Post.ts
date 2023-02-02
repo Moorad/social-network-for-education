@@ -7,6 +7,13 @@ export const Attachment = z.object({
 	mime: z.string(),
 });
 
+export const Reference = z.object({
+	title: z.string(),
+	DOI: z.string(),
+	creation: z.string(),
+	authors: z.array(z.string()),
+});
+
 export const PostZod = z.object({
 	_id: z.string().or(z.instanceof(Types.ObjectId)),
 	title: z
@@ -28,14 +35,24 @@ export const PostZod = z.object({
 	commentCount: z.number(),
 	attachments: z.array(Attachment),
 	tags: z.array(z.string()),
+	references: z.array(Reference),
 });
 
 export type PostType = z.infer<typeof PostZod>;
 type attachmentType = z.infer<typeof Attachment>;
+type referenceType = z.infer<typeof Reference>;
+
 const attachmentSchema = new Schema<attachmentType>({
 	name: { type: String },
 	url: { type: String },
 	mime: { type: String },
+});
+
+const referenceSchema = new Schema<referenceType>({
+	title: { type: String },
+	DOI: { type: String },
+	creation: { type: String },
+	authors: { type: [String] },
 });
 
 const postSchema = new Schema<PostType>({
@@ -50,6 +67,7 @@ const postSchema = new Schema<PostType>({
 	commentCount: { type: Number, default: 0 },
 	attachments: { type: [attachmentSchema], default: [] },
 	tags: { type: [String], default: [] },
+	references: { type: [referenceSchema], default: [] },
 });
 
 postSchema.index({ title: 'text' });

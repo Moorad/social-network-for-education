@@ -244,6 +244,51 @@ export default function post() {
 								);
 							})}
 					</div>
+					<div className='text-center font-semibold mb-3'>
+						References
+					</div>
+					{postQuery.data &&
+						postQuery.data.post.references &&
+						postQuery.data.post.references.length == 0 && (
+							<div className='text-gray-500 p-4 items-center text-center gap-4 rounded-md text-md'>
+								No references provided for this post.
+							</div>
+						)}
+
+					<div className='flex flex-wrap gap-2 text-sm mb-3 justify-center'>
+						{postQuery.data &&
+							postQuery.data.post.references &&
+							postQuery.data.post.references.length > 0 &&
+							postQuery.data.post.references.map((ref, i) => {
+								return (
+									<div
+										className='bg-gray-100 hover:bg-gray-200 p-3 rounded-md text-sm cursor-pointer w-full'
+										key={i}
+									>
+										<div className='font-semibold'>
+											{ref.title}
+										</div>
+										<div className='text-blue-500 underline break-words'>
+											<a
+												href={`https://doi.org/${ref.DOI}`}
+												target='_blank'
+												rel='noreferrer'
+											>
+												https://doi.org/{ref.DOI}
+											</a>
+										</div>
+										<div className='flex flex-wrap justify-between'>
+											<div>{ref.authors.join(', ')}</div>
+											<div>
+												{new Date(
+													ref.creation
+												).getFullYear()}
+											</div>
+										</div>
+									</div>
+								);
+							})}
+					</div>
 					<div className='text-center font-semibold mb-3'>Tags</div>
 					{postQuery.data &&
 						postQuery.data.post.tags &&
