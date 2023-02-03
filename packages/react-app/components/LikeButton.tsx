@@ -4,10 +4,9 @@ import React, { useState } from 'react';
 import { formatNumber } from '../utils/format';
 
 export default function LikeButton(props: {
-	likeCount: number,
-	liked: boolean,
-	handler: () => void,
-
+	likeCount: number;
+	liked: boolean;
+	handler: () => void;
 }) {
 	const [liked, setLiked] = useState(props.liked);
 	const [likeCount, setLikeCount] = useState(props.likeCount);
@@ -24,7 +23,6 @@ export default function LikeButton(props: {
 		}
 
 		props.handler();
-
 	}
 
 	return (
@@ -33,7 +31,6 @@ export default function LikeButton(props: {
 				{liked ? (
 					<FontAwesomeIcon
 						icon={faHeart}
-
 						className='cursor-pointer text-red-400'
 					/>
 				) : (

@@ -8,26 +8,22 @@ import { UserMinimal } from 'node-server/Models/User';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faReply } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 import { likeComment } from '../api/commentApi';
 import toast from 'react-hot-toast';
 
 type propTypes = { data: CommentWithUser } & {
 	isAuthor: boolean;
-	replyHandler: (user: UserMinimal, commentId: string) => void
+	replyHandler: (user: UserMinimal, commentId: string) => void;
 };
 
 export default function Comment(props: propTypes) {
 	const userId = useSelector(selectId);
 	const isReply = props.data.parents.length > 1;
-	const queryClient = useQueryClient();
 	const likeMutation = useMutation(likeComment, {
-		onSuccess: () => {
-			queryClient.invalidateQueries();
-		},
 		onError: () => {
 			toast.error('Failed to like the comment');
-		}
+		},
 	});
 
 	function handleLiking() {
@@ -39,13 +35,21 @@ export default function Comment(props: propTypes) {
 	}
 
 	return (
-		<div className='border-gray-300 py-5 text-left' style={{ marginLeft: `${(props.data.parents.length - 1) * 35}px` }}>
-			{isReply && <div className='text-gray-400'>
-				<FontAwesomeIcon icon={faReply} /> Replying
-			</div>}
+		<div
+			className='border-gray-300 py-5 text-left'
+			style={{ marginLeft: `${(props.data.parents.length - 1) * 35}px` }}
+		>
+			{isReply && (
+				<div className='text-gray-400'>
+					<FontAwesomeIcon icon={faReply} /> Replying
+				</div>
+			)}
 			<Link href={`/user/${props.data.user._id}`}>
 				<div className='flex items-center gap-3 mt-4 cursor-pointer w-fit group'>
-					<img src={props.data.user.avatar} className='w-9 rounded-full' />
+					<img
+						src={props.data.user.avatar}
+						className='w-9 rounded-full'
+					/>
 					<div className='flex gap-2 items-center'>
 						<div className='text-gray-700 font-medium group-hover:underline'>
 							{props.data.user.displayName}
@@ -67,11 +71,19 @@ export default function Comment(props: propTypes) {
 			</div>
 			<div className='flex justify-between mt-5'>
 				<div className='flex gap-12 px-2'>
-					<LikeButton likeCount={props.data.likeCount} liked={props.data.likes.includes(userId)} handler={handleLiking} />
+					<LikeButton
+						likeCount={props.data.likeCount}
+						liked={props.data.likes.includes(userId)}
+						handler={handleLiking}
+					/>
 					<Link href='#comment-box'>
 						<button onClick={handleReplying}>
 							<div className='flex gap-2 items-center text-gray-500'>
-								<FontAwesomeIcon icon={faReply} className='text-gray-400' /> Reply
+								<FontAwesomeIcon
+									icon={faReply}
+									className='text-gray-400'
+								/>{' '}
+								Reply
 							</div>
 						</button>
 					</Link>
