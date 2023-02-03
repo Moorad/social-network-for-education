@@ -36,6 +36,7 @@ import AttachmentModal from './components/AttachmentModal';
 import TagModal from './components/TagModal';
 import ReferenceModal from './components/ReferenceModal';
 import { ReferenceType } from 'node-server/routes/utils';
+import * as DOMPurify from 'dompurify';
 
 export type AttachmentType = {
 	name: string;
@@ -111,8 +112,8 @@ export default function PostEditor() {
 
 	function parseMarkdown() {
 		if (descriptionRef.current && markdownPreviewRef.current) {
-			markdownPreviewRef.current.innerHTML = marked.parse(
-				descriptionRef.current.value
+			markdownPreviewRef.current.innerHTML = DOMPurify.sanitize(
+				marked.parse(descriptionRef.current.value)
 			);
 			setWordCount(
 				getWordCount(markdownPreviewRef.current.innerText || '')

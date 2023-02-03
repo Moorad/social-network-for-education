@@ -17,6 +17,7 @@ import { likePost } from '../api/postApi';
 import toast from 'react-hot-toast';
 import { marked } from 'marked';
 import hljs from 'highlight.js';
+import * as DOMPurify from 'dompurify';
 
 const MAX_CHARACTER_LENGTH = 400;
 
@@ -51,7 +52,9 @@ export default function Post(props: {
 	}
 
 	function renderText() {
-		const description = marked.parse(props.post.description);
+		const description = DOMPurify.sanitize(
+			marked.parse(props.post.description)
+		);
 
 		if (
 			props.fullText ||
