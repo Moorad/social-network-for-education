@@ -3,60 +3,34 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MessageType } from 'node-server/Models/Chat';
 import { UserMinimal } from 'node-server/Models/User';
 import React, { useEffect, useRef, useState } from 'react';
-import { useQuery } from 'react-query';
-import { chatContacts } from '../../api/chatApi';
+import { useMutation, useQuery } from 'react-query';
+import { chatContacts, chatMessages } from '../../api/chatApi';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import useAuth from '../../utils/hooks/useAuth';
 
-const messages = [
-	{
-		message: 'Hello world',
-		sender: '63db9802f9f938e591838391',
-	},
-	{
-		message: 'Hello world back',
-		sender: '63db9802f9f938e591838392',
-	},
-	{
-		message: 'Joe waited for the train. "Joe" = subject, "waited" = verb.',
-		sender: '63db9802f9f938e591838392',
-	},
-	{
-		message:
-			'Mary and Samantha arrived at the bus station early but waited until noon for the bus. Mary and Samantha arrived at the bus station early but waited until noon for the bus.',
-		sender: '63db9802f9f938e591838392',
-	},
-	{
-		message: 'Hello world back',
-		sender: '63db9802f9f938e591838391',
-	},
-	{
-		message: 'Joe waited for the train. "Joe" = subject, "waited" = verb.',
-		sender: '63db9802f9f938e591838391',
-	},
-	{
-		message:
-			'Mary and Samantha arrived at the bus station early but waited until noon for the bus. Mary and Samantha arrived at the bus station early but waited until noon for the bus.',
-		sender: '63db9802f9f938e591838391',
-	},
-];
-
 export default function index() {
 	const { fetching, user } = useAuth();
 	const [selectedUser, setSelectedUser] = useState<{
-		user: UserMinimal | null;
+		chatId: string;
+		user: UserMinimal;
 		index: number;
-	}>({ user: null, index: -1 });
+	} | null>(null);
 	const [contacts, setContacts] = useState<
 		{
+			chatId: string;
 			type: 'direct' | 'group';
 			user: UserMinimal;
 			lastMessage: MessageType;
 		}[]
 	>([]);
+	const [messages, setMessages] = useState<MessageType[]>([]);
 	const MessageContainerRef = useRef<HTMLDivElement>(null);
-
+	const messagesMutation = useMutation('messages', chatMessages, {
+		onSuccess: (res) => {
+			setMessages(res);
+		},
+	});
 	useQuery('contacts', chatContacts, {
 		onSuccess: (res) => {
 			setContacts(res);
@@ -64,10 +38,16 @@ export default function index() {
 	});
 
 	useEffect(() => {
+		if (selectedUser) {
+			messagesMutation.mutate({ chatId: selectedUser.chatId });
+		}
+	}, [selectedUser]);
+
+	useEffect(() => {
 		MessageContainerRef.current?.scroll({
 			top: MessageContainerRef.current?.scrollHeight,
 		});
-	}, [selectedUser]);
+	}, [messages]);
 
 	function renderContactList() {
 		return contacts.map((contact, i) => {
@@ -76,10 +56,13 @@ export default function index() {
 					key={i}
 					className={
 						'flex py-2 px-3 gap-4 text-left hover:bg-gray-100 w-full ' +
-						(selectedUser.index == i ? 'bg-gray-100' : '')
+						(selectedUser && selectedUser.index == i
+							? 'bg-gray-100'
+							: '')
 					}
 					onClick={() =>
 						setSelectedUser({
+							chatId: contact.chatId,
 							user: contact.user,
 							index: i,
 						})
@@ -143,7 +126,7 @@ export default function index() {
 				</div>
 				<div className='flex-grow p-2'>
 					<div className='bg-gray-100 rounded-xl w-full h-full '>
-						{selectedUser.user == null && (
+						{selectedUser == null && (
 							<div className='flex justify-center items-center w-full h-full'>
 								<div className='flex flex-col gap-5 text-center text-gray-300'>
 									<FontAwesomeIcon
@@ -155,7 +138,7 @@ export default function index() {
 							</div>
 						)}
 
-						{selectedUser.user && (
+						{selectedUser && (
 							<div className='flex flex-col px-2 py-2 h-full gap-4'>
 								<div className='flex items-center gap-5 bg-white rounded-xl p-2'>
 									<div className='h-10 w-10'>

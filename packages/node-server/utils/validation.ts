@@ -151,6 +151,12 @@ export const UpdateProfile = z.object({
 	}),
 });
 
+export const ChatIdInQuery = z.object({
+	query: z.object({
+		chatId: z.string(),
+	}),
+});
+
 export const UpdateAccount = z.object({
 	body: z.object({
 		password: z
