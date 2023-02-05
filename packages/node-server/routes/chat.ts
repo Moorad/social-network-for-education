@@ -70,4 +70,8 @@ router.get(
 	}
 );
 
+export const socketMessageReceived = (payload: string) => {
+	console.log(payload);
+};
+
 export default router;

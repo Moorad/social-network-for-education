@@ -4,6 +4,7 @@ import { MessageType } from 'node-server/Models/Chat';
 import { UserMinimal } from 'node-server/Models/User';
 import React, { useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
+import { io } from 'socket.io-client';
 import { chatContacts, chatMessages } from '../../api/chatApi';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
@@ -47,6 +48,16 @@ export default function index() {
 		MessageContainerRef.current?.scroll({
 			top: MessageContainerRef.current?.scrollHeight,
 		});
+
+		// Creating web socket connection
+		if (selectedUser) {
+			const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
+				autoConnect: false,
+			});
+
+			socket.connect();
+			socket.emit('message', 'Hello world');
+		}
 	}, [messages]);
 
 	function renderContactList() {
