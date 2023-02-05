@@ -1,43 +1,13 @@
 import { faMessage, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { MessageType } from 'node-server/Models/Chat';
+import { UserMinimal } from 'node-server/Models/User';
 import React, { useEffect, useRef, useState } from 'react';
+import { useQuery } from 'react-query';
+import { chatContacts } from '../../api/chatApi';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import useAuth from '../../utils/hooks/useAuth';
-
-type person = {
-	name: string;
-	lastMessage: string;
-	timestamp: string;
-};
-
-const people = [
-	{
-		name: 'Jack Michael',
-		lastMessage: 'I will send you the document onc...',
-		timestamp: '11:15',
-	},
-	{
-		name: 'Ridwan Kirby',
-		lastMessage: 'He wore the surgical mask in publ...',
-		timestamp: '11:15',
-	},
-	{
-		name: 'Arman Mcconnell',
-		lastMessage: 'If you really strain your ears, yo...',
-		timestamp: '11:15',
-	},
-	{
-		name: 'Hugh Banks',
-		lastMessage: 'I want to buy a onesie',
-		timestamp: '11:15',
-	},
-	{
-		name: 'The Awesome GC',
-		lastMessage: 'are you going to the business me...',
-		timestamp: '11:15',
-	},
-];
 
 const messages = [
 	{
@@ -75,16 +45,79 @@ const messages = [
 export default function index() {
 	const { fetching, user } = useAuth();
 	const [selectedUser, setSelectedUser] = useState<{
-		user: person | null;
+		user: UserMinimal | null;
 		index: number;
 	}>({ user: null, index: -1 });
+	const [contacts, setContacts] = useState<
+		{
+			type: 'direct' | 'group';
+			user: UserMinimal;
+			lastMessage: MessageType;
+		}[]
+	>([]);
 	const MessageContainerRef = useRef<HTMLDivElement>(null);
+
+	useQuery('contacts', chatContacts, {
+		onSuccess: (res) => {
+			setContacts(res);
+		},
+	});
 
 	useEffect(() => {
 		MessageContainerRef.current?.scroll({
 			top: MessageContainerRef.current?.scrollHeight,
 		});
 	}, [selectedUser]);
+
+	function renderContactList() {
+		return contacts.map((contact, i) => {
+			return (
+				<button
+					key={i}
+					className={
+						'flex py-2 px-3 gap-4 text-left hover:bg-gray-100 w-full ' +
+						(selectedUser.index == i ? 'bg-gray-100' : '')
+					}
+					onClick={() =>
+						setSelectedUser({
+							user: contact.user,
+							index: i,
+						})
+					}
+				>
+					<div className='my-auto'>
+						<div className='h-12 w-12'>
+							<img
+								src={contact.user.avatar}
+								className=' rounded-full object'
+							/>
+						</div>
+					</div>
+					<div className='flex flex-col w-full'>
+						<div className='flex justify-between'>
+							<div className='font-semibold'>
+								{contact.user.displayName}
+							</div>
+							{contact.lastMessage && (
+								<div className='text-xs font-semibold text-gray-500'>
+									{new Date(
+										contact.lastMessage.timestamp
+									).getHours()}
+									:
+									{new Date(
+										contact.lastMessage.timestamp
+									).getMinutes()}
+								</div>
+							)}
+						</div>
+						<div className='text-sm text-gray-500 overflow-clip'>
+							{contact.lastMessage.message}
+						</div>
+					</div>
+				</button>
+			);
+		});
+	}
 
 	if (fetching) {
 		return <Loading />;
@@ -105,37 +138,7 @@ export default function index() {
 						/>
 					</div>
 					<div className='mt-5 overflow-auto flex-grow'>
-						{people.map((person, i) => (
-							<button
-								key={i}
-								className={
-									'flex py-2 px-3 gap-4 text-left hover:bg-gray-100 w-full ' +
-									(selectedUser.index == i
-										? 'bg-gray-100'
-										: '')
-								}
-								onClick={() =>
-									setSelectedUser({ user: person, index: i })
-								}
-							>
-								<div className='my-auto'>
-									<div className='h-12 w-12 bg-blue-500 rounded-full'></div>
-								</div>
-								<div className='flex flex-col w-full'>
-									<div className='flex justify-between'>
-										<div className='font-semibold'>
-											{person.name}
-										</div>
-										<div className='text-xs font-semibold text-gray-500'>
-											{person.timestamp}
-										</div>
-									</div>
-									<div className='text-sm text-gray-500 overflow-clip'>
-										{person.lastMessage}
-									</div>
-								</div>
-							</button>
-						))}
+						{renderContactList()}
 					</div>
 				</div>
 				<div className='flex-grow p-2'>
@@ -155,9 +158,14 @@ export default function index() {
 						{selectedUser.user && (
 							<div className='flex flex-col px-2 py-2 h-full gap-4'>
 								<div className='flex items-center gap-5 bg-white rounded-xl p-2'>
-									<div className='h-10 w-10 bg-blue-500 rounded-full'></div>
+									<div className='h-10 w-10'>
+										<img
+											src={selectedUser.user.avatar}
+											className=' rounded-full object'
+										/>
+									</div>
 									<div className='font-bold'>
-										{selectedUser.user.name}
+										{selectedUser.user.displayName}
 									</div>
 								</div>
 

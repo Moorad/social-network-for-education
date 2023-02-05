@@ -11,6 +11,7 @@ import postsRouter from './routes/post';
 import commentRouter from './routes/comment';
 import resourceRouter from './routes/resource';
 import utilsRouter from './routes/utils';
+import chatRouter from './routes/chat';
 import { startUpCheck } from './utils/start_up';
 
 const fullLogs = false;
@@ -49,5 +50,6 @@ app.use('/post', postsRouter);
 app.use('/comment', commentRouter);
 app.use('/resource', resourceRouter);
 app.use('/utils', utilsRouter);
+app.use('/chat', chatRouter);
 
 export default app;

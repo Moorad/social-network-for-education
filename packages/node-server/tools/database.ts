@@ -5,6 +5,7 @@ import Post from '../Models/Post';
 import Login from '../Models/Login';
 import bcrypt from 'bcrypt';
 import Comment from '../Models/Comment';
+import Chat from '../Models/Chat';
 
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
@@ -116,6 +117,13 @@ export async function resetDB() {
 	await mikePost.save();
 	await micheal.save();
 	console.log('Micheal added to the database');
+
+	const bobMikeChat = new Chat({
+		type: 'direct',
+		members: [bob._id, micheal._id],
+	});
+	await bobMikeChat.save();
+	console.log('Bob <-> Mike chat added to the database');
 
 	console.log('Database reset complete.');
 }
