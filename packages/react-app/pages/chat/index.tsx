@@ -56,7 +56,7 @@ export default function index() {
 			});
 
 			socket.connect();
-			socket.emit('message', 'Hello world');
+			socket.emit('set_user', user?._id);
 		}
 	}, [messages]);
 
