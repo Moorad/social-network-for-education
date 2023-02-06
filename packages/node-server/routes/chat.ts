@@ -74,8 +74,10 @@ router.get(
 
 export const socketMessageReceived = (
 	payload: {
+		chatId: string;
 		message: string;
 		to: string;
+		from: string;
 	},
 	connections: Connection[],
 	socket: Socket
@@ -84,17 +86,26 @@ export const socketMessageReceived = (
 		(connection) => connection.userId == payload.to
 	);
 
-	const senderUserId = connections.find(
-		(connection) => connection.socketId == socket.id
-	);
-
-	if (recipientSocketId && senderUserId) {
+	if (recipientSocketId) {
 		socket.to(recipientSocketId.socketId).emit('receive_message', {
 			message: payload.message,
-			sender: senderUserId.userId,
+			sender: payload.from,
 			timestamp: new Date().toISOString(),
 		});
 	}
+
+	Chat.updateOne(
+		{ chatId: payload.chatId },
+		{
+			$push: {
+				messages: {
+					sender: payload.from,
+					message: payload.message,
+					timestamp: new Date().toISOString(),
+				},
+			},
+		}
+	).exec();
 };
 
 export default router;

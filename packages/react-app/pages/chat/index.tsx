@@ -56,6 +56,19 @@ export default function index() {
 		messageContainerRef.current?.scroll({
 			top: messageContainerRef.current?.scrollHeight,
 		});
+
+		setContacts(
+			contacts.map((contact) => {
+				if (contact.chatId == selectedUser?.chatId) {
+					return {
+						...contact,
+						lastMessage: messages[messages.length - 1],
+					};
+				}
+
+				return contact;
+			})
+		);
 	}, [messages]);
 
 	useEffect(() => {
@@ -72,8 +85,10 @@ export default function index() {
 		event.preventDefault();
 		if (messageInputRef.current && socket.current) {
 			socket.current.emit('send_message', {
+				chatId: selectedUser?.chatId,
 				message: messageInputRef.current.value,
 				to: selectedUser?.user._id,
+				from: user?._id,
 			});
 
 			if (user) {
