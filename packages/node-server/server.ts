@@ -29,10 +29,15 @@ let connections: Connection[] = [];
 io.on('connection', (socket) => {
 	console.log(`SOCKET:CONNECT ${socket.id}`);
 
-	socket.use((event) => {
+	socket.use((event, next) => {
 		console.log(
-			`SOCKET:${event[0].toUpperCase()} ${event.slice(1).join(' ')}`
+			`SOCKET:${event[0].toUpperCase()} ${event
+				.slice(1)
+				.map((e) => JSON.stringify(e))
+				.join(' ')}`
 		);
+
+		next();
 	});
 
 	socket.on('set_user', (payload) => {
@@ -42,12 +47,14 @@ io.on('connection', (socket) => {
 		});
 	});
 
+	socket.on('send_message', (payload) =>
+		socketMessageReceived(payload, connections, socket)
+	);
+
 	socket.on('disconnect', () => {
 		console.log(`SOCKET:DISCONNECT ${socket.id}`);
 		connections = connections.filter((s) => s.socketId != socket.id);
 	});
-
-	socket.on('message', socketMessageReceived);
 });
 
 http.listen(process.env.PORT || '4000', () => {

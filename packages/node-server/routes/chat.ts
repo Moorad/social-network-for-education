@@ -4,6 +4,8 @@ import { ChatIdInQuery, validate } from '../utils/validation';
 import Chat from '../Models/Chat';
 import User, { UserMinimal } from '../Models/User';
 import { authenticateToken } from './auth';
+import { Connection } from '../server';
+import { Socket } from 'socket.io';
 
 const router = express.Router();
 
@@ -70,8 +72,29 @@ router.get(
 	}
 );
 
-export const socketMessageReceived = (payload: string) => {
-	console.log(payload);
+export const socketMessageReceived = (
+	payload: {
+		message: string;
+		to: string;
+	},
+	connections: Connection[],
+	socket: Socket
+) => {
+	const recipientSocketId = connections.find(
+		(connection) => connection.userId == payload.to
+	);
+
+	const senderUserId = connections.find(
+		(connection) => connection.socketId == socket.id
+	);
+
+	if (recipientSocketId && senderUserId) {
+		socket.to(recipientSocketId.socketId).emit('receive_message', {
+			message: payload.message,
+			sender: senderUserId.userId,
+			timestamp: new Date().toISOString(),
+		});
+	}
 };
 
 export default router;

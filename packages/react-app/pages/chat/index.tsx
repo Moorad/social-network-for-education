@@ -2,9 +2,9 @@ import { faMessage, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { MessageType } from 'node-server/Models/Chat';
 import { UserMinimal } from 'node-server/Models/User';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { io } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 import { chatContacts, chatMessages } from '../../api/chatApi';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
@@ -26,7 +26,8 @@ export default function index() {
 		}[]
 	>([]);
 	const [messages, setMessages] = useState<MessageType[]>([]);
-	const MessageContainerRef = useRef<HTMLDivElement>(null);
+	const messageContainerRef = useRef<HTMLDivElement>(null);
+	const messageInputRef = useRef<HTMLInputElement>(null);
 	const messagesMutation = useMutation('messages', chatMessages, {
 		onSuccess: (res) => {
 			setMessages(res);
@@ -37,28 +38,58 @@ export default function index() {
 			setContacts(res);
 		},
 	});
+	const socket = useRef<Socket | null>(null);
 
 	useEffect(() => {
 		if (selectedUser) {
 			messagesMutation.mutate({ chatId: selectedUser.chatId });
+
+			// Creating web socket connection
+			socket.current = io(process.env.NEXT_PUBLIC_API_URL as string, {
+				autoConnect: true,
+			});
+			socket.current.emit('set_user', user?._id);
 		}
 	}, [selectedUser]);
 
 	useEffect(() => {
-		MessageContainerRef.current?.scroll({
-			top: MessageContainerRef.current?.scrollHeight,
+		messageContainerRef.current?.scroll({
+			top: messageContainerRef.current?.scrollHeight,
 		});
+	}, [messages]);
 
-		// Creating web socket connection
-		if (selectedUser) {
-			const socket = io(process.env.NEXT_PUBLIC_API_URL as string, {
-				autoConnect: false,
+	useEffect(() => {
+		if (socket.current) {
+			socket.current.on('receive_message', (payload: MessageType) => {
+				console.log(payload);
+				console.log(messages);
+				setMessages([...messages, payload]);
 			});
-
-			socket.connect();
-			socket.emit('set_user', user?._id);
 		}
 	}, [messages]);
+
+	function handleSubmitMessage(event: FormEvent) {
+		event.preventDefault();
+		if (messageInputRef.current && socket.current) {
+			socket.current.emit('send_message', {
+				message: messageInputRef.current.value,
+				to: selectedUser?.user._id,
+			});
+
+			if (user) {
+				setMessages([
+					...messages,
+					{
+						message: messageInputRef.current.value,
+						sender: user._id,
+						timestamp: new Date().toISOString(),
+					},
+				]);
+			}
+
+			messageInputRef.current.value = '';
+		}
+	}
 
 	function renderContactList() {
 		return contacts.map((contact, i) => {
@@ -165,7 +196,7 @@ export default function index() {
 
 								<div
 									className='flex flex-col gap-2 justify-items-center flex-grow overflow-y-auto'
-									ref={MessageContainerRef}
+									ref={messageContainerRef}
 								>
 									{messages.map((msg, i) => {
 										let extraClasses;
@@ -191,11 +222,15 @@ export default function index() {
 									})}
 								</div>
 
-								<div className='flex items-center gap-2'>
+								<form
+									className='flex items-center gap-2'
+									onSubmit={(e) => handleSubmitMessage(e)}
+								>
 									<input
 										placeholder='Write a message...'
 										type='text'
 										className='flex-grow h-10 px-4 rounded-md'
+										ref={messageInputRef}
 									/>
 									<button className='bg-blue-500 h-10 w-10 rounded-md'>
 										<FontAwesomeIcon
@@ -203,7 +238,7 @@ export default function index() {
 											icon={faPaperPlane}
 										/>
 									</button>
-								</div>
+								</form>
 							</div>
 						)}
 					</div>

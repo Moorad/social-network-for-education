@@ -4,7 +4,7 @@ import { z } from 'zod';
 const MessageZod = z.object({
 	sender: z.string().or(z.instanceof(Types.ObjectId)),
 	message: z.string(),
-	timestamp: z.date(),
+	timestamp: z.date().or(z.string()),
 });
 
 const ChatZod = z.object({
