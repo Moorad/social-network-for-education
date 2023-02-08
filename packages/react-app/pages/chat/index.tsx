@@ -4,10 +4,10 @@ import { MessageType } from 'node-server/Models/Chat';
 import { UserMinimal } from 'node-server/Models/User';
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
-import { io, Socket } from 'socket.io-client';
 import { chatContacts, chatMessages } from '../../api/chatApi';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
+import { useSocket } from '../../components/SocketContext';
 import useAuth from '../../utils/hooks/useAuth';
 
 export default function index() {
@@ -26,6 +26,7 @@ export default function index() {
 		}[]
 	>([]);
 	const [messages, setMessages] = useState<MessageType[]>([]);
+	const socket = useSocket();
 	const messageContainerRef = useRef<HTMLDivElement>(null);
 	const messageInputRef = useRef<HTMLInputElement>(null);
 	const messagesMutation = useMutation('messages', chatMessages, {
@@ -38,17 +39,10 @@ export default function index() {
 			setContacts(res);
 		},
 	});
-	const socket = useRef<Socket | null>(null);
 
 	useEffect(() => {
 		if (selectedUser) {
 			messagesMutation.mutate({ chatId: selectedUser.chatId });
-
-			// Creating web socket connection
-			socket.current = io(process.env.NEXT_PUBLIC_API_URL as string, {
-				autoConnect: true,
-			});
-			socket.current.emit('set_user', user?._id);
 		}
 	}, [selectedUser]);
 
@@ -72,8 +66,8 @@ export default function index() {
 	}, [messages]);
 
 	useEffect(() => {
-		if (socket.current) {
-			socket.current.on('receive_message', (payload: MessageType) => {
+		if (socket) {
+			socket.on('receive_message', (payload: MessageType) => {
 				console.log(payload);
 				console.log(messages);
 				setMessages([...messages, payload]);
@@ -83,8 +77,8 @@ export default function index() {
 
 	function handleSubmitMessage(event: FormEvent) {
 		event.preventDefault();
-		if (messageInputRef.current && socket.current) {
-			socket.current.emit('send_message', {
+		if (messageInputRef.current && socket) {
+			socket.emit('send_message', {
 				chatId: selectedUser?.chatId,
 				message: messageInputRef.current.value,
 				to: selectedUser?.user._id,
