@@ -97,6 +97,12 @@ export const socketMessageReceived = (
 			sender: payload.from,
 			timestamp: new Date().toISOString(),
 		});
+	} else if (recipientSocketId) {
+		socket.to(recipientSocketId.socketId).emit('notification', {
+			type: 'Message',
+			text: payload.message,
+			user: payload.from,
+		});
 	} else {
 		User.updateOne(
 			{ _id: payload.to },
