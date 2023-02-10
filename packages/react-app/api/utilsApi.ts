@@ -10,7 +10,7 @@ export const referenceQuery = async (query: string) => {
 	return response.data;
 };
 
-export const clearNotifications = async () => {
+export const clearNotificationsRequest = async () => {
 	const response = await baseApi.get('/utils/clear_notifications');
 	return response.data;
 };

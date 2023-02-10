@@ -4,7 +4,7 @@ import { ChatIdInQuery, validate } from '../utils/validation';
 import Chat from '../Models/Chat';
 import User, { UserMinimal } from '../Models/User';
 import { authenticateToken } from './auth';
-import { Connection } from '../server';
+import { Connection, Room } from '../server';
 import { Socket } from 'socket.io';
 
 const router = express.Router();
@@ -80,18 +80,36 @@ export const socketMessageReceived = (
 		from: string;
 	},
 	connections: Connection[],
+	activeRooms: Room[],
 	socket: Socket
 ) => {
 	const recipientSocketId = connections.find(
 		(connection) => connection.userId == payload.to
 	);
 
-	if (recipientSocketId) {
+	const recipientInRoom = activeRooms.find(
+		(room) => room.userId == payload.to && room.chatId == payload.chatId
+	);
+
+	if (recipientSocketId && recipientInRoom) {
 		socket.to(recipientSocketId.socketId).emit('receive_message', {
 			message: payload.message,
 			sender: payload.from,
 			timestamp: new Date().toISOString(),
 		});
+	} else {
+		User.updateOne(
+			{ _id: payload.to },
+			{
+				$push: {
+					notifications: {
+						type: 'Message',
+						text: payload.message,
+						user: payload.from,
+					},
+				},
+			}
+		).exec();
 	}
 
 	Chat.updateOne(

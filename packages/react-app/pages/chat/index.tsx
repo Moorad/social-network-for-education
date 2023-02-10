@@ -41,9 +41,20 @@ export default function index() {
 	});
 
 	useEffect(() => {
-		if (selectedUser) {
+		if (socket && selectedUser) {
 			messagesMutation.mutate({ chatId: selectedUser.chatId });
+
+			socket.emit('enter_room', {
+				chatId: selectedUser.chatId,
+				userId: user?._id,
+			});
 		}
+
+		return () => {
+			if (socket && selectedUser) {
+				socket.emit('exit_room');
+			}
+		};
 	}, [selectedUser]);
 
 	useEffect(() => {

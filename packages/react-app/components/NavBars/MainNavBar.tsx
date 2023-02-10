@@ -18,6 +18,7 @@ import SideNavBar from './SideNavBar';
 import EmptyMessage from '../EmptyMessage';
 import { NotificationType } from 'node-server/Models/User';
 import { useMutation } from 'react-query';
+import { clearNotificationsRequest } from '../../api/utilsApi';
 
 type propTypes = {
 	active: number;
@@ -112,10 +113,16 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 
 function NotificationButton() {
 	const [hideNotifications, setHideNotifications] = useState(false);
-	const [notifications, setNotifications] = useState<NotificationType[]>(
-		useSelector(selectNotifications)
+	const notifications = useSelector(selectNotifications);
+	const clearNotiMutation = useMutation(
+		'clear_notifications',
+		clearNotificationsRequest,
+		{
+			onSuccess: () => {
+				console.log('done');
+			},
+		}
 	);
-	const clearNotiMutation = useMutation('clear_notifications');
 
 	function getNotificationData(noti: NotificationType[]) {
 		return noti.map((n) => {
@@ -141,7 +148,7 @@ function NotificationButton() {
 	}
 
 	function clearNotifications() {
-		if (notifications.length > 0) {
+		if (notifications.length > 0 && !hideNotifications) {
 			setHideNotifications(true);
 			clearNotiMutation.mutate();
 		}

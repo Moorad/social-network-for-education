@@ -24,14 +24,21 @@ export type Connection = {
 	socketId: string;
 };
 
+export type Room = {
+	userId: string;
+	chatId: string;
+	socketId: string;
+};
+
 let connections: Connection[] = [];
+let activeRooms: Room[] = [];
 
 io.on('connection', (socket) => {
 	console.log(`SOCKET:CONNECT ${socket.id}`);
 
 	socket.use((event, next) => {
 		console.log(
-			`SOCKET:${event[0].toUpperCase()} ${event
+			`SOCKET:${event[0].toUpperCase()} ${socket.id} ${event
 				.slice(1)
 				.map((e) => JSON.stringify(e))
 				.join(' ')}`
@@ -47,12 +54,25 @@ io.on('connection', (socket) => {
 		});
 	});
 
+	socket.on('enter_room', (payload) => {
+		activeRooms.push({
+			userId: payload.userId,
+			socketId: socket.id,
+			chatId: payload.chatId,
+		});
+	});
+
+	socket.on('exit_room', () => {
+		activeRooms = activeRooms.filter((r) => r.socketId != socket.id);
+	});
+
 	socket.on('send_message', (payload) =>
-		socketMessageReceived(payload, connections, socket)
+		socketMessageReceived(payload, connections, activeRooms, socket)
 	);
 
 	socket.on('disconnect', () => {
 		console.log(`SOCKET:DISCONNECT ${socket.id}`);
+		activeRooms = activeRooms.filter((r) => r.socketId != socket.id);
 		connections = connections.filter((s) => s.socketId != socket.id);
 	});
 });
