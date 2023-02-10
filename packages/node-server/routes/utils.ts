@@ -110,4 +110,19 @@ router.get(
 	}
 );
 
+router.get('/clear_notifications', authenticateToken, async (req, res) => {
+	try {
+		await User.updateOne(
+			{ _id: res.locals.user.id },
+			{
+				notifications: [],
+			}
+		).exec();
+
+		return res.sendStatus(200);
+	} catch {
+		return res.sendStatus(404);
+	}
+});
+
 export default router;

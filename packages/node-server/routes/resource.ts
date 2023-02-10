@@ -9,7 +9,7 @@ import {
 } from '../file_manager/file_manager';
 import multer from 'multer';
 import User from '../Models/User';
-import { uploadFile, validate } from '../utils/validation';
+import { uploadFile, ObjectIDInQuery, validate } from '../utils/validation';
 import { CallbackError } from 'mongoose';
 import { processImage } from '../file_manager/utils/processing';
 const router = express.Router();
@@ -22,14 +22,18 @@ const anyFileUpload = multer({
 	storage: multerWriteMedia(),
 }).single('file');
 
-router.get('/:id', (req, res) => {
-	mediaExists(req.params.id)
-		.then((path) => {
-			res.sendFile(path);
-		})
-		.catch(() => {
-			res.sendStatus(404);
-		});
+router.get('/avatar', validate(ObjectIDInQuery), async (req, res) => {
+	try {
+		const user = await User.findById(req.query.id).exec();
+
+		if (user == null) {
+			return res.sendStatus(404);
+		}
+
+		return res.redirect(user.avatar);
+	} catch {
+		return res.sendStatus(404);
+	}
 });
 
 router.post(
@@ -114,4 +118,13 @@ router.post(
 	}
 );
 
+router.get('/:id', (req, res) => {
+	mediaExists(req.params.id)
+		.then((path) => {
+			res.sendFile(path);
+		})
+		.catch(() => {
+			res.sendStatus(404);
+		});
+});
 export default router;

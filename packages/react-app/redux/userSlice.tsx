@@ -17,7 +17,8 @@ export const userSlice = createSlice({
 		avatar: '',
 		_id: '',
 		isPrivate: false,
-		background: ''
+		background: '',
+		notifications: [],
 	} as UserType,
 	reducers: {
 		setUser: (state, action: PayloadAction<UserType>) => {
@@ -42,5 +43,5 @@ export const selectBackground = (state: RootState) => state.user.background;
 export const selectDescription = (state: RootState) => state.user.description;
 export const selectLabel = (state: RootState) => state.user.label;
 export const selectIsPrivate = (state: RootState) => state.user.isPrivate;
-
-
+export const selectNotifications = (state: RootState) =>
+	state.user.notifications;

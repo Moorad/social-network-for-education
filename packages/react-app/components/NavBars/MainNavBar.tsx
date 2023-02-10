@@ -2,9 +2,9 @@ import {
 	faBell,
 	faCog,
 	faMessage,
+	faQuestion,
 	faRightFromBracket,
 	faUser,
-	IconDefinition,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Menu } from '@headlessui/react';
@@ -12,21 +12,16 @@ import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
 import Link from 'next/link';
 import router from 'next/router';
-import { selectAvatar } from '../../redux/userSlice';
+import { selectAvatar, selectNotifications } from '../../redux/userSlice';
 import useLogout from '../../utils/hooks/useLogout';
 import SideNavBar from './SideNavBar';
 import EmptyMessage from '../EmptyMessage';
+import { NotificationType } from 'node-server/Models/User';
+import { useMutation } from 'react-query';
 
 type propTypes = {
 	active: number;
 	children: JSX.Element;
-};
-
-type Notification = {
-	userAvatar: string;
-	icon: IconDefinition;
-	type: string;
-	text: string;
 };
 
 export default function MainNavBar(props: propTypes) {
@@ -116,26 +111,40 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 }
 
 function NotificationButton() {
-	const [unreadNotifications, setUnreadNotifications] = useState(true);
-	const [notifications, setNotifications] = useState<Notification[]>([
-		{
-			userAvatar:
-				'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
-			icon: faMessage,
-			type: 'Message',
-			text: 'Hello world',
-		},
-		{
-			userAvatar:
-				'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
-			icon: faUser,
-			type: 'Friend Request',
-			text: 'Hello world',
-		},
-	]);
+	const [hideNotifications, setHideNotifications] = useState(false);
+	const [notifications, setNotifications] = useState<NotificationType[]>(
+		useSelector(selectNotifications)
+	);
+	const clearNotiMutation = useMutation('clear_notifications');
+
+	function getNotificationData(noti: NotificationType[]) {
+		return noti.map((n) => {
+			if (n.type == 'Message') {
+				return {
+					...n,
+					icon: faMessage,
+				};
+			}
+
+			if (n.type == 'Friend Request') {
+				return {
+					...n,
+					icon: faUser,
+				};
+			}
+
+			return {
+				...n,
+				icon: faQuestion,
+			};
+		});
+	}
 
 	function clearNotifications() {
-		setUnreadNotifications(false);
+		if (notifications.length > 0) {
+			setHideNotifications(true);
+			clearNotiMutation.mutate();
+		}
 	}
 
 	return (
@@ -152,11 +161,12 @@ function NotificationButton() {
 								icon={faBell}
 							/>
 						</Menu.Button>
-						{unreadNotifications && (
-							<div className='flex justify-center items-center -bottom-1 -right-1 absolute bg-red-500 text-white w-5 h-5 text-sm rounded-full'>
-								3
-							</div>
-						)}
+						{hideNotifications == false &&
+							notifications.length > 0 && (
+								<div className='flex justify-center items-center -bottom-1 -right-1 absolute bg-red-500 text-white w-5 h-5 text-sm rounded-full'>
+									{notifications.length}
+								</div>
+							)}
 					</div>
 					{open && (
 						<div className='absolute right-2 top-[78px] border-gray-300 border p-3 rounded-md mt-3 w-96 z-[100] bg-white cursor-pointer'>
@@ -170,34 +180,36 @@ function NotificationButton() {
 									background='bg-white'
 								/>
 
-								{notifications.map((n, i) => (
-									<div
-										key={i}
-										className='hover:bg-gray-100 p-2 rounded-md'
-									>
-										<div className='flex'>
-											<div className='relative self-center'>
-												<img
-													className='w-9 ml-1 mr-4 text-gray-700 rounded-full'
-													src={n.userAvatar}
-												/>
-												<FontAwesomeIcon
-													className='absolute text-xs rounded-md bg-blue-500 p-1 right-2 -bottom-1 text-white'
-													icon={n.icon}
-												/>
-											</div>
-
-											<div>
-												<div className='text-sm font-semibold text-gray-700'>
-													{n.type}
+								{getNotificationData(notifications).map(
+									(n, i) => (
+										<div
+											key={i}
+											className='hover:bg-gray-100 p-2 rounded-md'
+										>
+											<div className='flex'>
+												<div className='relative self-center'>
+													<img
+														className='w-9 ml-1 mr-4 text-gray-700 rounded-full'
+														src={`http://localhost:4000/resource/avatar?id=${n.user}`}
+													/>
+													<FontAwesomeIcon
+														className='absolute text-xs rounded-md bg-blue-500 p-1 right-2 -bottom-1 text-white'
+														icon={n.icon}
+													/>
 												</div>
-												<div className='text-gray-700'>
-													{n.text}
+
+												<div>
+													<div className='text-sm font-semibold text-gray-700'>
+														{n.type}
+													</div>
+													<div className='text-gray-700'>
+														{n.text}
+													</div>
 												</div>
 											</div>
 										</div>
-									</div>
-								))}
+									)
+								)}
 							</Menu.Items>
 						</div>
 					)}

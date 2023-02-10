@@ -43,6 +43,7 @@ router.get('/', authenticateToken, async (req: Request, res: Response) => {
 				followings: {
 					$elemMatch: { $eq: res.locals.user.id },
 				},
+				notifications: 1,
 			}
 		).exec();
 
