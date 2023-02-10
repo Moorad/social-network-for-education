@@ -145,7 +145,7 @@ export default function index() {
 							)}
 						</div>
 						<div className='text-sm text-gray-500 overflow-clip'>
-							{contact.lastMessage.message}
+							{contact.lastMessage && contact.lastMessage.message}
 						</div>
 					</div>
 				</button>
