@@ -9,6 +9,7 @@ import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import { useSocket } from '../../components/SocketContext';
 import useAuth from '../../utils/hooks/useAuth';
+import AddUserMenu from './components/AddUserMenu';
 
 export default function index() {
 	const { fetching, user } = useAuth();
@@ -175,12 +176,8 @@ export default function index() {
 					<div className='font-bold text-2xl text-center my-5'>
 						Chat
 					</div>
-					<div className='flex justify-center px-4'>
-						<input
-							className=' border border-gray-300 px-2 py-1 text-sm w-full rounded-sm'
-							type='text'
-							placeholder='Search'
-						/>
+					<div className='flex flex-col items-center gap-2 px-4'>
+						<AddUserMenu />
 					</div>
 					<div className='mt-5 overflow-auto flex-grow'>
 						{renderContactList()}

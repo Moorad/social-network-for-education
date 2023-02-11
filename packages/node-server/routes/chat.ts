@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import mongoose from 'mongoose';
-import { ChatIdInQuery, validate } from '../utils/validation';
+import { ChatIdInQuery, UserIDInParams, validate } from '../utils/validation';
 import Chat from '../Models/Chat';
 import User, { UserMinimal } from '../Models/User';
 import { authenticateToken } from './auth';
@@ -66,6 +66,33 @@ router.get(
 			}
 
 			return res.json(chat.messages);
+		} catch {
+			return res.sendStatus(404);
+		}
+	}
+);
+
+router.post(
+	'/create_chat',
+	[validate(UserIDInParams), authenticateToken],
+	async (req: Request, res: Response) => {
+		try {
+			const chat = await Chat.findById(req.query.chatId).exec();
+
+			if (chat != null) {
+				return res.sendStatus(403);
+			}
+
+			const newChat = new Chat({
+				type: 'direct',
+				members: [req.body.userId, res.locals.user.id],
+			});
+
+			newChat.save();
+
+			return res.json({
+				chatId: newChat._id,
+			});
 		} catch {
 			return res.sendStatus(404);
 		}
