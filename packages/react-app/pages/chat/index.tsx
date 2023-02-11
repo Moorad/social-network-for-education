@@ -1,5 +1,6 @@
 import { faMessage, faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useRouter } from 'next/router';
 import { MessageType } from 'node-server/Models/Chat';
 import { UserMinimal } from 'node-server/Models/User';
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
@@ -13,6 +14,7 @@ import AddUserMenu from './components/AddUserMenu';
 
 export default function index() {
 	const { fetching, user } = useAuth();
+	const router = useRouter();
 	const [selectedUser, setSelectedUser] = useState<{
 		chatId: string;
 		user: UserMinimal;
@@ -30,6 +32,7 @@ export default function index() {
 	const socket = useSocket();
 	const messageContainerRef = useRef<HTMLDivElement>(null);
 	const messageInputRef = useRef<HTMLInputElement>(null);
+	const hasParsedURLQuery = useRef(false);
 	const messagesMutation = useMutation('messages', chatMessages, {
 		onSuccess: (res) => {
 			setMessages(res);
@@ -43,6 +46,9 @@ export default function index() {
 
 	useEffect(() => {
 		if (socket && selectedUser) {
+			router.push(`/chat?id=${selectedUser.chatId}`, undefined, {
+				shallow: true,
+			});
 			messagesMutation.mutate({ chatId: selectedUser.chatId });
 
 			socket.emit('enter_room', {
@@ -111,6 +117,25 @@ export default function index() {
 			messageInputRef.current.value = '';
 		}
 	}
+
+	useEffect(() => {
+		if (router.query.id && contacts && !hasParsedURLQuery.current) {
+			const contactInQuery = contacts.find(
+				(c) => c.chatId == router.query.id
+			);
+
+			if (contactInQuery) {
+				setSelectedUser({
+					chatId: router.query.id as string,
+					user: contactInQuery.user,
+					index: contacts.findIndex(
+						(c) => c.chatId == router.query.id
+					),
+				});
+				hasParsedURLQuery.current = true;
+			}
+		}
+	}, [router.query, contacts]);
 
 	function renderContactList() {
 		return contacts.map((contact, i) => {
@@ -192,7 +217,7 @@ export default function index() {
 										className='text-5xl'
 										icon={faMessage}
 									/>
-									<div>No chat opened</div>
+									<div>No chats open</div>
 								</div>
 							</div>
 						)}

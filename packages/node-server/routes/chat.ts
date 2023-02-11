@@ -77,9 +77,12 @@ router.post(
 	[validate(UserIDInParams), authenticateToken],
 	async (req: Request, res: Response) => {
 		try {
-			const chat = await Chat.findById(req.query.chatId).exec();
+			const chat = await Chat.find({
+				type: 'direct',
+				members: { $all: [req.body.userId, res.locals.user.id] },
+			}).exec();
 
-			if (chat != null) {
+			if (chat != null && chat.length > 0) {
 				return res.sendStatus(403);
 			}
 
@@ -88,7 +91,7 @@ router.post(
 				members: [req.body.userId, res.locals.user.id],
 			});
 
-			newChat.save();
+			await newChat.save();
 
 			return res.json({
 				chatId: newChat._id,

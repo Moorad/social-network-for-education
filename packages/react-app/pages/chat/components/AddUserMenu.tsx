@@ -1,9 +1,11 @@
 import { Combobox } from '@headlessui/react';
+import { useRouter } from 'next/router';
 import { UserMinimal } from 'node-server/Models/User';
 import React, { useEffect, useState } from 'react';
 import { useMutation, useQueryClient } from 'react-query';
 import { createChatRequest } from '../../../api/chatApi';
 import { searchQuery } from '../../../api/utilsApi';
+import EmptyMessage from '../../../components/EmptyMessage';
 import useDebounce from '../../../utils/hooks/useDebounce';
 
 export default function AddUserMenu() {
@@ -11,6 +13,7 @@ export default function AddUserMenu() {
 	const [results, setResults] = useState<UserMinimal[]>([]);
 	const debouncedQuery = useDebounce(query, 500);
 	const queryClient = useQueryClient();
+	const router = useRouter();
 	const searchMutation = useMutation<{
 		results: UserMinimal[];
 	}>(['search', debouncedQuery], () => searchQuery(debouncedQuery), {
@@ -20,8 +23,9 @@ export default function AddUserMenu() {
 		},
 	});
 	const createChatMutation = useMutation('create_chat', createChatRequest, {
-		onSuccess: () => {
+		onSuccess: (res) => {
 			queryClient.invalidateQueries();
+			router.push(`/chat?id=${res.chatId}`);
 		},
 	});
 
@@ -43,6 +47,11 @@ export default function AddUserMenu() {
 			/>
 			<div className='relative w-full h-3'>
 				<Combobox.Options className='border-gray-300 border bg-white absolute py-1 w-full rounded-sm'>
+					<EmptyMessage
+						message='No results found'
+						value={results}
+						background='bg-white'
+					/>
 					{results.map((person, i) => (
 						<Combobox.Option
 							className='px-5 py-2 hover:bg-gray-200 w-full cursor-pointer'
