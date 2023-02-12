@@ -33,16 +33,6 @@ export default function home() {
 		});
 
 	useEffect(() => {
-		// Removes the #_=_ hash from facebook login
-		// https://developers.facebook.com/support/bugs/318390728250352/
-		window.history.replaceState(
-			'',
-			document.title,
-			window.location.pathname
-		);
-	}, []);
-
-	useEffect(() => {
 		document
 			.getElementById('main-section')
 			?.addEventListener('scroll', trackScrolling);
