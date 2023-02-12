@@ -1,4 +1,5 @@
 import React, { forwardRef, MouseEventHandler, ReactNode } from 'react';
+import Loader from './Loader';
 
 type PropsType = {
 	children: ReactNode;
@@ -7,6 +8,7 @@ type PropsType = {
 	variant?: 'base' | 'primary' | 'danger';
 	size?: 'normal' | 'small';
 	disabled?: boolean;
+	loading?: boolean;
 	onClick?: MouseEventHandler<HTMLButtonElement>;
 };
 
@@ -19,6 +21,9 @@ type ClassesType = {
 		[key in Exclude<PropsType['variant'], null | undefined>]: string;
 	};
 	size: {
+		[key in Exclude<PropsType['size'], null | undefined>]: string;
+	};
+	loader: {
 		[key in Exclude<PropsType['size'], null | undefined>]: string;
 	};
 };
@@ -35,6 +40,10 @@ const classes: ClassesType = {
 		normal: 'text-base',
 		small: 'text-sm',
 	},
+	loader: {
+		normal: 'h-6 w-6',
+		small: 'h-5 w-5',
+	},
 };
 
 const Button = forwardRef<RefType, PropsType>(
@@ -46,6 +55,7 @@ const Button = forwardRef<RefType, PropsType>(
 			variant = 'base',
 			size = 'normal',
 			disabled = false,
+			loading = false,
 			onClick,
 			...props
 		},
@@ -61,7 +71,7 @@ const Button = forwardRef<RefType, PropsType>(
 			onClick={onClick}
 			{...props}
 		>
-			{children}
+			{loading ? <Loader className={classes.loader[size]} /> : children}
 		</button>
 	)
 );

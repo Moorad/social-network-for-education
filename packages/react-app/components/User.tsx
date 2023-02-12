@@ -283,7 +283,7 @@ export default function User(props: propTypes) {
 							{!props.me && (
 								<Button
 									additionalClasses='flex items-center gap-2'
-									variant={following ? 'primary' : 'base'}
+									variant={following ? 'base' : 'primary'}
 									onClick={() => handleFollow()}
 								>
 									{following ? 'Following' : 'Follow'}

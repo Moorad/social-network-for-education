@@ -5,7 +5,7 @@ import { ReferenceType } from 'node-server/routes/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
 import { referenceQuery } from '../../../api/utilsApi';
-import InlineLoading from '../../../components/InlineLoading';
+import Loader from '../../../components/Loader';
 import Modal from '../../../components/Modal';
 import useDebounce from '../../../utils/hooks/useDebounce';
 import EmptyMessage from '../../../components/EmptyMessage';
@@ -56,8 +56,8 @@ export default function ReferenceModal({
 						/>
 						<Combobox.Options className='flex flex-col gap-5 bg-white rounded-md overflow-auto max-h-52 mt-2'>
 							{referenceMutation.isLoading && (
-								<div>
-									<InlineLoading />
+								<div className='p-3'>
+									<Loader />
 								</div>
 							)}
 

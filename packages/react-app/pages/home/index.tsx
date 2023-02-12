@@ -10,24 +10,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { useInfiniteQuery } from 'react-query';
 import { userFeed } from '../../api/userApi';
-import InlineLoading from '../../components/InlineLoading';
+import Loader from '../../components/Loader';
 import toast from 'react-hot-toast';
 
-type APIResponseType = PostType & { user: UserMinimal }
+type APIResponseType = PostType & { user: UserMinimal };
 
 export default function home() {
 	const { fetching } = useAuth();
 	const limit = 10;
-	const {
-		isLoading,
-		isFetchingNextPage,
-		fetchNextPage,
-		hasNextPage,
-		data
-	} = useInfiniteQuery<APIResponseType[]>(
-		['feed'],
-		userFeed,
-		{
+	const { isLoading, isFetchingNextPage, fetchNextPage, hasNextPage, data } =
+		useInfiniteQuery<APIResponseType[]>(['feed'], userFeed, {
 			getNextPageParam: (lastPage, pages) => {
 				if (lastPage.length < limit) {
 					return undefined;
@@ -37,10 +29,8 @@ export default function home() {
 			},
 			onError: () => {
 				toast.error('Failed to fetch more posts');
-			}
-
-		}
-	);
+			},
+		});
 
 	useEffect(() => {
 		// Removes the #_=_ hash from facebook login
@@ -53,16 +43,23 @@ export default function home() {
 	}, []);
 
 	useEffect(() => {
-		document.getElementById('main-section')?.addEventListener('scroll', trackScrolling);
+		document
+			.getElementById('main-section')
+			?.addEventListener('scroll', trackScrolling);
 
 		return () => {
-			document.getElementById('main-section')?.removeEventListener('scroll', trackScrolling);
+			document
+				.getElementById('main-section')
+				?.removeEventListener('scroll', trackScrolling);
 		};
 	}, [trackScrolling]);
 
 	function trackScrolling(e: Event) {
 		const target = e.target as HTMLDivElement;
-		if (target && target.scrollHeight - target.scrollTop <= target.clientHeight) {
+		if (
+			target &&
+			target.scrollHeight - target.scrollTop <= target.clientHeight
+		) {
 			if (!isFetchingNextPage && hasNextPage) {
 				fetchNextPage();
 			}
@@ -71,9 +68,9 @@ export default function home() {
 
 	function renderPosts() {
 		return data?.pages.map((page, pi) => {
-			return page.map((p, i) =>
-				<Post post={p} user={p.user} key={(pi * 10) + i} />
-			);
+			return page.map((p, i) => (
+				<Post post={p} user={p.user} key={pi * 10 + i} />
+			));
 		});
 	}
 
@@ -91,14 +88,24 @@ export default function home() {
 				</div>
 				<div className='flex flex-col m-auto mt-20 text-gray-500 w-[50rem] gap-5'>
 					{renderPosts()}
-					{isFetchingNextPage && <InlineLoading />}
-					{!hasNextPage && <div className='text-center'>
-						<div className='m-5'>
-							<div><FontAwesomeIcon icon={faCheckCircle} className='text-xl mb-2' /></div>
-							You are up to date
+					{isFetchingNextPage && (
+						<div className='p-3'>
+							<Loader />
 						</div>
-					</div>}
-
+					)}
+					{!hasNextPage && (
+						<div className='text-center'>
+							<div className='m-5'>
+								<div>
+									<FontAwesomeIcon
+										icon={faCheckCircle}
+										className='text-xl mb-2'
+									/>
+								</div>
+								You are up to date
+							</div>
+						</div>
+					)}
 				</div>
 			</div>
 		</MainNavBar>

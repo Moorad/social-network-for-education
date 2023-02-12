@@ -112,6 +112,7 @@ export default function AttachmentModal({
 						variant='primary'
 						size='small'
 						onClick={() => fileRef.current?.click()}
+						loading={uploadMutation.isLoading}
 					>
 						Upload
 					</Button>
