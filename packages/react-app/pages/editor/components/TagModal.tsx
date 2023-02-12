@@ -4,6 +4,7 @@ import React, { useRef } from 'react';
 import Modal from '../../../components/Modal';
 import { cleanStringAndCase } from '../../../utils/text';
 import EmptyMessage from '../../../components/EmptyMessage';
+import Button from '../../../components/Button';
 
 const suggestedTags = [
 	'Food',
@@ -124,13 +125,10 @@ export default function TagModal({
 					</div>
 				</div>
 
-				<div className='flex gap-5 mt-6 text-sm'>
-					<button
-						className='bg-gray-400 py-2 px-5 rounded text-white'
-						onClick={() => setIsOpen(false)}
-					>
+				<div className='mt-6'>
+					<Button size='small' onClick={() => setIsOpen(false)}>
 						Close
-					</button>
+					</Button>
 				</div>
 			</div>
 		</Modal>

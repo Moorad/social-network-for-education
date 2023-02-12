@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import Button from '../components/Button';
 
 export default function Custom404() {
 	return (
@@ -11,9 +12,7 @@ export default function Custom404() {
 				</div>
 				<div>
 					<Link href='/home'>
-						<button className='bg-blue-500 text-white py-2 px-4 rounded'>
-							Go back to home
-						</button>
+						<Button variant='primary'>Go back to home</Button>
 					</Link>
 				</div>
 			</div>

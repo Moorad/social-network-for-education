@@ -82,7 +82,7 @@ export default function Comment(props: propTypes) {
 								<FontAwesomeIcon
 									icon={faReply}
 									className='text-gray-400'
-								/>{' '}
+								/>
 								Reply
 							</div>
 						</button>

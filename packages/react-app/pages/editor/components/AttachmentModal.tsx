@@ -5,6 +5,7 @@ import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
 import { AttachmentType } from '..';
 import { uploadAnyFile } from '../../../api/userApi';
+import Button from '../../../components/Button';
 import EmptyMessage from '../../../components/EmptyMessage';
 import Modal from '../../../components/Modal';
 import { getIconFromMimeType } from '../../../utils/file';
@@ -103,19 +104,17 @@ export default function AttachmentModal({
 						</div>
 					))}
 				</div>
-				<div className='flex gap-5 mt-6 text-sm'>
-					<button
-						className='bg-gray-400 py-2 px-5 rounded text-white'
-						onClick={() => setIsOpen(false)}
-					>
+				<div className='flex gap-5 mt-6'>
+					<Button size='small' onClick={() => setIsOpen(false)}>
 						Close
-					</button>
-					<button
-						className='bg-blue-500 py-2 px-5 rounded text-white'
+					</Button>
+					<Button
+						variant='primary'
+						size='small'
 						onClick={() => fileRef.current?.click()}
 					>
 						Upload
-					</button>
+					</Button>
 				</div>
 			</div>
 		</Modal>

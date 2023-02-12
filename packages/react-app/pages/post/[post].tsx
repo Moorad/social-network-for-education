@@ -23,6 +23,7 @@ import { replyToComment } from '../../api/commentApi';
 import toast from 'react-hot-toast';
 import { getIconFromMimeType } from '../../utils/file';
 import EmptyMessage from '../../components/EmptyMessage';
+import Button from '../../components/Button';
 
 type SinglePostWithUser = {
 	post: PostType;
@@ -187,12 +188,14 @@ export default function post() {
 										placeholder='Write a comment'
 										ref={commentRef}
 									></textarea>
-									<button
-										className='bg-blue-500 text-white px-5 py-2 rounded-md text-sm absolute bottom-0 right-0 m-3'
+									<Button
+										additionalClasses='absolute bottom-0 right-0 m-3'
+										size='small'
+										variant='primary'
 										type='submit'
 									>
 										Send
-									</button>
+									</Button>
 								</form>
 							</div>
 						</div>

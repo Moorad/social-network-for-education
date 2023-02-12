@@ -6,6 +6,7 @@ import { UserMinimal } from 'node-server/Models/User';
 import React, { FormEvent, useEffect, useRef, useState } from 'react';
 import { useMutation, useQuery } from 'react-query';
 import { chatContacts, chatMessages } from '../../api/chatApi';
+import Button from '../../components/Button';
 import Loading from '../../components/Loading';
 import MainNavBar from '../../components/NavBars/MainNavBar';
 import { useSocket } from '../../components/SocketContext';
@@ -274,12 +275,9 @@ export default function index() {
 										className='flex-grow h-10 px-4 rounded-md'
 										ref={messageInputRef}
 									/>
-									<button className='bg-blue-500 h-10 w-10 rounded-md'>
-										<FontAwesomeIcon
-											className='text-white'
-											icon={faPaperPlane}
-										/>
-									</button>
+									<Button variant='primary'>
+										<FontAwesomeIcon icon={faPaperPlane} />
+									</Button>
 								</form>
 							</div>
 						)}

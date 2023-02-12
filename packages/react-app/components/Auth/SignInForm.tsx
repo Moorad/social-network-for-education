@@ -7,6 +7,7 @@ import { useMutation } from 'react-query';
 import { loginUser } from '../../api/authApi';
 import toast from 'react-hot-toast';
 import { AxiosError } from 'axios';
+import Button from '../Button';
 
 export default function SignIn() {
 	const emailRef = useRef<HTMLInputElement>(null);
@@ -18,17 +19,19 @@ export default function SignIn() {
 		onError: (error) => {
 			const err = error as AxiosError;
 			switch (err.response?.status) {
-				case (403):
+				case 403:
 					toast.error('Incorrect email address or password');
 					break;
-				case (400):
+				case 400:
 					toast.error('Incorrect email address or password');
 					break;
 				default:
-					toast.error('The server has encountered an internal error, please try again later');
+					toast.error(
+						'The server has encountered an internal error, please try again later'
+					);
 					break;
 			}
-		}
+		},
 	});
 
 	function handleSubmission(e: FormEvent) {
@@ -70,12 +73,9 @@ export default function SignIn() {
 					ref={passwordRef}
 				/>
 				<div className='flex justify-end text-sm gap-3 text-white mt-4'>
-					<button
-						type='submit'
-						className='bg-blue-500 py-2 px-6 rounded'
-					>
+					<Button variant='primary' type='submit'>
 						Submit
-					</button>
+					</Button>
 				</div>
 				<div className='flex flex-col gap-6 mt-2'>
 					{/* This is the divider */}
@@ -91,22 +91,22 @@ export default function SignIn() {
 						<Link
 							href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
 						>
-							<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
+							<Button additionalClasses='relative basis-1/2'>
 								<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-500 text-center'>
 									<FontAwesomeIcon icon={faGoogle} />
 								</span>
 								Google
-							</button>
+							</Button>
 						</Link>
 						<Link
 							href={`${process.env.NEXT_PUBLIC_API_URL}/auth/facebook`}
 						>
-							<button className='relative bg-gray-50 text-gray-500 py-2 px-4 rounded border border-gray-300 basis-1/2'>
+							<Button additionalClasses='relative basis-1/2'>
 								<span className='absolute inset-y-0 left-0 flex items-center pl-4 text-blue-700'>
 									<FontAwesomeIcon icon={faSquareFacebook} />
 								</span>
 								Facebook
-							</button>
+							</Button>
 						</Link>
 					</div>
 				</div>

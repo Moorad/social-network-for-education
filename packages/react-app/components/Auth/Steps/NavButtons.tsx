@@ -1,4 +1,5 @@
 import React from 'react';
+import Button from '../../Button';
 
 type propTypes = {
 	hasNext?: boolean;
@@ -11,40 +12,42 @@ export default function NavButtons(props: propTypes) {
 		const elements = [];
 		if (props.onBack) {
 			elements.push(
-				<button
-					className='bg-blue-500 py-2 px-6 rounded'
+				<Button
 					type='button'
+					size='small'
 					onClick={() => {
 						props.onBack?.();
 					}}
 					key={elements.length}
 				>
 					Back
-				</button>
+				</Button>
 			);
 		}
 
 		if (props.hasNext) {
 			elements.push(
-				<button
+				<Button
 					type='submit'
-					className='bg-blue-500 py-2 px-6 rounded'
+					size='small'
+					variant='primary'
 					key={elements.length}
 				>
 					Next
-				</button>
+				</Button>
 			);
 		}
 
 		if (props.hasSubmit) {
 			elements.push(
-				<button
+				<Button
 					type='submit'
-					className='bg-blue-500 py-2 px-6 rounded'
+					size='small'
+					variant='primary'
 					key={elements.length}
 				>
 					Submit
-				</button>
+				</Button>
 			);
 		}
 
@@ -52,7 +55,7 @@ export default function NavButtons(props: propTypes) {
 	}
 
 	return (
-		<div className='flex justify-end text-sm gap-3 text-white mt-14'>
+		<div className='flex justify-end gap-3 text-white mt-14'>
 			{getButtons()}
 		</div>
 	);

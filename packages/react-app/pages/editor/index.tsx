@@ -37,6 +37,7 @@ import TagModal from './components/TagModal';
 import ReferenceModal from './components/ReferenceModal';
 import { ReferenceType } from 'node-server/routes/utils';
 import * as DOMPurify from 'dompurify';
+import Button from '../../components/Button';
 
 export type AttachmentType = {
 	name: string;
@@ -337,8 +338,8 @@ export default function PostEditor() {
 						{readingLevelDebounce}
 					</div>
 					<div className='flex gap-5'>
-						<button
-							className='bg-red-500 py-2 px-5 rounded text-white hover:bg-red-600'
+						<Button
+							variant='danger'
 							onClick={() => {
 								const confirmation = confirm(
 									'The post information will be lost. Are you sure you want to do this?'
@@ -350,13 +351,10 @@ export default function PostEditor() {
 							}}
 						>
 							Discard
-						</button>
-						<button
-							className='bg-blue-500 py-2 px-5 rounded text-white hover:bg-blue-600'
-							onClick={handleSubmission}
-						>
+						</Button>
+						<Button variant='primary' onClick={handleSubmission}>
 							Post
-						</button>
+						</Button>
 					</div>
 				</div>
 			</div>

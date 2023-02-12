@@ -7,7 +7,6 @@ import MainNavBar from './NavBars/MainNavBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
 	faCamera,
-	faCheck,
 	faCirclePlus,
 	faFaceSadTear,
 	faLock,
@@ -17,9 +16,17 @@ import { selectUser, setUser } from '../redux/userSlice';
 import { formatNumber } from '../utils/format';
 import Post from './Post';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { followUser, getUser, getUserMe, getUserPosts, getUserPostsMe, uploadUserImage } from '../api/userApi';
+import {
+	followUser,
+	getUser,
+	getUserMe,
+	getUserPosts,
+	getUserPostsMe,
+	uploadUserImage,
+} from '../api/userApi';
 import Loading from './Loading';
 import toast from 'react-hot-toast';
+import Button from './Button';
 
 type propTypes = {
 	id?: string;
@@ -42,21 +49,31 @@ export default function User(props: propTypes) {
 	const dispatch = useDispatch();
 
 	if (props.me) {
-		var { isLoading, isError, data: user } = useQuery<UserType>('user_me', getUserMe, {
+		var {
+			isLoading,
+			isError,
+			data: user,
+		} = useQuery<UserType>('user_me', getUserMe, {
 			onSuccess: (data) => {
 				dispatch(setUser(data));
-			}
+			},
 		});
 		var postQuery = useQuery<PostWithUser>('posts_me', getUserPostsMe);
 	} else {
-		var { isLoading, isError, data: user } = useQuery<UserType>(['user', props.id], () => getUser(props.id), {
+		var {
+			isLoading,
+			isError,
+			data: user,
+		} = useQuery<UserType>(['user', props.id], () => getUser(props.id), {
 			onSuccess: (res) => {
 				if (res.followers.includes(reduxUser._id)) {
 					setFollowing(true);
 				}
-			}
+			},
 		});
-		var postQuery = useQuery<PostWithUser>(['posts', props.id], () => getUserPosts(props.id));
+		var postQuery = useQuery<PostWithUser>(['posts', props.id], () =>
+			getUserPosts(props.id)
+		);
 	}
 
 	const followMutation = useMutation(followUser, {
@@ -66,7 +83,7 @@ export default function User(props: propTypes) {
 		},
 		onError: () => {
 			toast.error('Failed to follow the user');
-		}
+		},
 	});
 
 	const uploadMutation = useMutation(uploadUserImage, {
@@ -75,7 +92,7 @@ export default function User(props: propTypes) {
 		},
 		onError: () => {
 			toast.error('Failed to upload image');
-		}
+		},
 	});
 
 	if (isLoading || postQuery.isLoading || user == undefined) {
@@ -97,7 +114,7 @@ export default function User(props: propTypes) {
 
 			uploadMutation.mutate({
 				formData: formData,
-				_for: forRef.current
+				_for: forRef.current,
 			});
 		}
 	}
@@ -141,9 +158,7 @@ export default function User(props: propTypes) {
 						</div>
 					</div>
 					<div>
-						<button className='bg-blue-500 text-white py-2 px-7 rounded-md'>
-							Create
-						</button>
+						<Button variant='primary'>Create</Button>
 					</div>
 				</div>
 			);
@@ -192,7 +207,9 @@ export default function User(props: propTypes) {
 						{props.me && (
 							<div
 								className='absolute h-full w-full bg-gray-800/[.5] opacity-0 hover:opacity-100 cursor-pointer '
-								onClick={() => handleUploadClick('Profile_Background')}
+								onClick={() =>
+									handleUploadClick('Profile_Background')
+								}
 							>
 								<div className='flex w-full h-full justify-center items-center'>
 									<FontAwesomeIcon
@@ -214,7 +231,9 @@ export default function User(props: propTypes) {
 								{props.me && (
 									<div
 										className='absolute h-44 w-44 bg-gray-800/[.5] rounded-full opacity-0 hover:opacity-100 cursor-pointer '
-										onClick={() => handleUploadClick('Avatar')}
+										onClick={() =>
+											handleUploadClick('Avatar')
+										}
 									>
 										<div className='flex w-full h-full justify-center items-center'>
 											<FontAwesomeIcon
@@ -262,11 +281,13 @@ export default function User(props: propTypes) {
 						</div>
 						<div>
 							{!props.me && (
-								following ? <button className='text-gray-500 border-gray-300 border py-2 px-7 rounded-md' onClick={() => handleFollow()}>
-									<FontAwesomeIcon icon={faCheck} /> Following
-								</button> : <button className='bg-blue-500 text-white py-2 px-7 rounded-md' onClick={() => handleFollow()}>
-									Follow
-								</button>
+								<Button
+									additionalClasses='flex items-center gap-2'
+									variant={following ? 'primary' : 'base'}
+									onClick={() => handleFollow()}
+								>
+									{following ? 'Following' : 'Follow'}
+								</Button>
 							)}
 						</div>
 					</div>

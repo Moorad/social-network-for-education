@@ -9,6 +9,7 @@ import InlineLoading from '../../../components/InlineLoading';
 import Modal from '../../../components/Modal';
 import useDebounce from '../../../utils/hooks/useDebounce';
 import EmptyMessage from '../../../components/EmptyMessage';
+import Button from '../../../components/Button';
 
 export default function ReferenceModal({
 	isOpen,
@@ -134,6 +135,11 @@ export default function ReferenceModal({
 							</button>
 						))}
 					</div>
+				</div>
+				<div className='mt-6'>
+					<Button size='small' onClick={() => setIsOpen(false)}>
+						Close
+					</Button>
 				</div>
 			</div>
 		</Modal>
