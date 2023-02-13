@@ -84,7 +84,7 @@ export default function home() {
 						</div>
 					)}
 					{!hasNextPage && (
-						<div className='text-center'>
+						<div className='text-center dark:text-gray-300'>
 							<div className='m-5'>
 								<div>
 									<FontAwesomeIcon

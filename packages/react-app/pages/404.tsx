@@ -7,7 +7,7 @@ export default function Custom404() {
 		<div className='inset-center'>
 			<div className='flex flex-col items-center gap-12'>
 				<img src='/undraw_404.svg' className='w-3/4 inline m-auto' />
-				<div className='text-gray-600 text-center text-xl'>
+				<div className='text-gray-600 dark:text-gray-300 text-center text-xl'>
 					It seems like the page you are looking for does not exist.
 				</div>
 				<div>

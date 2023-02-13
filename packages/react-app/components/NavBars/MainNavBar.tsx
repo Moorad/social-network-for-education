@@ -2,8 +2,10 @@ import {
 	faBell,
 	faCog,
 	faMessage,
+	faMoon,
 	faQuestion,
 	faRightFromBracket,
+	faSun,
 	faUser,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -29,19 +31,17 @@ export default function MainNavBar(props: propTypes) {
 	const avatar = useSelector(selectAvatar);
 	return (
 		<div className='flex flex-col h-screen'>
-			<div className='flex justify-between shadow'>
+			<div className='flex justify-between'>
 				<div className=''>
 					<Link href='/home'>
 						<div className='bg-blue-500 w-20 h-20 flex justify-center align-middle items-center'>
-							<img
-								src='/logos/logo.png'
-								className='m-autoa h-12'
-							></img>
+							<img src='/logos/logo.png' className='h-12'></img>
 						</div>
 					</Link>
 				</div>
-				<div className='flex items-center pr-4 gap-5'>
+				<div className='flex items-center pr-4 gap-5 w-full justify-end border-b dark:border-gray-800'>
 					<NotificationButton />
+					<DarkModeButton />
 					<TopLeftAccountDropDown avatar={avatar} />
 				</div>
 			</div>
@@ -78,7 +78,7 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 		<Menu>
 			{({ open }) => (
 				<>
-					<Menu.Button className='hover:bg-gray-200 p-2 rounded-full'>
+					<Menu.Button className='hover:bg-gray-200 hover:dark:bg-gray-800 p-2 rounded-full'>
 						<img
 							src={props.avatar}
 							alt='profile image'
@@ -86,7 +86,7 @@ function TopLeftAccountDropDown(props: { avatar: string }) {
 						/>
 					</Menu.Button>
 					{open && (
-						<div className='absolute right-2 top-[78px] border-gray-300 border p-1 rounded-md mt-3 w-56 z-[100] bg-white'>
+						<div className='absolute right-2 top-[78px] border-gray-300 dark:border-gray-800 dark:text-white border p-1 rounded-md mt-3 w-56 z-[100] bg-white dark:bg-gray-800'>
 							<Menu.Items static>
 								{options.map((e, i) => (
 									<Menu.Item key={i}>
@@ -160,11 +160,11 @@ function NotificationButton() {
 				<>
 					<div className='relative'>
 						<Menu.Button
-							className='hover:bg-gray-200 p-2 rounded-md w-14 h-14'
+							className='hover:bg-gray-200 hover:dark:bg-gray-800 p-2 rounded-md w-14 h-14'
 							onClick={() => clearNotifications()}
 						>
 							<FontAwesomeIcon
-								className='text-xl text-gray-700'
+								className='text-xl text-gray-700 dark:text-white'
 								icon={faBell}
 							/>
 						</Menu.Button>
@@ -176,9 +176,9 @@ function NotificationButton() {
 							)}
 					</div>
 					{open && (
-						<div className='absolute right-2 top-[78px] border-gray-300 border p-3 rounded-md mt-3 w-96 z-[100] bg-white cursor-pointer'>
+						<div className='absolute right-2 top-[78px] border-gray-300 dark:border-gray-800 border p-3 rounded-md mt-3 w-96 z-[100] bg-white dark:bg-gray-800 cursor-pointer'>
 							<Menu.Items static>
-								<div className='text-gray-900 font-bold mb-3'>
+								<div className='text-gray-900 dark:text-white font-bold mb-3'>
 									Notifications
 								</div>
 								<EmptyMessage
@@ -191,7 +191,7 @@ function NotificationButton() {
 									(n, i) => (
 										<div
 											key={i}
-											className='hover:bg-gray-100 p-2 rounded-md'
+											className='hover:bg-gray-100 hover:dark:bg-gray-700 p-2 rounded-md'
 										>
 											<div className='flex'>
 												<div className='relative self-center'>
@@ -206,10 +206,10 @@ function NotificationButton() {
 												</div>
 
 												<div>
-													<div className='text-sm font-semibold text-gray-700'>
+													<div className='text-sm font-semibold text-gray-700 dark:text-gray-300'>
 														{n.type}
 													</div>
-													<div className='text-gray-700'>
+													<div className='text-gray-700 dark:text-gray-300'>
 														{n.text}
 													</div>
 												</div>
@@ -223,6 +223,31 @@ function NotificationButton() {
 				</>
 			)}
 		</Menu>
+	);
+}
+
+function DarkModeButton() {
+	const [theme, setTheme] = useState(localStorage.getItem('theme'));
+	return (
+		<button
+			className='hover:bg-gray-200 hover:dark:bg-gray-800 p-2 rounded-md w-14 h-14'
+			onClick={() => {
+				if (theme == 'light') {
+					setTheme('dark');
+					localStorage.setItem('theme', 'dark');
+					document.documentElement.classList.add('dark');
+				} else {
+					setTheme('light');
+					localStorage.setItem('theme', 'light');
+					document.documentElement.classList.remove('dark');
+				}
+			}}
+		>
+			<FontAwesomeIcon
+				className='text-xl text-gray-700 dark:text-white'
+				icon={theme == 'light' ? faMoon : faSun}
+			/>
+		</button>
 	);
 }
 

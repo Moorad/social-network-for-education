@@ -77,16 +77,16 @@ export default function Post(props: {
 	return (
 		<div
 			className={
-				'max-w-[60rem] w-full border-gray-300 border rounded-lg p-5 text-left ' +
+				'max-w-[60rem] w-full border-gray-300 dark:border-gray-800 dark:bg-gray-800 border rounded-lg p-5 text-left ' +
 				(!props.fullText ? 'cursor-pointer' : '')
 			}
 			onClick={handleClick}
 		>
-			<div className='text-gray-900 font-semibold text-lg'>
+			<div className='text-gray-900 dark:text-white font-semibold text-lg'>
 				{props.post.title}
 			</div>
 			<div
-				className='text-gray-800 mt-3 whitespace-pre-wrap leading-none markdown'
+				className='text-gray-800 dark:text-white mt-3 whitespace-pre-wrap leading-none markdown'
 				dangerouslySetInnerHTML={{ __html: renderText() }}
 			></div>
 			<Link href={`/user/${props.user._id}`}>
@@ -96,11 +96,13 @@ export default function Post(props: {
 				>
 					<img src={props.user.avatar} className='w-9 rounded-full' />
 					<div className='flex gap-2'>
-						<div className='text-gray-700 font-medium group-hover:underline'>
+						<div className='text-gray-700 dark:text-gray-200 font-medium group-hover:underline'>
 							{props.user.displayName}
 						</div>
-						<div className='text-gray-500'>•</div>
-						<div className='text-gray-500'>
+						<div className='text-gray-500 dark:text-gray-400'>
+							•
+						</div>
+						<div className='text-gray-500 dark:text-gray-400'>
 							{formatToRelativeTime(props.post.created)}
 						</div>
 					</div>

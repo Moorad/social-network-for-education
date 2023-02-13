@@ -22,7 +22,7 @@ const navigation = [
 export default function SideNavBar(props: { active: number }) {
 	return (
 		<>
-			<div className='flex flex-col w-20 bg-gray-800 items-center py-4'>
+			<div className='flex flex-col w-20 bg-slate-800 items-center py-4'>
 				<Link href='/editor'>
 					<div className='w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 bg-blue-500 hover:bg-blue-400'>
 						<FontAwesomeIcon icon={faPenToSquare}></FontAwesomeIcon>
@@ -52,16 +52,16 @@ type sideBarButtonTypes = {
 function SideBarButton(props: sideBarButtonTypes) {
 	let extraClasses = '';
 	if (props.active) {
-		extraClasses = 'bg-gray-600';
+		extraClasses = 'bg-slate-600';
 	}
 
 	return (
 		<Link href={props.href}>
-			<div
-				className={`w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 hover:bg-gray-700 ${extraClasses}`}
+			<button
+				className={`w-14 h-14 flex items-center justify-center text-xl text-white rounded-md mb-4 hover:bg-slate-700 ${extraClasses}`}
 			>
 				<FontAwesomeIcon icon={props.icon}></FontAwesomeIcon>
-			</div>
+			</button>
 		</Link>
 	);
 }

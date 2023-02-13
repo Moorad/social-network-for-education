@@ -12,7 +12,6 @@ import Button from '../components/Button';
 
 export default class Index extends Component {
 	render() {
-		// document.body.classList.add('', 'overflow-hidden');
 		return (
 			<div className='h-screen'>
 				<LandingNavBar />

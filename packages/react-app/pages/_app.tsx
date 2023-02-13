@@ -5,6 +5,7 @@ import { Toaster } from 'react-hot-toast';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { Provider } from 'react-redux';
+import Config from '../components/Config';
 import { SocketProvider } from '../components/SocketContext';
 import '../index.css';
 import store from '../redux/store';
@@ -30,6 +31,7 @@ export default function App({ Component, pageProps }: AppProps) {
 						/>
 						<title>React App</title>
 					</Head>
+					<Config />
 					<Component {...pageProps} />
 					<Toaster position='bottom-right' />
 					<ReactQueryDevtools initialIsOpen={false} />

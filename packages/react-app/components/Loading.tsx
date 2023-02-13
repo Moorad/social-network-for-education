@@ -2,7 +2,7 @@ import React from 'react';
 
 export default function Loading() {
 	return (
-		<div className='inset-center'>
+		<div className='inset-center dark:bg-gray-900'>
 			<svg
 				className='animate-spin h-12 w-12 text-blue-500'
 				xmlns='http://www.w3.org/2000/svg'
