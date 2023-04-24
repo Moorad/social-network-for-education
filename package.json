@@ -7,6 +7,7 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
+		"start-prod": "concurrently \"yarn start-server\" \"yarn start-react\"",
 		"start-react": "yarn --cwd ./packages/react-app dev",
 		"start-server": "yarn --cwd ./packages/node-server start",
 		"tools": "yarn --cwd ./packages/node-server tools",
@@ -17,5 +18,8 @@
 	},
 	"workspaces": [
 		"packages/*"
-	]
+	],
+	"dependencies": {
+		"concurrently": "^8.0.1"
+	}
 }
