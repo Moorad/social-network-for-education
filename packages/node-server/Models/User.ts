@@ -17,8 +17,8 @@ export const UserZod = z.object({
 	followingCount: z.number().default(0),
 	followings: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	posts: z.array(z.string().or(z.instanceof(Types.ObjectId))),
-	avatar: z.string().default('http://localhost:4000/resource/default'),
-	background: z.string().default('http://localhost:4000/resource/default_bg'),
+	avatar: z.string().default(`${process.env.EXPRESS_URL}/default`),
+	background: z.string().default(`${process.env.EXPRESS_URL}/default_bg`),
 	isPrivate: z.boolean().default(false),
 	notifications: z.array(NotificationZod),
 });
@@ -44,11 +44,11 @@ const userSchema = new Schema<UserType>({
 	posts: { type: [Schema.Types.ObjectId], default: [] },
 	avatar: {
 		type: String,
-		default: 'http://localhost:4000/resource/default',
+		default: `${process.env.EXPRESS_URL}/default`,
 	},
 	background: {
 		type: String,
-		default: 'http://localhost:4000/resource/default_bg',
+		default: `${process.env.EXPRESS_URL}/default_bg`,
 	},
 	isPrivate: { type: Boolean, default: false },
 	notifications: { type: [notificationSchema], default: [] },

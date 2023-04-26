@@ -197,7 +197,7 @@ function NotificationButton() {
 												<div className='relative self-center'>
 													<img
 														className='w-9 ml-1 mr-4 text-gray-700 rounded-full'
-														src={`http://localhost:4000/resource/avatar?id=${n.user}`}
+														src={`${process.env.NEXT_PUBLIC_API_URL}/resource/avatar?id=${n.user}`}
 													/>
 													<FontAwesomeIcon
 														className='absolute text-xs rounded-md bg-blue-500 p-1 right-2 -bottom-1 text-white'

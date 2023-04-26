@@ -50,7 +50,7 @@ router.post(
 			}
 
 			const URL =
-				'http://localhost:4000/resource/' +
+			`${process.env.EXPRESS_URL}/resource/` +
 				path.basename(
 					req.file.filename,
 					path.extname(req.file.filename)
@@ -102,7 +102,7 @@ router.post(
 			}
 
 			const URL =
-				'http://localhost:4000/resource/' +
+				`${process.env.EXPRESS_URL}/resource/` +
 				path.basename(
 					req.file.filename,
 					path.extname(req.file.filename)
