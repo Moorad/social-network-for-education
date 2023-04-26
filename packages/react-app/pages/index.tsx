@@ -9,8 +9,25 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import Link from 'next/link';
 import Button from '../components/Button';
+import { baseApi } from '../api/base';
 
-export default class Index extends Component {
+type stateType = {
+	userCount: number;
+	postCount: number;
+	messageCount: number;
+};
+
+export default class Index extends Component<Record<string, never>, stateType> {
+	constructor(props: Record<string, never>) {
+		super(props);
+
+		this.state = { userCount: 0, postCount: 0, messageCount: 0 };
+
+		baseApi.get('/utils/stats').then((res) => {
+			this.setState(res.data);
+		});
+	}
+
 	render() {
 		// document.body.classList.add('', 'overflow-hidden');
 		return (
@@ -49,19 +66,19 @@ export default class Index extends Component {
 					<div className='flex justify-between w-96 text-center'>
 						<div className='w-24'>
 							<div className='text-xl font-bold text-gray-900'>
-								0
+								{this.state.userCount}
 							</div>
 							<div className='text-sm'>Learners signed up</div>
 						</div>
 						<div className='w-24'>
 							<div className='text-xl font-bold text-gray-900'>
-								0
+								{this.state.postCount}
 							</div>
 							<div className='text-sm'>Resources shared</div>
 						</div>
 						<div className='w-24'>
 							<div className='text-xl font-bold text-gray-900'>
-								0
+								{this.state.messageCount}
 							</div>
 							<div className='text-sm'>Messages sent</div>
 						</div>
@@ -289,27 +306,61 @@ export default class Index extends Component {
 							className='text-gray-900 text-4xl font-bold py-5'
 							id='details'
 						>
-							Project details
+							Project description
 						</div>
 						<div className='text-gray-600'>
-							This is some background behind the project and why I
-							created it
+							This is some background behind the project and why
+							it was created
+						</div>
+						<div className='flex justify-center w-1/2 mx-auto'>
+							<div className='text-gray-500 w-5/6 p-14 text-left'>
+								The project is a social network for learning
+								that aims to create an online community where
+								users can engage in knowledge sharing and
+								skill-building. The platform is designed to
+								support various forms of communication,
+								including messaging, posts, likes, follows,
+								comments, and notifications, allowing users to
+								connect and interact with each other. The
+								platform&apos;s post editor is a powerful tool
+								that supports markdown, file uploads, and
+								academic referencing. Users can create
+								high-quality posts and share them with their
+								peers, allowing for a more engaging and
+								informative learning experience. Furthermore,
+								the platform has a simple recommendation system
+								that helps users discover relevant content and
+								connect with like-minded learners.
+							</div>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div className='mb-28 text-center'>
+						<div
+							className='text-gray-900 text-4xl font-bold py-5'
+							id='details'
+						>
+							Acknowledgement
 						</div>
 						<div className='flex justify-center w-1/2 mx-auto'>
 							<div className='text-gray-500 w-4/6 p-14 text-left'>
-								This project was my chosen final year project at
-								Swansea University. In Swansea University (for
-								the Computer Science course at least) you get to
-								choose a project that you want to work on in
-								your final year. The project you choose should
-								roughly take you around 300 hrs to make and
-								should be developed solo. I enjoyed making this
-								platform and it taught me a lot about web
-								development and project management (software and
-								timing wise). This project is expected to be
-								complete on the 15th of April but with the
-								current development progress, it is expected to
-								be complete sooner :).
+								The successful completion of my final year
+								computer science project has been made possible
+								by the invaluable support and guidance of the
+								university faculty and staff. Throughout the
+								process, I have gained a deeper understanding of
+								the subject matter and acquired essential skills
+								in problem-solving, critical thinking, and
+								project management. I would like to express my
+								appreciation to classmates who supported me and
+								the university staff who provided me with the
+								resources necessary to complete the project. The
+								experience has been invaluable in preparing me
+								for a successful career in the field of computer
+								science, and I am honored to have had the
+								opportunity to work on this project with such
+								exceptional support and resources.
 							</div>
 							<div className='flex flex-col justify-center w-2/6 p-14'>
 								<img src='/logos/swansea.png' className='' />

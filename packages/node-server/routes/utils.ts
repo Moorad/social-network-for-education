@@ -3,6 +3,8 @@ import User from '../Models/User';
 import { SearchTerm, validate } from '../utils/validation';
 import { authenticateToken } from './auth';
 import axios from 'axios';
+import Post from '../Models/Post';
+import Chat from '../Models/Chat';
 const router = express.Router();
 
 export type ReferenceType = {
@@ -120,6 +122,42 @@ router.get('/clear_notifications', authenticateToken, async (req, res) => {
 		).exec();
 
 		return res.sendStatus(200);
+	} catch {
+		return res.sendStatus(404);
+	}
+});
+
+router.get('/stats', async (req, res) => {
+	try {
+		const stats = {
+			userCount: 0,
+			postCount: 0,
+			messageCount: 0,
+		};
+
+		const userCount = await User.countDocuments().exec();
+
+		if (userCount != null) {
+			stats.userCount = userCount;
+		}
+
+		const postCount = await Post.countDocuments().exec();
+
+		if (postCount != null) {
+			stats.postCount = postCount;
+		}
+
+		const messageCount = await Chat.aggregate([
+			{ $unwind: '$messages' },
+			{ $group: { _id: '$_id', sum: { $sum: 1 } } },
+			{ $group: { _id: null, sum: { $sum: '$sum' } } },
+		]).exec();
+
+		if (messageCount != null && messageCount.length > 0) {
+			stats.messageCount = messageCount[0].sum;
+		}
+
+		return res.json(stats);
 	} catch {
 		return res.sendStatus(404);
 	}

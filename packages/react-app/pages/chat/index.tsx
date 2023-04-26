@@ -275,7 +275,7 @@ export default function index() {
 										className='flex-grow h-10 px-4 rounded-md'
 										ref={messageInputRef}
 									/>
-									<Button variant='primary'>
+									<Button variant='primary' type='submit'>
 										<FontAwesomeIcon icon={faPaperPlane} />
 									</Button>
 								</form>
