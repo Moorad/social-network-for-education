@@ -7,6 +7,9 @@ import bcrypt from 'bcrypt';
 import Comment from '../Models/Comment';
 import Chat from '../Models/Chat';
 
+import * as dotenv from 'dotenv';
+dotenv.config({path: "../"});
+
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
 		if (!process.env.DB) {
@@ -40,7 +43,7 @@ export async function resetDB() {
 		label: 'Hardcore Gamer',
 		followerCount: 1,
 		followingCount: 1,
-		avatar: 'http://localhost:4000/resource/d741bf93-672a-4b04-83ad-fbb90009f211',
+		avatar: `${process.env.EXPRESS_URL}/resource/d741bf93-672a-4b04-83ad-fbb90009f211`,
 	});
 
 	bobLogin.userId = bob._id;
@@ -60,7 +63,7 @@ export async function resetDB() {
 		label: 'First Year Undergrad',
 		followerCount: 1,
 		followingCount: 1,
-		avatar: 'http://localhost:4000/resource/70bb12c5-5084-4f73-8302-451a2764e3e2',
+		avatar: `${process.env.EXPRESS_URL}/resource/70bb12c5-5084-4f73-8302-451a2764e3e2`,
 	});
 
 	michealLogin.userId = micheal._id;

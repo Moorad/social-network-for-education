@@ -74,7 +74,7 @@ router.get(
 
 		createJWTToken(res, req.user.toString());
 
-		return res.redirect('http://localhost:3000/home');
+		return res.redirect(`${process.env.REACT_URL}/home`);
 	}
 );
 
@@ -90,7 +90,7 @@ router.get(
 
 		createJWTToken(res, req.user.toString());
 
-		return res.redirect('http://localhost:3000/home');
+		return res.redirect(`${process.env.REACT_URL}/home`);
 	}
 );
 

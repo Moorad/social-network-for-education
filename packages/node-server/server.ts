@@ -15,7 +15,7 @@ const http = createServer(app);
 
 const io = new Server(http, {
 	cors: {
-		origin: 'http://localhost:3000',
+		origin: process.env.REACT_URL,
 	},
 });
 

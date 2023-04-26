@@ -26,7 +26,7 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 						<div className='self-center'>
 							<img
 								className='w-9 text-gray-700 rounded-full'
-								src={`http://localhost:4000/resource/avatar?id=${payload.user}`}
+								src={`${process.env.NEXT_PUBLIC_API_URL}/resource/avatar?id=${payload.user}`}
 								alt=''
 							/>
 						</div>
