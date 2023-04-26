@@ -15,7 +15,6 @@ const navigation = [
 	{ name: 'Home', href: '/home', icon: faHouseChimney },
 	{ name: 'Profile', href: '/profile', icon: faUser },
 	{ name: 'Chat', href: '/chat', icon: faMessage },
-	{ name: 'Notifications', href: '/NA', icon: faBell },
 	{ name: 'Settings', href: '/settings', icon: faCog },
 ];
 

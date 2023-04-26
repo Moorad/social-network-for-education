@@ -1,4 +1,4 @@
-import 'highlight.js/styles/github-dark.css';
+import 'highlight.js/styles/atom-one-dark.css';
 import type { PostType } from 'node-server/Models/Post';
 import type { UserMinimal } from 'node-server/Models/User';
 
@@ -82,7 +82,7 @@ export default function Post(props: {
 			}
 			onClick={handleClick}
 		>
-			<div className='text-gray-900 font-semibold text-lg'>
+			<div className='text-gray-900 font-semibold text-3xl'>
 				{props.post.title}
 			</div>
 			<div
