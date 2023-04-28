@@ -1,10 +1,10 @@
 import { faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
-import Modal from '../../../components/Modal';
-import { cleanStringAndCase } from '../../../utils/text';
-import EmptyMessage from '../../../components/EmptyMessage';
-import Button from '../../../components/Button';
+import Modal from '../Modal';
+import { cleanStringAndCase } from '../../utils/text';
+import EmptyMessage from '../EmptyMessage';
+import Button from '../Button';
 
 const suggestedTags = [
 	'Food',
