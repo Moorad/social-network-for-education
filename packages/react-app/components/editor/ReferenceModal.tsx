@@ -4,12 +4,12 @@ import { Combobox } from '@headlessui/react';
 import { ReferenceType } from 'node-server/routes/utils';
 import React, { useEffect, useRef, useState } from 'react';
 import { useMutation } from 'react-query';
-import { referenceQuery } from '../../../api/utilsApi';
-import Loader from '../../../components/Loader';
-import Modal from '../../../components/Modal';
-import useDebounce from '../../../utils/hooks/useDebounce';
-import EmptyMessage from '../../../components/EmptyMessage';
-import Button from '../../../components/Button';
+import { referenceQuery } from '../../api/utilsApi';
+import Loader from '../Loader';
+import Modal from '../Modal';
+import useDebounce from '../../utils/hooks/useDebounce';
+import EmptyMessage from '../EmptyMessage';
+import Button from '../Button';
 
 export default function ReferenceModal({
 	isOpen,

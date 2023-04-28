@@ -3,13 +3,13 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useRef } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMutation } from 'react-query';
-import { AttachmentType } from '..';
-import { uploadAnyFile } from '../../../api/userApi';
-import Button from '../../../components/Button';
-import EmptyMessage from '../../../components/EmptyMessage';
-import Modal from '../../../components/Modal';
-import { getIconFromMimeType } from '../../../utils/file';
-import { formatByteSizes } from '../../../utils/format';
+import { AttachmentType } from '../../pages/editor';
+import { uploadAnyFile } from '../../api/userApi';
+import Button from '../Button';
+import EmptyMessage from '../EmptyMessage';
+import Modal from '../Modal';
+import { getIconFromMimeType } from '../../utils/file';
+import { formatByteSizes } from '../../utils/format';
 
 export default function AttachmentModal({
 	isOpen,
