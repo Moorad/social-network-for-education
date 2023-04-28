@@ -3,6 +3,7 @@ dist/
 .env
 coverage
 .nyc_output
+__pycache__
 
 # Ignore all files in media except default.png
 file_manager/media/*
