@@ -8,7 +8,7 @@ import Comment from '../Models/Comment';
 import Chat from '../Models/Chat';
 
 import * as dotenv from 'dotenv';
-dotenv.config({path: "../"});
+dotenv.config({ path: '../' });
 
 export function connectToDB(dbName: string) {
 	return new Promise<void>((resolve, reject) => {
@@ -211,12 +211,17 @@ export async function populateWithFakeData(userCount: number) {
 		const likeCount = Math.floor(Math.random() * viewCount);
 		const commentCount = Math.floor(Math.random() * viewCount);
 
-		// Generate random comments
-		const peopleComments = faker.helpers.arrayElements(users, commentCount);
+		const viewsUsers = faker.helpers.arrayElements(users, viewCount);
+		const likeUsers = faker.helpers.arrayElements(viewsUsers, likeCount);
+		const commentUsers = faker.helpers.arrayElements(
+			viewsUsers,
+			commentCount
+		);
+
 		for (let j = 0; j < commentCount; j++) {
 			const comment = new Comment({
 				postId: posts[i],
-				userId: peopleComments[j],
+				userId: commentUsers[j],
 				content: faker.lorem.paragraph(),
 				likeCount: faker.datatype.number({ max: viewCount }),
 			});
@@ -231,8 +236,10 @@ export async function populateWithFakeData(userCount: number) {
 		}
 
 		await Post.findByIdAndUpdate(posts[i], {
-			likeCount: likeCount,
 			viewCount: viewCount,
+			views: viewsUsers,
+			likeCount: likeCount,
+			likes: likeUsers,
 			commentCount: commentCount,
 		}).exec();
 
