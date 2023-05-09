@@ -4,8 +4,6 @@ import { z } from 'zod';
 import * as dotenv from 'dotenv';
 dotenv.config();
 
-console.log(process.env);
-
 const NotificationZod = z.object({
 	type: z.enum(['Message', 'Friend Request']),
 	text: z.string(),
@@ -22,8 +20,8 @@ export const UserZod = z.object({
 	followingCount: z.number().default(0),
 	followings: z.array(z.string().or(z.instanceof(Types.ObjectId))),
 	posts: z.array(z.string().or(z.instanceof(Types.ObjectId))),
-	avatar: z.string().default(`${process.env.EXPRESS_URL}/default`),
-	background: z.string().default(`${process.env.EXPRESS_URL}/default_bg`),
+	avatar: z.string().default(`${process.env.EXPRESS_URL}/resource/default`),
+	background: z.string().default(`${process.env.EXPRESS_URL}/resource/default_bg`),
 	isPrivate: z.boolean().default(false),
 	notifications: z.array(NotificationZod),
 });
@@ -49,11 +47,11 @@ const userSchema = new Schema<UserType>({
 	posts: { type: [Schema.Types.ObjectId], default: [] },
 	avatar: {
 		type: String,
-		default: `${process.env.EXPRESS_URL}/default`,
+		default: `${process.env.EXPRESS_URL}/resource/default`,
 	},
 	background: {
 		type: String,
-		default: `${process.env.EXPRESS_URL}/default_bg`,
+		default: `${process.env.EXPRESS_URL}/resource/default_bg`,
 	},
 	isPrivate: { type: Boolean, default: false },
 	notifications: { type: [notificationSchema], default: [] },
